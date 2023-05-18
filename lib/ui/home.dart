@@ -1,5 +1,6 @@
-import 'package:dollar_app/ui/home_tabs/expenses.dart';
-import 'package:dollar_app/ui/home_tabs/income.dart';
+import 'package:dollar_app/ui/home_tabs/transactions_tabs/expenses.dart';
+import 'package:dollar_app/ui/home_tabs/transactions_tabs/income.dart';
+import 'package:dollar_app/ui/home_tabs/transactions_tabs/transactions.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import "colors.dart";
@@ -23,7 +24,7 @@ class _HomeState extends State<Home> {
           ),
           body: const TabBarView(children: [
             Expenses(),
-            Income(),
+            Transactions(),
             SizedBox(),
             Expenses(),
             Income()
