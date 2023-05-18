@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:google_fonts/google_fonts.dart';
+import "package:font_awesome_flutter/font_awesome_flutter.dart";
 
 import '../widgets/monserrat_text.dart';
 
@@ -97,18 +98,44 @@ class _HomeTabState extends State<HomeTab> {
           const SizedBox(height: 30),
           montserratText(
               "Recent transaction", 20, FontWeight.w600, Colors.black87),
+          const SizedBox(
+            height: 20,
+          ),
           Expanded(
             child: ListView.separated(
               itemBuilder: (context, index) {
                 return Container(
                     padding: const EdgeInsets.all(15),
                     decoration: BoxDecoration(
-                        color: Colors.grey.shade200,
+                        color: Colors.grey.shade300,
                         borderRadius: BorderRadius.circular(15)),
-                    child: Text("Index $index"));
+                    child: Row(
+                      children: [
+                        CircleAvatar(
+                          radius: 30,
+                          backgroundColor: Colors.black87,
+                          child: Icon(
+                            FontAwesomeIcons.utensils,
+                            color: Colors.white,
+                            size: 24.0,
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        Column(
+                          children: [
+                            montserratText("Hoshino Omakase", 15,
+                                FontWeight.w800, Colors.black87),
+                            montserratText("Hoshino Omakase", 15,
+                                FontWeight.w500, Colors.black87)
+                          ],
+                        )
+                      ],
+                    ));
               },
               separatorBuilder: (context, idnex) {
-                return const SizedBox(height: 10);
+                return const SizedBox(height: 15);
               },
               itemCount: 10,
             ),
