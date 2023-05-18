@@ -1,11 +1,10 @@
-import 'package:dollar_app/ui/home_tabs/expenses.dart';
 import 'package:dollar_app/ui/home_tabs/homeTab.dart';
-import 'package:dollar_app/ui/home_tabs/income.dart';
 import 'package:dollar_app/ui/home_tabs/profile.dart';
+import 'package:dollar_app/ui/home_tabs/transactions_tabs/expenses.dart';
+import 'package:dollar_app/ui/home_tabs/transactions_tabs/transactions.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import "colors.dart";
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -39,11 +38,9 @@ class _HomeState extends State<Home> {
                   )),
             ],
           ),
-          body: const TabBarView(
-            
-            children: [
+          body: const TabBarView(children: [
             HomeTab(),
-            Income(),
+            Transactions(),
             SizedBox(),
             Expenses(),
             Profile()
