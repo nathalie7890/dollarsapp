@@ -1,8 +1,10 @@
 import 'package:dollar_app/ui/home_tabs/expenses.dart';
 import 'package:dollar_app/ui/home_tabs/homeTab.dart';
 import 'package:dollar_app/ui/home_tabs/income.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import "colors.dart";
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -15,7 +17,7 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-        length: 4,
+        length: 5,
         child: Scaffold(
           appBar: AppBar(
             title: const Text(
@@ -67,30 +69,36 @@ class _HomeState extends State<Home> {
                   const Tab(
                     child: Align(
                       alignment: Alignment.center,
-                      child: Icon(Icons.house),
+                      child: Icon(CupertinoIcons.house, size: 30),
                     ),
                   ),
                   const Tab(
                     child: Align(
                       alignment: Alignment.center,
-                      child: Icon(Icons.wallet),
+                      child:
+                          Icon(Icons.account_balance_wallet_outlined, size: 30),
                     ),
                   ),
-                  FloatingActionButton(
-                    onPressed: () => {},
-                    backgroundColor: Colors.black87,
-                    child: const Icon(Icons.add),
+                  Tab(
+                    child: Align(
+                      alignment: Alignment.center,
+                      child: FloatingActionButton(
+                        onPressed: () => {},
+                        backgroundColor: Colors.black87,
+                        child: const Icon(Icons.add, size: 30),
+                      ),
+                    ),
                   ),
                   const Tab(
                     child: Align(
                       alignment: Alignment.center,
-                      child: Icon(Icons.wallet),
+                      child: Icon(Icons.credit_card_outlined, size: 30),
                     ),
                   ),
                   const Tab(
                     child: Align(
                       alignment: Alignment.center,
-                      child: Icon(Icons.wallet),
+                      child: Icon(Icons.person_outline_rounded, size: 30),
                     ),
                   ),
                 ]),
