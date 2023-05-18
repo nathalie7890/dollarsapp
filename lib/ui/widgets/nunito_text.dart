@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-Text montserratText(
+Text nunitoText(
   String text,
   double size,
   FontWeight weight,
@@ -9,7 +9,7 @@ Text montserratText(
 ) {
   return Text(
     text,
-    style: GoogleFonts.montserrat(
+    style: GoogleFonts.nunito(
       fontSize: size,
       fontWeight: weight,
       color: color,

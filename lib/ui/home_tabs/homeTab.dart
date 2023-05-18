@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:flutter/src/widgets/placeholder.dart';
-import 'package:google_fonts/google_fonts.dart';
 import "package:font_awesome_flutter/font_awesome_flutter.dart";
-
-import '../widgets/monserrat_text.dart';
+import "../colors.dart";
+import '../widgets/nunito_text.dart';
 
 class HomeTab extends StatefulWidget {
   const HomeTab({super.key});
@@ -18,19 +15,19 @@ class _HomeTabState extends State<HomeTab> {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(15),
-      color: Colors.grey.shade100,
+      color: bg,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          montserratText("Hello,", 25, FontWeight.w500, Colors.black87),
-          montserratText("Bob Marley", 25, FontWeight.w800, Colors.black87),
+          nunitoText("Hello,", 25, FontWeight.w500, primary),
+          nunitoText("Bob Marley", 25, FontWeight.w800, primary),
           const SizedBox(
             height: 20,
           ),
           Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-                color: Colors.black87,
+                color: primary,
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
@@ -41,9 +38,8 @@ class _HomeTabState extends State<HomeTab> {
             width: double.infinity,
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              montserratText(
-                  "Sunday", 20, FontWeight.w500, Colors.grey.shade100),
-              montserratText(
+              nunitoText("Sunday", 20, FontWeight.w500, Colors.grey.shade100),
+              nunitoText(
                   "28th May 2023", 15, FontWeight.w500, Colors.grey.shade400),
               const SizedBox(height: 30),
               Row(
@@ -52,18 +48,17 @@ class _HomeTabState extends State<HomeTab> {
                     child: Container(
                       padding: const EdgeInsets.all(15),
                       decoration: BoxDecoration(
-                          color: Colors.orange.shade50,
+                          color: tertiary,
                           borderRadius: BorderRadius.circular(15)),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          montserratText(
-                              "Income", 15, FontWeight.w800, Colors.black87),
+                          nunitoText("Income", 15, FontWeight.w700, primary),
                           const SizedBox(
-                            height: 8,
+                            height: 5,
                           ),
-                          montserratText("RM 346, 234", 20, FontWeight.w500,
-                              Colors.black87),
+                          nunitoText(
+                              "RM 346, 234", 20, FontWeight.w500, primary),
                         ],
                       ),
                     ),
@@ -75,18 +70,17 @@ class _HomeTabState extends State<HomeTab> {
                     child: Container(
                       padding: const EdgeInsets.all(15),
                       decoration: BoxDecoration(
-                          color: Colors.orange.shade50,
+                          color: tertiary,
                           borderRadius: BorderRadius.circular(15)),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          montserratText(
-                              "Expenes", 15, FontWeight.w800, Colors.black87),
+                          nunitoText("Expenses", 15, FontWeight.w700, primary),
                           const SizedBox(
-                            height: 8,
+                            height: 5,
                           ),
-                          montserratText("RM 67, 108", 20, FontWeight.w500,
-                              Colors.black87),
+                          nunitoText(
+                              "RM 67, 108", 20, FontWeight.w500, primary),
                         ],
                       ),
                     ),
@@ -96,10 +90,9 @@ class _HomeTabState extends State<HomeTab> {
             ]),
           ),
           const SizedBox(height: 30),
-          montserratText(
-              "Recent transaction", 20, FontWeight.w600, Colors.black87),
+          nunitoText("Recent transaction", 20, FontWeight.w600, primary),
           const SizedBox(
-            height: 20,
+            height: 10,
           ),
           Expanded(
             child: ListView.separated(
@@ -107,34 +100,37 @@ class _HomeTabState extends State<HomeTab> {
                 return Container(
                     padding: const EdgeInsets.all(15),
                     decoration: BoxDecoration(
-                        color: Colors.grey.shade300,
+                        color: Colors.grey.shade200,
                         borderRadius: BorderRadius.circular(15)),
                     child: Row(
                       children: [
                         CircleAvatar(
                           radius: 30,
-                          backgroundColor: Colors.black87,
+                          backgroundColor: primary,
                           child: Icon(
                             FontAwesomeIcons.utensils,
-                            color: Colors.white,
-                            size: 24.0,
+                            color: tertiary,
+                            size: 20.0,
                           ),
                         ),
                         const SizedBox(
                           width: 10,
                         ),
                         Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            montserratText("Hoshino Omakase", 15,
-                                FontWeight.w800, Colors.black87),
-                            montserratText("Hoshino Omakase", 15,
-                                FontWeight.w500, Colors.black87)
+                            nunitoText("Hoshino Omakase", 15, FontWeight.w800,
+                                primary),
+                            nunitoText(
+                                "14/10/2023", 13, FontWeight.w500, primary)
                           ],
-                        )
+                        ),
+                        const Spacer(),
+                        nunitoText("RM4.50", 15, FontWeight.w700, primary)
                       ],
                     ));
               },
-              separatorBuilder: (context, idnex) {
+              separatorBuilder: (context, index) {
                 return const SizedBox(height: 15);
               },
               itemCount: 10,
@@ -145,7 +141,7 @@ class _HomeTabState extends State<HomeTab> {
     );
   }
 
-  // Text montserratText(
+  // Text nunitoText(
   //     String text, double size, FontWeight weight, Color? color) {
   //   return Text(text,
   //       style: GoogleFonts.montserrat(

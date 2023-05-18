@@ -1,8 +1,4 @@
-import 'package:dollar_app/ui/login.dart';
-import 'package:dollar_app/ui/register.dart';
 import 'package:flutter/material.dart';
-import "package:go_router/go_router.dart";
-import 'home.dart';
 import 'navigation.dart';
 
 void main() {

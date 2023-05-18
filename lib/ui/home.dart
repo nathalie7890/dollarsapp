@@ -2,9 +2,9 @@ import 'package:dollar_app/ui/home_tabs/homeTab.dart';
 import 'package:dollar_app/ui/home_tabs/profile.dart';
 import 'package:dollar_app/ui/home_tabs/transactions_tabs/expenses.dart';
 import 'package:dollar_app/ui/home_tabs/transactions_tabs/transactions.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:heroicons/heroicons.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import "colors.dart";
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -19,35 +19,32 @@ class _HomeState extends State<Home> {
     return DefaultTabController(
         length: 5,
         child: Scaffold(
-          appBar: AppBar(
-            title: const Text(
-              "Dollars",
-            ),
-            titleTextStyle: GoogleFonts.montserrat(
-                color: Colors.grey.shade100,
-                fontWeight: FontWeight.w500,
-                fontSize: 20),
-            backgroundColor: Colors.black87,
-            elevation: 0,
-            actions: [
-              IconButton(
-                  onPressed: () => debugPrint("logout"),
-                  icon: Icon(
-                    Icons.logout,
-                    color: Colors.grey.shade100,
-                  )),
-            ],
+          // appBar: AppBar(
+          //   title: nunitoText("Dollars", 20, FontWeight.bold, primary),
+          //   backgroundColor: Colors.grey.shade50,
+          //   elevation: 0,
+          //   actions: [
+          //     IconButton(
+          //         onPressed: () => debugPrint("logout"),
+          //         icon: const Icon(
+          //           Icons.logout,
+          //           color: primary,
+          //         )),
+          //   ],
+          // ),
+          body: const Padding(
+            padding: EdgeInsets.only(top: 15.0),
+            child: TabBarView(children: [
+              HomeTab(),
+              Transactions(),
+              SizedBox(),
+              Expenses(),
+              Profile()
+            ]),
           ),
-          body: const TabBarView(children: [
-            HomeTab(),
-            Transactions(),
-            SizedBox(),
-            Expenses(),
-            Profile()
-          ]),
           bottomNavigationBar: Container(
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: Colors.grey.shade50,
               boxShadow: [
                 BoxShadow(
                   color: Colors.grey.shade200,
@@ -61,22 +58,25 @@ class _HomeState extends State<Home> {
                 unselectedLabelColor: Colors.grey.shade500,
                 indicatorSize: TabBarIndicatorSize.label,
                 indicatorPadding: const EdgeInsets.symmetric(vertical: -2),
-                labelColor: Colors.black87,
+                labelColor: primary,
                 indicatorColor: Colors.transparent,
-                // indicator: BoxDecoration(
-                //     shape: BoxShape.circle, color: Colors.transparent),
                 tabs: [
                   const Tab(
                     child: Align(
                       alignment: Alignment.center,
-                      child: Icon(CupertinoIcons.house, size: 30),
+                      child: HeroIcon(
+                        HeroIcons.home,
+                        size: 27,
+                      ),
                     ),
                   ),
                   const Tab(
                     child: Align(
                       alignment: Alignment.center,
-                      child:
-                          Icon(Icons.account_balance_wallet_outlined, size: 30),
+                      child: HeroIcon(
+                        HeroIcons.wallet,
+                        size: 27,
+                      ),
                     ),
                   ),
                   Tab(
@@ -84,21 +84,22 @@ class _HomeState extends State<Home> {
                       alignment: Alignment.center,
                       child: FloatingActionButton(
                         onPressed: () => {},
-                        backgroundColor: Colors.black87,
-                        child: const Icon(Icons.add, size: 30),
+                        elevation: 0,
+                        backgroundColor: primary,
+                        child: const HeroIcon(HeroIcons.plus),
                       ),
                     ),
                   ),
                   const Tab(
                     child: Align(
                       alignment: Alignment.center,
-                      child: Icon(Icons.credit_card_outlined, size: 30),
+                      child: HeroIcon(HeroIcons.newspaper, size: 27),
                     ),
                   ),
                   const Tab(
                     child: Align(
                       alignment: Alignment.center,
-                      child: Icon(Icons.person_outline_rounded, size: 30),
+                      child: HeroIcon(HeroIcons.userCircle, size: 27),
                     ),
                   ),
                 ]),

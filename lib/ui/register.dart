@@ -66,9 +66,9 @@ class _RegisterState extends State<Register> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text(
+                    Text(
                       "Incorrect username or password.",
-                      style: TextStyle(color: tertiary),
+                      style: TextStyle(color: primary),
                     ),
                     const SizedBox(height: 20),
                     TextField(
@@ -76,15 +76,13 @@ class _RegisterState extends State<Register> {
                       style: const TextStyle(color: Colors.white),
                       decoration: InputDecoration(
                         hintText: "Username",
-                        hintStyle: const TextStyle(color: secondary),
-                        labelStyle: const TextStyle(color: secondary),
+                        hintStyle: TextStyle(color: secondary),
+                        labelStyle: TextStyle(color: secondary),
                         enabledBorder: OutlineInputBorder(
-                            borderSide:
-                                const BorderSide(width: 1, color: secondary),
+                            borderSide: BorderSide(width: 1, color: secondary),
                             borderRadius: BorderRadius.circular(15.0)),
                         focusedBorder: OutlineInputBorder(
-                          borderSide:
-                              const BorderSide(color: secondary, width: 2),
+                          borderSide: BorderSide(color: secondary, width: 2),
                           borderRadius: BorderRadius.circular(15.0),
                         ),
                       ),
@@ -97,15 +95,13 @@ class _RegisterState extends State<Register> {
                       style: const TextStyle(color: Colors.white),
                       decoration: InputDecoration(
                         hintText: "Email",
-                        hintStyle: const TextStyle(color: secondary),
-                        labelStyle: const TextStyle(color: secondary),
+                        hintStyle: TextStyle(color: secondary),
+                        labelStyle: TextStyle(color: secondary),
                         enabledBorder: OutlineInputBorder(
-                            borderSide:
-                                const BorderSide(width: 1, color: secondary),
+                            borderSide: BorderSide(width: 1, color: secondary),
                             borderRadius: BorderRadius.circular(15.0)),
                         focusedBorder: OutlineInputBorder(
-                          borderSide:
-                              const BorderSide(color: secondary, width: 2),
+                          borderSide: BorderSide(color: secondary, width: 2),
                           borderRadius: BorderRadius.circular(15.0),
                         ),
                       ),
@@ -118,15 +114,13 @@ class _RegisterState extends State<Register> {
                       style: const TextStyle(color: Colors.white),
                       decoration: InputDecoration(
                         hintText: "Password",
-                        hintStyle: const TextStyle(color: secondary),
-                        labelStyle: const TextStyle(color: secondary),
+                        hintStyle: TextStyle(color: secondary),
+                        labelStyle: TextStyle(color: secondary),
                         enabledBorder: OutlineInputBorder(
-                            borderSide:
-                                const BorderSide(width: 1, color: secondary),
+                            borderSide: BorderSide(width: 1, color: secondary),
                             borderRadius: BorderRadius.circular(15.0)),
                         focusedBorder: OutlineInputBorder(
-                          borderSide:
-                              const BorderSide(color: secondary, width: 2),
+                          borderSide: BorderSide(color: secondary, width: 2),
                           borderRadius: BorderRadius.circular(15.0),
                         ),
                       ),
@@ -139,15 +133,13 @@ class _RegisterState extends State<Register> {
                       style: const TextStyle(color: Colors.white),
                       decoration: InputDecoration(
                         hintText: "Confirm Password",
-                        hintStyle: const TextStyle(color: secondary),
-                        labelStyle: const TextStyle(color: secondary),
+                        hintStyle: TextStyle(color: secondary),
+                        labelStyle: TextStyle(color: secondary),
                         enabledBorder: OutlineInputBorder(
-                            borderSide:
-                                const BorderSide(width: 1, color: secondary),
+                            borderSide: BorderSide(width: 1, color: secondary),
                             borderRadius: BorderRadius.circular(15.0)),
                         focusedBorder: OutlineInputBorder(
-                          borderSide:
-                              const BorderSide(color: secondary, width: 2),
+                          borderSide: BorderSide(color: secondary, width: 2),
                           borderRadius: BorderRadius.circular(15.0),
                         ),
                       ),
@@ -164,7 +156,7 @@ class _RegisterState extends State<Register> {
                                 horizontal: 50, vertical: 20),
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(15))),
-                        child: const Text(
+                        child: Text(
                           "Sign in",
                           style: TextStyle(color: secondary),
                         )),
@@ -175,7 +167,7 @@ class _RegisterState extends State<Register> {
                       onTap: () {
                         _goToLogin(context);
                       },
-                      child: const Text(
+                      child: Text(
                         "Already have an account?",
                         style: TextStyle(color: secondary),
                       ),
