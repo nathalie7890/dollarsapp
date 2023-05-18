@@ -11,7 +11,8 @@ class MyApp extends StatelessWidget {
 
   final _routes = [
     GoRoute(path: "/login", builder: (context, state) => const Login()),
-    GoRoute(path: "/home", name: "home", builder: (context, state) => const Home()),
+    GoRoute(
+        path: "/home", name: "home", builder: (context, state) => const Home()),
     GoRoute(
         path: "/register",
         name: "register",
@@ -22,7 +23,6 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
         debugShowCheckedModeBanner: false,
-        theme: ThemeData(primarySwatch: Colors.pink),
         home: MaterialApp.router(
           routerConfig:
               GoRouter(initialLocation: initialRoute, routes: _routes),
