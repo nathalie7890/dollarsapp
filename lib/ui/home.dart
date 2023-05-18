@@ -1,6 +1,7 @@
 import 'package:dollar_app/ui/home_tabs/expenses.dart';
 import 'package:dollar_app/ui/home_tabs/homeTab.dart';
 import 'package:dollar_app/ui/home_tabs/income.dart';
+import 'package:dollar_app/ui/home_tabs/profile.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -38,12 +39,14 @@ class _HomeState extends State<Home> {
                   )),
             ],
           ),
-          body: const TabBarView(children: [
+          body: const TabBarView(
+            
+            children: [
             HomeTab(),
             Income(),
             SizedBox(),
             Expenses(),
-            Income()
+            Profile()
           ]),
           bottomNavigationBar: Container(
             decoration: BoxDecoration(
