@@ -1,8 +1,8 @@
 import 'package:dollar_app/ui/home_tabs/expenses.dart';
+import 'package:dollar_app/ui/home_tabs/homeTab.dart';
 import 'package:dollar_app/ui/home_tabs/income.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import "colors.dart";
+import 'package:google_fonts/google_fonts.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -18,11 +18,26 @@ class _HomeState extends State<Home> {
         length: 4,
         child: Scaffold(
           appBar: AppBar(
-            backgroundColor: bg,
+            title: const Text(
+              "Dollars",
+            ),
+            titleTextStyle: GoogleFonts.montserrat(
+                color: Colors.grey.shade100,
+                fontWeight: FontWeight.w500,
+                fontSize: 20),
+            backgroundColor: Colors.black87,
             elevation: 0,
+            actions: [
+              IconButton(
+                  onPressed: () => debugPrint("logout"),
+                  icon: Icon(
+                    Icons.logout,
+                    color: Colors.grey.shade100,
+                  )),
+            ],
           ),
           body: const TabBarView(children: [
-            Expenses(),
+            HomeTab(),
             Income(),
             SizedBox(),
             Expenses(),
