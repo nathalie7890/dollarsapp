@@ -1,9 +1,9 @@
 import 'package:dollar_app/ui/colors.dart';
+import 'package:flutter/material.dart';
+
+// tabs
 import 'package:dollar_app/ui/home_tabs/transactions_tabs/expenses.dart';
 import 'package:dollar_app/ui/home_tabs/transactions_tabs/income.dart';
-import 'package:dollar_app/ui/widgets/nunito_text.dart';
-import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 class Transactions extends StatefulWidget {
   const Transactions({Key? key}) : super(key: key);

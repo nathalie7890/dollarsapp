@@ -1,9 +1,6 @@
 import 'package:dollar_app/ui/widgets/nunito_text.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:heroicons/heroicons.dart';
-
 import '../colors.dart';
 
 class Profile extends StatefulWidget {
@@ -82,7 +79,7 @@ class _ProfileState extends State<Profile> {
               child: Align(
                 alignment: Alignment.bottomCenter,
                 child: SizedBox(
-                    height: 40,
+                    height: 50,
                     width: double.infinity,
                     child: _isEditing
                         ? _cancelSaveBtnRow()
@@ -107,14 +104,20 @@ class _ProfileState extends State<Profile> {
   Widget _cancelSaveBtnRow() {
     return Row(
       children: [
-        Expanded(child: _btn(_onCancelClick, "Cancel", color: burgundy)),
+        Expanded(
+            child: SizedBox(
+                height: 50,
+                child: _btn(_onCancelClick, "Cancel", color: burgundy))),
         const SizedBox(
           width: 8,
         ),
         Expanded(
-            child: _btn(
-          _onSaveClick,
-          "Save",
+            child: SizedBox(
+          height: 50,
+          child: _btn(
+            _onSaveClick,
+            "Save",
+          ),
         )),
       ],
     );
