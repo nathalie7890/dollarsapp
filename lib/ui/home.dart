@@ -40,7 +40,7 @@ class _HomeState extends State<Home> {
           //   ],
           // ),
           body: const Padding(
-            padding: EdgeInsets.only(top: 15.0),
+            padding: EdgeInsets.only(top: 25.0),
             child: TabBarView(children: [
               HomeTab(),
               Transactions(),
