@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import "package:font_awesome_flutter/font_awesome_flutter.dart";
+import 'package:go_router/go_router.dart';
 import "../colors.dart";
 import '../widgets/nunito_text.dart';
 
@@ -11,6 +12,10 @@ class HomeTab extends StatefulWidget {
 }
 
 class _HomeTabState extends State<HomeTab> {
+  _goToTransaction() {
+    context.push("/transaction");
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -97,38 +102,41 @@ class _HomeTabState extends State<HomeTab> {
           Expanded(
             child: ListView.separated(
               itemBuilder: (context, index) {
-                return Container(
-                    padding: const EdgeInsets.all(15),
-                    decoration: BoxDecoration(
-                        color: Colors.grey.shade200,
-                        borderRadius: BorderRadius.circular(15)),
-                    child: Row(
-                      children: [
-                        CircleAvatar(
-                          radius: 30,
-                          backgroundColor: primary,
-                          child: Icon(
-                            FontAwesomeIcons.utensils,
-                            color: tertiary,
-                            size: 20.0,
+                return GestureDetector(
+                  onTap: () => _goToTransaction(),
+                  child: Container(
+                      padding: const EdgeInsets.all(15),
+                      decoration: BoxDecoration(
+                          color: Colors.grey.shade200,
+                          borderRadius: BorderRadius.circular(15)),
+                      child: Row(
+                        children: [
+                          CircleAvatar(
+                            radius: 30,
+                            backgroundColor: primary,
+                            child: Icon(
+                              FontAwesomeIcons.utensils,
+                              color: tertiary,
+                              size: 20.0,
+                            ),
                           ),
-                        ),
-                        const SizedBox(
-                          width: 10,
-                        ),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            nunitoText("Hoshino Omakase", 15, FontWeight.w800,
-                                primary),
-                            nunitoText(
-                                "14/10/2023", 13, FontWeight.w500, primary)
-                          ],
-                        ),
-                        const Spacer(),
-                        nunitoText("RM4.50", 15, FontWeight.w700, primary)
-                      ],
-                    ));
+                          const SizedBox(
+                            width: 10,
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              nunitoText("Hoshino Omakase", 15, FontWeight.w800,
+                                  primary),
+                              nunitoText(
+                                  "14/10/2023", 13, FontWeight.w500, primary)
+                            ],
+                          ),
+                          const Spacer(),
+                          nunitoText("RM4.50", 15, FontWeight.w700, primary)
+                        ],
+                      )),
+                );
               },
               separatorBuilder: (context, index) {
                 return const SizedBox(height: 15);

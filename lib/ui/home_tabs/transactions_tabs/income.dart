@@ -11,26 +11,37 @@ class Income extends StatefulWidget {
 }
 
 class _IncomeState extends State<Income> {
-  final List<String> _categories = [
-    "Grocery",
-    "Transport",
-    "Entertainment",
-    "Food",
-    "Bills",
-    "Clothing"
-  ];
-  final List<Icon> _icons = [
-    const Icon(
-      FontAwesomeIcons.carrot,
-      color: Colors.black54,
-      size: 15,
-    ),
-    const Icon(FontAwesomeIcons.headphones, color: Colors.black54, size: 15),
-    const Icon(FontAwesomeIcons.bicycle, color: Colors.black54, size: 15),
-    const Icon(FontAwesomeIcons.utensils, color: Colors.black54, size: 15),
-    const Icon(FontAwesomeIcons.fileInvoiceDollar,
-        color: Colors.black54, size: 15),
-    const Icon(FontAwesomeIcons.shirt, color: Colors.black54, size: 15),
+  final List<Map<String, Icon>> _categories = [
+    {
+      "Grocery": const Icon(
+        FontAwesomeIcons.cartShopping,
+        color: Colors.black54,
+        size: 15,
+      )
+    },
+    {
+      "Transport": const Icon(
+        FontAwesomeIcons.bicycle,
+        color: Colors.black54,
+        size: 15,
+      )
+    },
+    {
+      "Entertainment": const Icon(FontAwesomeIcons.headphones,
+          color: Colors.black54, size: 15)
+    },
+    {
+      "Food":
+          const Icon(FontAwesomeIcons.utensils, color: Colors.black54, size: 15)
+    },
+    {
+      "Bills": const Icon(FontAwesomeIcons.fileInvoiceDollar,
+          color: Colors.black54, size: 15)
+    },
+    {
+      "Clothing":
+          const Icon(FontAwesomeIcons.shirt, color: Colors.black54, size: 15)
+    }
   ];
 
   @override
@@ -70,9 +81,9 @@ class _IncomeState extends State<Income> {
                         ),
                         elevation: 0,
                         backgroundColor: Colors.grey.shade300),
-                    icon: _icons[index],
-                    label: nunitoText(
-                        _categories[index], 15, FontWeight.w500, primary));
+                    icon: _categories[index].values.first,
+                    label: nunitoText(_categories[index].keys.first, 15,
+                        FontWeight.w500, primary));
                 // return _categoryIcons(index);
               },
               separatorBuilder: (context, index) => const SizedBox(
@@ -87,6 +98,7 @@ class _IncomeState extends State<Income> {
           const SizedBox(height: 20),
           Expanded(
             child: ListView.separated(
+              padding: EdgeInsets.only(bottom: 80),
               itemBuilder: (context, index) {
                 return Container(
                     padding: const EdgeInsets.all(15),
@@ -117,7 +129,8 @@ class _IncomeState extends State<Income> {
                           ],
                         ),
                         const Spacer(),
-                        nunitoText("RM4.50", 15, FontWeight.w700, primary)
+                        nunitoText("+ RM4.50", 15, FontWeight.w700,
+                            Colors.blue.shade700)
                       ],
                     ));
               },
@@ -129,18 +142,6 @@ class _IncomeState extends State<Income> {
           )
         ],
       ),
-    );
-  }
-
-  FloatingActionButton _categoryIcons(int index) {
-    return FloatingActionButton(
-      onPressed: () {},
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(50),
-      ),
-      elevation: 0,
-      backgroundColor: Colors.grey.shade300,
-      child: _icons[index],
     );
   }
 

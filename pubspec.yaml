@@ -14,6 +14,7 @@ dependencies:
   go_router: ^7.0.1
   google_fonts: ^4.0.4
   heroicons: ^0.8.0
+  syncfusion_flutter_datepicker: ^21.2.5
 
 dev_dependencies:
   flutter_test:
@@ -26,3 +27,6 @@ flutter:
     - assets/images/wallet.png
     - assets/images/card.png
     - assets/images/bob_marley.jpg
+    - assets/images/receipt_1.png
+    - assets/images/receipt_2.jpg
+    - assets/images/omakase.jpg

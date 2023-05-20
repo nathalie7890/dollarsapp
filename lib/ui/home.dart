@@ -1,10 +1,13 @@
-import 'package:dollar_app/ui/home_tabs/homeTab.dart';
-import 'package:dollar_app/ui/home_tabs/profile.dart';
-import 'package:dollar_app/ui/home_tabs/transactions_tabs/expenses.dart';
-import 'package:dollar_app/ui/home_tabs/transactions_tabs/transactions.dart';
 import 'package:heroicons/heroicons.dart';
 import 'package:flutter/material.dart';
+import "package:go_router/go_router.dart";
 import "colors.dart";
+
+// tabs
+import "home_tabs/home_tab.dart";
+import 'package:dollar_app/ui/home_tabs/transactions.dart';
+import 'package:dollar_app/ui/home_tabs/news.dart';
+import 'package:dollar_app/ui/home_tabs/profile.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -14,6 +17,10 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  _goToAddTrans() {
+    context.push("/addTrans");
+  }
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -38,7 +45,7 @@ class _HomeState extends State<Home> {
               HomeTab(),
               Transactions(),
               SizedBox(),
-              Expenses(),
+              News(),
               Profile()
             ]),
           ),
@@ -83,7 +90,7 @@ class _HomeState extends State<Home> {
                     child: Align(
                       alignment: Alignment.center,
                       child: FloatingActionButton(
-                        onPressed: () => {},
+                        onPressed: () => {_goToAddTrans()},
                         elevation: 0,
                         backgroundColor: primary,
                         child: const HeroIcon(HeroIcons.plus),

@@ -1,4 +1,6 @@
 import 'package:dollar_app/ui/home.dart';
+import 'package:dollar_app/ui/home_tabs/transaction.dart';
+import 'package:dollar_app/ui/home_tabs/transactions_tabs/add_transaction.dart';
 import 'package:dollar_app/ui/register.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -16,7 +18,15 @@ class MyApp extends StatelessWidget {
     GoRoute(
         path: "/register",
         name: "register",
-        builder: (context, state) => const Register())
+        builder: (context, state) => const Register()),
+    GoRoute(
+        path: "/transaction",
+        name: "transaction",
+        builder: (context, state) => const Transaction()),
+    GoRoute(
+        path: "/addTrans",
+        name: "addTrans",
+        builder: (context, state) => const AddTrans())
   ];
 
   @override

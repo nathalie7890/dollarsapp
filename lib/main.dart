@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'navigation.dart';
+import 'ui/navigation.dart';
 
 void main() {
   runApp(MyApp(
