@@ -1,9 +1,16 @@
 import 'package:flutter/material.dart';
 import 'ui/navigation.dart';
 
-void main() {
+// firebase
+import 'firebase_options.dart';
+import 'package:firebase_core/firebase_core.dart';
+
+void main() async {
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(MyApp(
-    initialRoute: "/home",
+    initialRoute: "/login",
   ));
 }
 

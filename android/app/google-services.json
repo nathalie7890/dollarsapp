@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "586963805807",
+    "project_id": "dollarsapp-de950",
+    "storage_bucket": "dollarsapp-de950.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:586963805807:android:7364bdd0b798e96f1e0f9a",
+        "android_client_info": {
+          "package_name": "com.example.dollar_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "586963805807-l7kricjjj94p75psv218g0dn8emhts1l.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCjkWuMTBzDzQ_Rq1pmtmCRREECmS6luWs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "586963805807-l7kricjjj94p75psv218g0dn8emhts1l.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
