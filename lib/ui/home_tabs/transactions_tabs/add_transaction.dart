@@ -34,6 +34,7 @@ class _AddTransState extends State<AddTrans> {
 
   final TextEditingController _title = TextEditingController();
   final TextEditingController _note = TextEditingController();
+  final TextEditingController _amount = TextEditingController();
   DateTime _date = DateTime.now();
   String _category = 'grocery';
   String _type = "income";
@@ -115,6 +116,7 @@ class _AddTransState extends State<AddTrans> {
       final transaction = Transaction(
           uid: uid,
           title: _title.text,
+          amount: double.tryParse(_amount.text) ?? 0.0,
           note: _note.text,
           date: _date,
           category: _category,
@@ -162,6 +164,10 @@ class _AddTransState extends State<AddTrans> {
                     ? nunitoText(
                         "Title is required", 15, FontWeight.w500, expense_red)
                     : Container(),
+                const SizedBox(height: 15),
+
+                // amount input
+                _transInput("Amount", _amount, isNumber: true),
                 const SizedBox(height: 15),
 
                 // date dropdown
@@ -381,13 +387,15 @@ class _AddTransState extends State<AddTrans> {
   }
 
 // transaction input
-  Column _transInput(String title, TextEditingController controller) {
+  Column _transInput(String title, TextEditingController controller,
+      {bool isNumber = false}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         nunitoText(title, 15, FontWeight.bold, Colors.grey.shade700),
         TextField(
           controller: controller,
+          keyboardType: isNumber ? TextInputType.number : TextInputType.text,
           maxLines: null,
           style: GoogleFonts.nunito(
               color: primary, fontWeight: FontWeight.w600, fontSize: 17),

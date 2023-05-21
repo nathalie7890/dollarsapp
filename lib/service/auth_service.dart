@@ -18,7 +18,6 @@ class AuthService {
       if (user != null) {
         await user.updateDisplayName(displayName);
       }
-      debugPrint(user.toString());
       return true;
     } catch (e) {
       debugPrint("Register failed: ${e.toString()}");

@@ -1,6 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class Transaction {
   String uid;
   String title;
+  double amount;
   DateTime date;
   String category;
   String type;
@@ -10,6 +13,7 @@ class Transaction {
   Transaction({
     required this.uid,
     required this.title,
+    required this.amount,
     required this.date,
     required this.category,
     required this.type,
@@ -21,6 +25,7 @@ class Transaction {
     return {
       'uid': uid,
       'title': title,
+      'amount': amount,
       'date': date.toIso8601String(),
       'category': category,
       'type': type,
@@ -33,7 +38,8 @@ class Transaction {
     return Transaction(
       uid: map['uid'],
       title: map['title'],
-      date: DateTime.parse(map['date']),
+      amount: map['amount'] as double,
+      date: (map['date'] as Timestamp).toDate(),
       category: map['category'],
       type: map['type'],
       note: map['note'],
@@ -43,6 +49,6 @@ class Transaction {
 
   @override
   String toString() {
-    return 'Transaction(uid: $uid, title: $title, date: $date, category: $category, type: $type,note: $note, image: $image)';
+    return 'Transaction(uid: $uid, title: $title, amount: $amount, date: $date, category: $category, type: $type,note: $note, image: $image)';
   }
 }
