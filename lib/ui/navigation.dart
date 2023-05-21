@@ -2,7 +2,6 @@ import 'package:dollar_app/ui/home.dart';
 import 'package:dollar_app/ui/home_tabs/transaction.dart';
 import 'package:dollar_app/ui/home_tabs/transactions.dart';
 import 'package:dollar_app/ui/home_tabs/transactions_tabs/add_transaction.dart';
-import 'package:dollar_app/ui/home_tabs/transactions_tabs/income.dart';
 import 'package:dollar_app/ui/register.dart';
 import 'package:dollar_app/ui/splash_screen.dart';
 import 'package:flutter/material.dart';

@@ -1,8 +1,6 @@
 import 'package:dollar_app/data/model/trans.dart';
 import 'package:dollar_app/service/auth_service.dart';
 import 'package:dollar_app/service/trans_service.dart';
-import 'package:dollar_app/ui/home.dart';
-import 'package:dollar_app/ui/home_tabs/home_tab.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
