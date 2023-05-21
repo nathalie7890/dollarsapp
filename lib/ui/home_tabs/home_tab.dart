@@ -1,8 +1,16 @@
 import 'package:flutter/material.dart';
-import "package:font_awesome_flutter/font_awesome_flutter.dart";
 import 'package:go_router/go_router.dart';
+
+// ui
 import "../colors.dart";
 import '../widgets/nunito_text.dart';
+import "package:font_awesome_flutter/font_awesome_flutter.dart";
+
+// utils
+import '../utils/utils.dart';
+
+// repo
+import 'package:dollar_app/service/auth_service.dart';
 
 class HomeTab extends StatefulWidget {
   const HomeTab({super.key});
@@ -12,6 +20,29 @@ class HomeTab extends StatefulWidget {
 }
 
 class _HomeTabState extends State<HomeTab> {
+  final auth = AuthService();
+
+  @override
+  void initState() {
+    super.initState();
+    _getCurrentUser();
+  }
+
+// set username
+  String _username = "";
+  String _photoUrl = "";
+
+  _getCurrentUser() {
+    final user = auth.getCurrentUser();
+    debugPrint(user.toString());
+    if (user != null) {
+      setState(() {
+        _username = user.displayName ?? "";
+        _photoUrl = user.photoURL ?? "";
+      });
+    }
+  }
+
   _goToTransaction() {
     context.push("/transaction");
   }
@@ -108,8 +139,10 @@ class _HomeTabState extends State<HomeTab> {
           ]),
       width: double.infinity,
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        nunitoText("Sunday", 20, FontWeight.w500, Colors.grey.shade100),
-        nunitoText("28th May 2023", 15, FontWeight.w500, Colors.grey.shade400),
+        nunitoText(Utils.getCurrentDayOfWeek(), 20, FontWeight.w500,
+            Colors.grey.shade100),
+        nunitoText(Utils.getCurrentDateFormatted(), 15, FontWeight.w500,
+            Colors.grey.shade400),
         const SizedBox(height: 30),
         Row(
           children: [
@@ -156,7 +189,7 @@ class _HomeTabState extends State<HomeTab> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             nunitoText("Hello,", 25, FontWeight.w500, primary),
-            nunitoText("Bob Marley", 25, FontWeight.w800, primary),
+            nunitoText("@$_username", 25, FontWeight.w800, primary),
           ],
         ),
         SizedBox(
@@ -164,10 +197,12 @@ class _HomeTabState extends State<HomeTab> {
           child: CircleAvatar(
             radius: 50,
             child: ClipOval(
-              child: Image.asset(
-                "assets/images/bob_marley.jpg",
-                fit: BoxFit.cover,
-              ),
+              child: _photoUrl.isNotEmpty
+                  ? Image.network(_photoUrl)
+                  : Image.asset(
+                      "assets/images/logo.jpg",
+                      fit: BoxFit.cover,
+                    ),
             ),
           ),
         ),

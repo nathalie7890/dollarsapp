@@ -1,7 +1,10 @@
 import 'package:dollar_app/ui/widgets/nunito_text.dart';
 import 'package:flutter/material.dart';
 
+
+// ui
 import '../colors.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class Transaction extends StatefulWidget {
   const Transaction({super.key});
@@ -23,13 +26,23 @@ class _TransactionState extends State<Transaction> {
       body: SingleChildScrollView(
         child: Container(
           color: bg,
-          padding: const EdgeInsets.all(10),
+          padding: const EdgeInsets.all(25),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _badge(),
               const SizedBox(height: 10),
-              nunitoText("Hoshino Omakase", 28, FontWeight.bold, primary),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  nunitoText("Hoshino Omakase", 28, FontWeight.bold, primary),
+                  Icon(
+                    FontAwesomeIcons.pen,
+                    size: 15,
+                    color: Colors.grey.shade700,
+                  )
+                ],
+              ),
               _divider(),
               _transactionDetail("Amount", "- RM 103.57",
                   valueFontSize: 20, color: Colors.red.shade700),
@@ -92,7 +105,7 @@ class _TransactionState extends State<Transaction> {
     return Divider(
       color: Colors.grey.shade300,
       thickness: 1,
-      height: 20,
+      height: 30,
     );
   }
 }

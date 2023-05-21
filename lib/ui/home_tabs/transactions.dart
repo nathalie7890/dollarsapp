@@ -6,13 +6,34 @@ import 'package:dollar_app/ui/home_tabs/transactions_tabs/expenses.dart';
 import 'package:dollar_app/ui/home_tabs/transactions_tabs/income.dart';
 
 class Transactions extends StatefulWidget {
-  const Transactions({Key? key}) : super(key: key);
+  final int initialTabIndex;
+  const Transactions({Key? key, required this.initialTabIndex})
+      : super(key: key);
 
   @override
   State<Transactions> createState() => _TransactionsState();
 }
 
-class _TransactionsState extends State<Transactions> {
+class _TransactionsState extends State<Transactions>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(
+      length: 2,
+      initialIndex: widget.initialTabIndex, 
+      vsync: this,
+    );
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -25,6 +46,7 @@ class _TransactionsState extends State<Transactions> {
               padding: const EdgeInsets.symmetric(vertical: 5),
               color: primary,
               child: TabBar(
+                controller: _tabController,
                 tabs: const [
                   Tab(text: 'Income'),
                   Tab(text: 'Expense'),
@@ -39,7 +61,10 @@ class _TransactionsState extends State<Transactions> {
               ),
             ),
           ),
-          body: const TabBarView(children: [Income(), Expenses()]),
+          body: TabBarView(
+            controller: _tabController,
+            children: const [Income(), Expenses()],
+          ),
         ));
   }
 }

@@ -16,7 +16,7 @@ class Home extends StatefulWidget {
   State<Home> createState() => _HomeState();
 }
 
-class _HomeState extends State<Home> {
+class _HomeState extends State<Home>{
   _goToAddTrans() {
     context.push("/addTrans");
   }
@@ -26,24 +26,13 @@ class _HomeState extends State<Home> {
     return DefaultTabController(
         length: 5,
         child: Scaffold(
-          // appBar: AppBar(
-          //   title: nunitoText("Dollars", 20, FontWeight.bold, primary),
-          //   backgroundColor: Colors.grey.shade50,
-          //   elevation: 0,
-          //   actions: [
-          //     IconButton(
-          //         onPressed: () => debugPrint("logout"),
-          //         icon: const Icon(
-          //           Icons.logout,
-          //           color: primary,
-          //         )),
-          //   ],
-          // ),
           body: const Padding(
             padding: EdgeInsets.only(top: 25.0),
             child: TabBarView(children: [
               HomeTab(),
-              Transactions(),
+              Transactions(
+                initialTabIndex: 0,
+              ),
               SizedBox(),
               News(),
               Profile()
@@ -61,6 +50,7 @@ class _HomeState extends State<Home> {
               ],
             ),
             child: TabBar(
+
                 padding: const EdgeInsets.symmetric(vertical: 10),
                 unselectedLabelColor: Colors.grey.shade500,
                 indicatorSize: TabBarIndicatorSize.label,

@@ -1,8 +1,14 @@
-import 'package:dollar_app/ui/widgets/nunito_text.dart';
+import 'package:dollar_app/service/auth_service.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'colors.dart';
 import "package:go_router/go_router.dart";
+
+// ui
+import 'colors.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:dollar_app/ui/widgets/nunito_text.dart';
+
+// utils
+import 'package:dollar_app/ui/utils/utils.dart';
 
 class Register extends StatefulWidget {
   const Register({super.key});
@@ -12,10 +18,12 @@ class Register extends StatefulWidget {
 }
 
 class _RegisterState extends State<Register> {
-  TextEditingController _username = TextEditingController();
-  TextEditingController _email = TextEditingController();
-  TextEditingController _password = TextEditingController();
-  TextEditingController _confirmPassword = TextEditingController();
+  final auth = AuthService();
+
+  final TextEditingController _username = TextEditingController();
+  final TextEditingController _email = TextEditingController();
+  final TextEditingController _password = TextEditingController();
+  final TextEditingController _confirmPassword = TextEditingController();
 
   bool _usernameError = false;
   bool _emailError = false;
@@ -26,23 +34,28 @@ class _RegisterState extends State<Register> {
     context.push("/login");
   }
 
-  _goToHome(BuildContext context) {
-    context.push("/home");
+// sign up
+  _onSignupClicked() {
+    try {
+      if (_isValid()) {
+        _singup().then((value) => {
+              if (value == true) {context.push("/login")}
+            });
+      }
+    } catch (e) {
+      debugPrint("Failed to register: $e");
+    }
   }
 
-// sign up
-  _signup() {
-    _isValid();
-    if (_isValid()) {
-      context.push("/home");
-    }
+  Future<bool> _singup() async {
+    return await auth.signup(_email.text, _password.text, _username.text);
   }
 
 // validate every input
   bool _isValid() {
     setState(() {
       _usernameError = _username.text.length < 3;
-      _emailError = !isEmailValid(_email.text);
+      _emailError = !Utils.isEmailValid(_email.text);
       _passError = _password.text.length < 5;
       _confirmPassError = _confirmPassword.text != _password.text;
     });
@@ -54,14 +67,7 @@ class _RegisterState extends State<Register> {
       _confirmPassError
     ];
 
-    return !boolList.every((bool value) => value);
-  }
-
-// check if email is valid
-  bool isEmailValid(String email) {
-    RegExp emailRegex = RegExp(r'^[\w-]+(\.[\w-]+)*@([\w-]+\.)+[a-zA-Z]{2,7}$');
-
-    return emailRegex.hasMatch(email);
+    return !boolList.contains(true);
   }
 
   @override
@@ -109,7 +115,7 @@ class _RegisterState extends State<Register> {
                       height: 50,
                       width: MediaQuery.of(context).size.width,
                       child: _signupBtn(() {
-                        _signup();
+                        _onSignupClicked();
                       })),
                   const SizedBox(height: 20),
 

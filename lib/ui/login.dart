@@ -1,8 +1,11 @@
-import 'package:dollar_app/ui/widgets/nunito_text.dart';
-import 'package:flutter/material.dart';
-import "package:google_fonts/google_fonts.dart";
-import "colors.dart";
+import 'package:dollar_app/service/auth_service.dart';
+import 'package:dollar_app/ui/widgets/toast.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter/material.dart';
+
+import "colors.dart";
+import "package:google_fonts/google_fonts.dart";
+import 'package:dollar_app/ui/widgets/nunito_text.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -12,15 +15,26 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-  TextEditingController _username = TextEditingController();
-  TextEditingController _password = TextEditingController();
+  final auth = AuthService();
+
+  final TextEditingController _email = TextEditingController();
+  final TextEditingController _password = TextEditingController();
 
   _goToRegister(BuildContext context) {
     context.push("/register");
   }
 
-  _goToHome(BuildContext context) {
-    context.push("/home");
+  _onLoginClicked() {
+    _login().then((value) => {
+          if (value == true)
+            {context.push("/home")}
+          else
+            {showToast("Incorrect username or password")}
+        });
+  }
+
+  Future<bool> _login() async {
+    return await auth.login(_email.text, _password.text);
   }
 
   @override
@@ -42,18 +56,15 @@ class _LoginState extends State<Login> {
                   nunitoText("Login to your account.", 20, FontWeight.w500,
                       Colors.grey.shade500),
                   const SizedBox(height: 30),
-                  _loginInput("Username", _username, false),
+                  _loginInput("Email", _email, false),
                   const SizedBox(height: 15),
                   _loginInput("Password", _password, true),
-                  const SizedBox(height: 10),
-                  nunitoText("Incorrect username or password.", 17,
-                      FontWeight.w500, expense_red),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 30),
                   SizedBox(
                       height: 50,
                       width: MediaQuery.of(context).size.width,
                       child: _loginBtn(() {
-                        _goToHome(context);
+                        _onLoginClicked();
                       })),
                   const SizedBox(height: 20),
                   nunitoText("Don't have an account?", 17, FontWeight.w500,

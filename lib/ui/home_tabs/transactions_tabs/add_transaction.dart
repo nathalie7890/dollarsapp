@@ -1,12 +1,24 @@
+import 'package:dollar_app/data/model/trans.dart';
+import 'package:dollar_app/service/auth_service.dart';
+import 'package:dollar_app/service/trans_service.dart';
+import 'package:dollar_app/ui/home.dart';
+import 'package:dollar_app/ui/home_tabs/home_tab.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:heroicons/heroicons.dart';
-import 'package:intl/intl.dart';
+import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 
+// ui
 import '../../colors.dart';
-import 'package:syncfusion_flutter_datepicker/datepicker.dart';
+import 'package:google_fonts/google_fonts.dart';
 import "../../widgets/horizontal_divider.dart";
+import 'package:heroicons/heroicons.dart';
 import '../../widgets/nunito_text.dart';
+import 'package:syncfusion_flutter_datepicker/datepicker.dart';
+
+// utils
+import '../../utils/utils.dart';
+import '../../widgets/toast.dart';
 
 class AddTrans extends StatefulWidget {
   const AddTrans({super.key});
@@ -16,13 +28,19 @@ class AddTrans extends StatefulWidget {
 }
 
 class _AddTransState extends State<AddTrans> {
+  final auth = AuthService();
+  final transService = TransactionService();
+
   // visibility of date picker
   bool _datePickerDropDown = false;
 
-  TextEditingController _title = TextEditingController();
-  TextEditingController _note = TextEditingController();
+  final TextEditingController _title = TextEditingController();
+  final TextEditingController _note = TextEditingController();
+  DateTime _date = DateTime.now();
+  String _category = 'grocery';
+  String _type = "income";
 
-  DateTime? _date;
+  bool _titleError = false;
 
 // value of date picker
   void _onDateSelected(DateRangePickerSelectionChangedArgs args) {
@@ -37,38 +55,91 @@ class _AddTransState extends State<AddTrans> {
     debugPrint('Selected Date: ${selectedDate.toString()}');
   }
 
-  // convert datetime to date
-  String getDateFromDateTime(DateTime dateTime) {
-    String formattedDate = DateFormat('yyyy-MM-dd').format(dateTime.toLocal());
-    return formattedDate;
-  }
-
-  String? selectedValue;
-
 // onChange for category input
   void _categoryOnChange(String? value) {
     setState(() {
-      selectedValue = value ?? '';
+      _category = value ?? '';
     });
   }
 
 // drop down options for category drop down
   List<String> dropdownItems = [
-    'Grocery',
-    'Transport',
-    'Entertainment',
-    "Food",
-    "Bills",
-    "Clothing"
+    'grocery',
+    'transport',
+    'entertainment',
+    "food",
+    "bills",
+    "clothing"
   ];
 
-  // image upload
-  bool hasImage = false;
-
-  _onTapImageUpload() {
+  _onIncomeBtnClicked() {
     setState(() {
-      hasImage = true;
+      _type = "income";
     });
+  }
+
+  _onExpenseBtnClicked() {
+    setState(() {
+      _type = "expense";
+    });
+  }
+
+  // image upload
+  File? selectedImage;
+  _onTapImageUpload() async {
+    final picker = ImagePicker();
+    final image = await picker.pickImage(source: ImageSource.gallery);
+
+    if (image != null) {
+      setState(() {
+        selectedImage = File(image.path);
+      });
+    }
+  }
+
+// add transaction
+  Future<bool> _addTransaction(Transaction transaction, File? imageFile) async {
+    return await transService.addTrans(transaction, imageFile);
+  }
+
+  // add btn click
+  _onAddBtnClicked() {
+    if (_title.text.isEmpty) {
+      setState(() {
+        _titleError = true;
+      });
+      return;
+    }
+
+    final uid = auth.getUid();
+
+    if (uid.isNotEmpty) {
+      final transaction = Transaction(
+          uid: uid,
+          title: _title.text,
+          note: _note.text,
+          date: _date,
+          category: _category,
+          type: _type);
+      _addTransaction(transaction, selectedImage).then((value) => {
+            if (value == true)
+              {
+                showToast("Added successfully!"),
+                if (_type == "income")
+                  {
+                    context.go("/home")
+                    // context.go("/home/transactions/income")
+                  }
+                else
+                  {
+                    {
+                      context.go("/home")
+                      // context.go("home/transactions/expense")
+                    }
+                  }
+              }
+          });
+    }
   }
 
   @override
@@ -86,6 +157,13 @@ class _AddTransState extends State<AddTrans> {
               children: [
                 // title input
                 _transInput("Title", _title),
+                const SizedBox(
+                  height: 3,
+                ),
+                _titleError
+                    ? nunitoText(
+                        "Title is required", 15, FontWeight.w500, expense_red)
+                    : Container(),
                 const SizedBox(height: 15),
 
                 // date dropdown
@@ -106,23 +184,78 @@ class _AddTransState extends State<AddTrans> {
                 _transInput("Note (Optional)", _note),
                 const SizedBox(height: 15),
 
+                // type
+                nunitoText("Type", 15, FontWeight.bold, Colors.grey.shade700),
+                const SizedBox(height: 10),
+                _typeBtns(),
+                const SizedBox(height: 15),
+
                 // upload image
                 nunitoText("Image (Optional)", 15, FontWeight.bold,
                     Colors.grey.shade700),
                 const SizedBox(height: 15),
-                hasImage
-                    ? Image.asset("assets/images/receipt_1.png")
+                selectedImage != null
+                    ? Image.file(selectedImage!)
                     : _imageUpload(context),
                 const SizedBox(height: 15),
+
+                // change image button
+                selectedImage != null
+                    ? SizedBox(
+                        width: MediaQuery.of(context).size.width,
+                        height: 50,
+                        child: _btn(_onTapImageUpload, "Change Image",
+                            color: Colors.grey.shade800))
+                    : Container(),
+                const SizedBox(height: 15),
+
                 // add transation button
                 SizedBox(
                     width: MediaQuery.of(context).size.width,
                     height: 50,
-                    child: _addBtn())
+                    child: _btn(_onAddBtnClicked, "Add Transaction"))
               ],
             )),
       ),
     );
+  }
+
+  Row _typeBtns() {
+    return Row(
+      children: [
+        Expanded(
+            child: SizedBox(
+          height: 50,
+          child: _typeIconBtn("income", "Income", _onIncomeBtnClicked),
+        )),
+        const SizedBox(width: 8),
+        Expanded(
+            child: SizedBox(
+          height: 50,
+          child: _typeIconBtn("expense", "Expense", _onExpenseBtnClicked),
+        ))
+      ],
+    );
+  }
+
+  ElevatedButton _typeIconBtn(
+      String condition, String title, void Function() onPressed) {
+    return ElevatedButton.icon(
+        onPressed: onPressed,
+        icon: _type == condition
+            ? const HeroIcon(
+                HeroIcons.checkCircle,
+                color: Colors.greenAccent,
+                size: 17,
+              )
+            : Container(),
+        style: ElevatedButton.styleFrom(
+            backgroundColor:
+                _type == condition ? primary : Colors.grey.shade400,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(17))),
+        label: nunitoText(title, 15, FontWeight.w500,
+            _type == condition ? tertiary : primary));
   }
 
   GestureDetector _imageUpload(BuildContext context) {
@@ -134,7 +267,7 @@ class _AddTransState extends State<AddTrans> {
         width: MediaQuery.of(context).size.width,
         height: 150,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(15),
           border: Border.all(
             color: Colors.grey.shade400,
             width: 1,
@@ -157,14 +290,15 @@ class _AddTransState extends State<AddTrans> {
   }
 
 // upload image btn
-  ElevatedButton _addBtn() {
+  ElevatedButton _btn(void Function() onPressed, String title,
+      {Color color = primary}) {
     return ElevatedButton(
-        onPressed: () {},
+        onPressed: onPressed,
         style: ElevatedButton.styleFrom(
-            backgroundColor: primary,
+            backgroundColor: color,
             shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(15))),
-        child: nunitoText("Add Transaction", 15, FontWeight.w500, tertiary));
+        child: nunitoText(title, 15, FontWeight.w500, tertiary));
   }
 
 // displays title Date with down icon btn
@@ -172,8 +306,8 @@ class _AddTransState extends State<AddTrans> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        nunitoText(_date != null ? getDateFromDateTime(_date!) : "Select date",
-            17, FontWeight.w500, primary),
+        nunitoText(
+            Utils.getDateFromDateTime(_date), 17, FontWeight.w500, primary),
         GestureDetector(
           onTap: () {
             setState(() {
@@ -192,7 +326,7 @@ class _AddTransState extends State<AddTrans> {
 // category dropdown
   DropdownButtonFormField<String> _categoryDropDown() {
     return DropdownButtonFormField<String>(
-      value: selectedValue,
+      value: _category,
       hint: nunitoText("Select a category", 17, FontWeight.w500, primary),
       onChanged: (value) {
         if (value != null) {
@@ -202,7 +336,7 @@ class _AddTransState extends State<AddTrans> {
       },
       style: GoogleFonts.nunito(
         color: Colors.black,
-        fontSize: 15,
+        fontSize: 17,
         fontWeight: FontWeight.w500,
       ),
       decoration: InputDecoration(
@@ -216,14 +350,15 @@ class _AddTransState extends State<AddTrans> {
           value: value,
           child: Container(
             padding: const EdgeInsets.all(8),
-            child: Text(value),
+            child: Text(Utils.capitalize(value)),
           ),
         );
       }).toList(),
       selectedItemBuilder: (BuildContext context) {
         return dropdownItems.map<Widget>((String value) {
           return Container(
-              child: nunitoText(value, 15, FontWeight.w500, primary));
+              child: nunitoText(
+                  Utils.capitalize(value), 17, FontWeight.w500, primary));
         }).toList();
       },
     );
@@ -255,6 +390,7 @@ class _AddTransState extends State<AddTrans> {
         nunitoText(title, 15, FontWeight.bold, Colors.grey.shade700),
         TextField(
           controller: controller,
+          maxLines: null,
           style: GoogleFonts.nunito(
               color: primary, fontWeight: FontWeight.w600, fontSize: 17),
           decoration: InputDecoration(
