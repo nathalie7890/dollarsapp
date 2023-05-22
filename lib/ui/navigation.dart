@@ -32,7 +32,7 @@ class MyApp extends StatelessWidget {
         name: "addTrans",
         builder: (context, state) => const AddTrans()),
     GoRoute(
-        path: "/transactions",
+        path: "/transactions/:tab",
         name: "transactions",
         builder: (context, state) {
           final tab = state.pathParameters['tab'] ?? 'income';

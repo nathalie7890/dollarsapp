@@ -34,7 +34,7 @@ class _HomeTabState extends State<HomeTab> {
 
   _getCurrentUser() {
     final user = auth.getCurrentUser();
-    debugPrint(user.toString());
+    // debugPrint(user.toString());
     if (user != null) {
       setState(() {
         _username = user.displayName ?? "";

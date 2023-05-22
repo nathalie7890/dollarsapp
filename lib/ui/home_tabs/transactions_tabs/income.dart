@@ -1,4 +1,5 @@
 import 'package:dollar_app/service/trans_service.dart';
+import 'package:dollar_app/ui/home_tabs/transactions_tabs/period_list.dart';
 import 'package:flutter/material.dart';
 
 // ui
@@ -11,7 +12,7 @@ import '../../../data/model/trans.dart';
 
 // utils
 import 'package:dollar_app/ui/utils/utils.dart';
-import "categoryList.dart";
+import 'category_list.dart';
 
 class Income extends StatefulWidget {
   const Income({super.key});
@@ -23,6 +24,8 @@ class Income extends StatefulWidget {
 class _IncomeState extends State<Income> {
   final transService = TransactionService();
   List<Transaction> _incomes = [];
+  String? _period;
+  String? _category;
 
   @override
   void initState() {
@@ -31,13 +34,29 @@ class _IncomeState extends State<Income> {
   }
 
   Future _fetchTransWithType() async {
-    final res = await transService.getTransWithType("income");
+    final res =
+        await transService.getTransWithType("income", category: _category);
 
     if (res != null) {
       setState(() {
         _incomes = res;
       });
     }
+  }
+
+  _periodBtnClicked(value) {
+    debugPrint(_period);
+    setState(() {
+      _period = value;
+    });
+  }
+
+  _categoryBtnClicked(value) {
+    setState(() {
+      _category = value;
+    });
+
+    _fetchTransWithType();
   }
 
   @override
@@ -47,10 +66,17 @@ class _IncomeState extends State<Income> {
       child: Column(
         children: [
           // weekly monthly yearly btns
-          _periodBtnRow(),
+          SizedBox(
+            height: 40,
+            child: _periodBtnRow(),
+          ),
           const SizedBox(
             height: 15,
           ),
+
+          // total income
+          nunitoText("RM 2037.67", 25, FontWeight.w700, primary),
+          const SizedBox(height: 20),
 
           // category btns
           SizedBox(
@@ -60,10 +86,6 @@ class _IncomeState extends State<Income> {
           const SizedBox(
             height: 30,
           ),
-
-          // total income
-          nunitoText("RM 2037.67", 25, FontWeight.w700, primary),
-          const SizedBox(height: 20),
 
           // income list
           Expanded(
@@ -130,22 +152,32 @@ class _IncomeState extends State<Income> {
     );
   }
 
-  ListView _categoryBtnRow() {
+  ListView _periodBtnRow() {
     return ListView.separated(
       scrollDirection: Axis.horizontal,
-      itemCount: categories.length,
+      itemCount: periods.length,
       itemBuilder: (context, index) {
-        return ElevatedButton.icon(
-            onPressed: () {},
+        final period = periods[index];
+        var title = period["title"];
+        var value = period["value"];
+        final isSelected = _period == value;
+
+        return ElevatedButton(
+            onPressed: () {
+              _periodBtnClicked(value);
+            },
             style: ElevatedButton.styleFrom(
                 shape: RoundedRectangleBorder(
+                  side: const BorderSide(color: primary, width: 1),
                   borderRadius: BorderRadius.circular(50),
                 ),
                 elevation: 0,
-                backgroundColor: Colors.grey.shade300),
-            icon: categories[index].values.first,
-            label: nunitoText(
-                categories[index].keys.first, 15, FontWeight.w500, primary));
+                backgroundColor: isSelected ? tertiary : primary),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10.0),
+              child: nunitoText(
+                  title, 15, FontWeight.w500, isSelected ? primary : tertiary),
+            ));
         // return _categoryIcons(index);
       },
       separatorBuilder: (context, index) => const SizedBox(
@@ -154,35 +186,42 @@ class _IncomeState extends State<Income> {
     );
   }
 
-  Row _periodBtnRow() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        _periodButton("Weekly", false),
-        const SizedBox(
-          width: 4,
-        ),
-        _periodButton("Monthly", true),
-        const SizedBox(
-          width: 4,
-        ),
-        _periodButton("Yearly", false),
-      ],
-    );
-  }
+  ListView _categoryBtnRow() {
+    return ListView.separated(
+      scrollDirection: Axis.horizontal,
+      itemCount: categories.length,
+      itemBuilder: (context, index) {
+        final category = categories[index];
+        var title = category["title"];
+        var value = category["value"];
+        var iconData = category["icon"]["iconData"];
+        var defaultColor = category["icon"]["defaultColor"];
+        var selectedColor = category["icon"]["selectedColor"];
+        final isSelected = _category == value;
 
-  Expanded _periodButton(String title, bool isSelected) {
-    return Expanded(
-        child: ElevatedButton(
-      onPressed: () => {},
-      style: ElevatedButton.styleFrom(
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15),
-              side: const BorderSide(color: Colors.black54, width: 1)),
-          elevation: 0,
-          backgroundColor: isSelected ? tertiary : primary),
-      child: nunitoText(
-          title, 15, FontWeight.w600, isSelected ? primary : tertiary),
-    ));
+        return ElevatedButton.icon(
+            onPressed: () {
+              _categoryBtnClicked(value);
+            },
+            style: ElevatedButton.styleFrom(
+                shape: RoundedRectangleBorder(
+                  side: const BorderSide(color: primary, width: 1),
+                  borderRadius: BorderRadius.circular(50),
+                ),
+                elevation: 0,
+                backgroundColor: isSelected ? primary : Colors.grey.shade300),
+            icon: Icon(
+              iconData,
+              color: isSelected ? selectedColor : defaultColor,
+              size: 15,
+            ),
+            label: nunitoText(
+                title, 15, FontWeight.w500, isSelected ? tertiary : primary));
+        // return _categoryIcons(index);
+      },
+      separatorBuilder: (context, index) => const SizedBox(
+        width: 5,
+      ),
+    );
   }
 }

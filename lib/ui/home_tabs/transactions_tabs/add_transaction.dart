@@ -127,14 +127,14 @@ class _AddTransState extends State<AddTrans> {
                 showToast("Added successfully!"),
                 if (_type == "income")
                   {
-                    context.go("/home?initialTabIndex=1&subTabIndex=0")
-                    // context.go("/home/transactions/income")
+                    // context.go("/home?initialTabIndex=1&subTabIndex=0")
+                    context.go("/transactions/income")
                   }
                 else
                   {
                     {
-                      context.go("/home?initialTabIndex=1&subTabIndex=1")
-                      // context.go("home/transactions/expense")
+                      // context.go("/home?initialTabIndex=1&subTabIndex=1")
+                      context.go("/transactions/expense")
                     }
                   }
               }
