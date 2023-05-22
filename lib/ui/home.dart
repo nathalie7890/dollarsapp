@@ -29,6 +29,9 @@ class _HomeState extends State<Home> {
 
   _goToAddTrans() {
     context.push("/addTrans");
+    setState(() {
+      tabState = "";
+    });
   }
 
   @override
