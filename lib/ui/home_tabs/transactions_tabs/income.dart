@@ -11,6 +11,7 @@ import '../../../data/model/trans.dart';
 
 // utils
 import 'package:dollar_app/ui/utils/utils.dart';
+import "categoryList.dart";
 
 class Income extends StatefulWidget {
   const Income({super.key});
@@ -38,39 +39,6 @@ class _IncomeState extends State<Income> {
       });
     }
   }
-
-  final List<Map<String, Icon>> _categories = [
-    {
-      "Grocery": const Icon(
-        FontAwesomeIcons.cartShopping,
-        color: Colors.black54,
-        size: 15,
-      )
-    },
-    {
-      "Transport": const Icon(
-        FontAwesomeIcons.bicycle,
-        color: Colors.black54,
-        size: 15,
-      )
-    },
-    {
-      "Entertainment": const Icon(FontAwesomeIcons.headphones,
-          color: Colors.black54, size: 15)
-    },
-    {
-      "Food":
-          const Icon(FontAwesomeIcons.utensils, color: Colors.black54, size: 15)
-    },
-    {
-      "Bills": const Icon(FontAwesomeIcons.fileInvoiceDollar,
-          color: Colors.black54, size: 15)
-    },
-    {
-      "Clothing":
-          const Icon(FontAwesomeIcons.shirt, color: Colors.black54, size: 15)
-    }
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -165,7 +133,7 @@ class _IncomeState extends State<Income> {
   ListView _categoryBtnRow() {
     return ListView.separated(
       scrollDirection: Axis.horizontal,
-      itemCount: _categories.length,
+      itemCount: categories.length,
       itemBuilder: (context, index) {
         return ElevatedButton.icon(
             onPressed: () {},
@@ -175,9 +143,9 @@ class _IncomeState extends State<Income> {
                 ),
                 elevation: 0,
                 backgroundColor: Colors.grey.shade300),
-            icon: _categories[index].values.first,
+            icon: categories[index].values.first,
             label: nunitoText(
-                _categories[index].keys.first, 15, FontWeight.w500, primary));
+                categories[index].keys.first, 15, FontWeight.w500, primary));
         // return _categoryIcons(index);
       },
       separatorBuilder: (context, index) => const SizedBox(
@@ -206,7 +174,7 @@ class _IncomeState extends State<Income> {
   Expanded _periodButton(String title, bool isSelected) {
     return Expanded(
         child: ElevatedButton(
-      onPressed: () {},
+      onPressed: () => {},
       style: ElevatedButton.styleFrom(
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(15),

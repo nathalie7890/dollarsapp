@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'categoryList.dart';
 
 import '../../colors.dart';
 import '../../widgets/nunito_text.dart';
@@ -12,38 +13,6 @@ class Expenses extends StatefulWidget {
 }
 
 class _ExpensesState extends State<Expenses> {
-  final List<Map<String, Icon>> _categories = [
-    {
-      "Grocery": const Icon(
-        FontAwesomeIcons.cartShopping,
-        color: Colors.black54,
-        size: 15,
-      )
-    },
-    {
-      "Transport": const Icon(
-        FontAwesomeIcons.bicycle,
-        color: Colors.black54,
-        size: 15,
-      )
-    },
-    {
-      "Entertainment": const Icon(FontAwesomeIcons.headphones,
-          color: Colors.black54, size: 15)
-    },
-    {
-      "Food":
-          const Icon(FontAwesomeIcons.utensils, color: Colors.black54, size: 15)
-    },
-    {
-      "Bills": const Icon(FontAwesomeIcons.fileInvoiceDollar,
-          color: Colors.black54, size: 15)
-    },
-    {
-      "Clothing":
-          const Icon(FontAwesomeIcons.shirt, color: Colors.black54, size: 15)
-    }
-  ];
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -71,7 +40,7 @@ class _ExpensesState extends State<Expenses> {
             height: 50,
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
-              itemCount: _categories.length,
+              itemCount: categories.length,
               itemBuilder: (context, index) {
                 return ElevatedButton.icon(
                     onPressed: () {},
@@ -81,8 +50,8 @@ class _ExpensesState extends State<Expenses> {
                         ),
                         elevation: 0,
                         backgroundColor: Colors.grey.shade300),
-                    icon: _categories[index].values.first,
-                    label: nunitoText(_categories[index].keys.first, 15,
+                    icon: categories[index].values.first,
+                    label: nunitoText(categories[index].keys.first, 15,
                         FontWeight.w500, primary));
                 // return _categoryIcons(index);
               },

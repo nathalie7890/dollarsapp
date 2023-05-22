@@ -15,7 +15,7 @@ void main() async {
   final auth = AuthService();
   var user = auth.getCurrentUser();
 
-  String initialRoute = user != null ? "/home" : "/login";
+  String initialRoute = user != null ? "/" : "/login";
 
   runApp(MyApp(
     initialRoute: initialRoute,
