@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'categoryList.dart';
+
+import '../../colors.dart';
+import '../../widgets/nunito_text.dart';
 
 class Expenses extends StatefulWidget {
   const Expenses({super.key});
@@ -12,7 +16,114 @@ class _ExpensesState extends State<Expenses> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: Text("Expenses"),
+      padding: const EdgeInsets.all(10),
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              _periodButton("Weekly", false),
+              const SizedBox(
+                width: 4,
+              ),
+              _periodButton("Monthly", true),
+              const SizedBox(
+                width: 4,
+              ),
+              _periodButton("Yearly", false),
+            ],
+          ),
+          const SizedBox(
+            height: 15,
+          ),
+          SizedBox(
+            height: 50,
+            child: ListView.separated(
+              scrollDirection: Axis.horizontal,
+              itemCount: categories.length,
+              itemBuilder: (context, index) {
+                return ElevatedButton.icon(
+                    onPressed: () {},
+                    style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(50),
+                        ),
+                        elevation: 0,
+                        backgroundColor: Colors.grey.shade300),
+                    icon: categories[index].values.first,
+                    label: nunitoText(categories[index].keys.first, 15,
+                        FontWeight.w500, primary));
+                // return _categoryIcons(index);
+              },
+              separatorBuilder: (context, index) => const SizedBox(
+                width: 5,
+              ),
+            ),
+          ),
+          const SizedBox(
+            height: 30,
+          ),
+          nunitoText("RM 2037.67", 25, FontWeight.w700, primary),
+          const SizedBox(height: 20),
+          Expanded(
+            child: ListView.separated(
+              itemBuilder: (context, index) {
+                return Container(
+                    padding: const EdgeInsets.all(15),
+                    decoration: BoxDecoration(
+                        color: Colors.grey.shade200,
+                        borderRadius: BorderRadius.circular(15)),
+                    child: Row(
+                      children: [
+                        CircleAvatar(
+                          radius: 30,
+                          backgroundColor: primary,
+                          child: Icon(
+                            FontAwesomeIcons.utensils,
+                            color: tertiary,
+                            size: 20.0,
+                          ),
+                        ),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            nunitoText("Hoshino Omakase", 15, FontWeight.w800,
+                                primary),
+                            nunitoText(
+                                "14/10/2023", 13, FontWeight.w500, primary)
+                          ],
+                        ),
+                        const Spacer(),
+                        nunitoText("- RM4.50", 15, FontWeight.w700, expense_red)
+                      ],
+                    ));
+              },
+              separatorBuilder: (context, index) {
+                return const SizedBox(height: 15);
+              },
+              itemCount: 10,
+            ),
+          )
+        ],
+      ),
     );
+  }
+
+  Expanded _periodButton(String title, bool isSelected) {
+    return Expanded(
+        child: ElevatedButton(
+      onPressed: () {},
+      style: ElevatedButton.styleFrom(
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15),
+              side: const BorderSide(color: Colors.black54, width: 1)),
+          elevation: 0,
+          backgroundColor: isSelected ? tertiary : primary),
+      child: nunitoText(
+          title, 15, FontWeight.w600, isSelected ? primary : tertiary),
+    ));
   }
 }

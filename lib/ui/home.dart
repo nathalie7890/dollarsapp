@@ -1,10 +1,13 @@
-import 'package:dollar_app/ui/home_tabs/homeTab.dart';
-import 'package:dollar_app/ui/home_tabs/profile.dart';
-import 'package:dollar_app/ui/home_tabs/transactions_tabs/expenses.dart';
-import 'package:dollar_app/ui/home_tabs/transactions_tabs/transactions.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:heroicons/heroicons.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
+import "package:go_router/go_router.dart";
+import "colors.dart";
+
+// tabs
+import "home_tabs/home_tab.dart";
+import 'package:dollar_app/ui/home_tabs/transactions.dart';
+import 'package:dollar_app/ui/home_tabs/news.dart';
+import 'package:dollar_app/ui/home_tabs/profile.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -13,41 +16,31 @@ class Home extends StatefulWidget {
   State<Home> createState() => _HomeState();
 }
 
-class _HomeState extends State<Home> {
+class _HomeState extends State<Home>{
+  _goToAddTrans() {
+    context.push("/addTrans");
+  }
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
         length: 5,
         child: Scaffold(
-          appBar: AppBar(
-            title: const Text(
-              "Dollars",
-            ),
-            titleTextStyle: GoogleFonts.montserrat(
-                color: Colors.grey.shade100,
-                fontWeight: FontWeight.w500,
-                fontSize: 20),
-            backgroundColor: Colors.black87,
-            elevation: 0,
-            actions: [
-              IconButton(
-                  onPressed: () => debugPrint("logout"),
-                  icon: Icon(
-                    Icons.logout,
-                    color: Colors.grey.shade100,
-                  )),
-            ],
+          body: const Padding(
+            padding: EdgeInsets.only(top: 25.0),
+            child: TabBarView(children: [
+              HomeTab(),
+              Transactions(
+                initialTabIndex: 0,
+              ),
+              SizedBox(),
+              News(),
+              Profile()
+            ]),
           ),
-          body: const TabBarView(children: [
-            HomeTab(),
-            Transactions(),
-            SizedBox(),
-            Expenses(),
-            Profile()
-          ]),
           bottomNavigationBar: Container(
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: Colors.grey.shade50,
               boxShadow: [
                 BoxShadow(
                   color: Colors.grey.shade200,
@@ -57,48 +50,53 @@ class _HomeState extends State<Home> {
               ],
             ),
             child: TabBar(
+
                 padding: const EdgeInsets.symmetric(vertical: 10),
                 unselectedLabelColor: Colors.grey.shade500,
                 indicatorSize: TabBarIndicatorSize.label,
                 indicatorPadding: const EdgeInsets.symmetric(vertical: -2),
-                labelColor: Colors.black87,
+                labelColor: primary,
                 indicatorColor: Colors.transparent,
-                // indicator: BoxDecoration(
-                //     shape: BoxShape.circle, color: Colors.transparent),
                 tabs: [
                   const Tab(
                     child: Align(
                       alignment: Alignment.center,
-                      child: Icon(CupertinoIcons.house, size: 30),
-                    ),
-                  ),
-                  const Tab(
-                    child: Align(
-                      alignment: Alignment.center,
-                      child:
-                          Icon(Icons.account_balance_wallet_outlined, size: 30),
-                    ),
-                  ),
-                  Tab(
-                    child: Align(
-                      alignment: Alignment.center,
-                      child: FloatingActionButton(
-                        onPressed: () => {},
-                        backgroundColor: Colors.black87,
-                        child: const Icon(Icons.add, size: 30),
+                      child: HeroIcon(
+                        HeroIcons.home,
+                        size: 27,
                       ),
                     ),
                   ),
                   const Tab(
                     child: Align(
                       alignment: Alignment.center,
-                      child: Icon(Icons.credit_card_outlined, size: 30),
+                      child: HeroIcon(
+                        HeroIcons.wallet,
+                        size: 27,
+                      ),
+                    ),
+                  ),
+                  Tab(
+                    child: Align(
+                      alignment: Alignment.center,
+                      child: FloatingActionButton(
+                        onPressed: () => {_goToAddTrans()},
+                        elevation: 0,
+                        backgroundColor: primary,
+                        child: const HeroIcon(HeroIcons.plus),
+                      ),
                     ),
                   ),
                   const Tab(
                     child: Align(
                       alignment: Alignment.center,
-                      child: Icon(Icons.person_outline_rounded, size: 30),
+                      child: HeroIcon(HeroIcons.newspaper, size: 27),
+                    ),
+                  ),
+                  const Tab(
+                    child: Align(
+                      alignment: Alignment.center,
+                      child: HeroIcon(HeroIcons.userCircle, size: 27),
                     ),
                   ),
                 ]),
