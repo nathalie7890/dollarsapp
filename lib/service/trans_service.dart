@@ -10,62 +10,34 @@ import '../ui/utils/utils.dart';
 class TransactionService {
   final ref = firestore.FirebaseFirestore.instance.collection('transaction');
 
-  Future<List<Transaction>?> getTransWithType(String type,
-      {String? category, String? period}) async {
+  Future<List<Transaction>?> getTransWithType({String? type,
+      String? category, String? period}) async {
     try {
       final repo = AuthService();
       final user = repo.getCurrentUser();
 
       if (user != null) {
         final uid = user.uid;
-        firestore.Query query =
-            ref.where('uid', isEqualTo: uid).where('type', isEqualTo: type);
+       firestore.Query query = ref.where('uid', isEqualTo: uid);
 
-        if (category != null && period != null) {
-          final now = DateTime.now();
-          late DateTime startDate;
+        if (type != null) {
+          query = query.where('type', isEqualTo: type);
+        }
 
-          if (period == 'weekly') {
-            startDate = now.subtract(const Duration(days: 7));
-          } else if (period == 'monthly') {
-            startDate = now.subtract(const Duration(days: 30));
-          } else if (period == 'yearly') {
-            startDate = now.subtract(const Duration(days:  365));
-          }
-
-          query.where('category', isEqualTo: category).where('date',
-              isGreaterThanOrEqualTo: firestore.Timestamp.fromDate(startDate));
-        } else {
-          if (category != null) {
-            query.where('category', isEqualTo: category);
-          }
-
-          if (period != null) {
-            final now = DateTime.now();
-            late DateTime startDate;
-
-            if (period == 'weekly') {
-              startDate = now.subtract(const Duration(days: 7));
-            } else if (period == 'monthly') {
-              startDate = now.subtract(const Duration(days: 30));
-            } else if (period == 'yearly') {
-              startDate = now.subtract(const Duration(days: 365));
-            }
-
-            query.where('date',
-                isGreaterThanOrEqualTo:
-                    firestore.Timestamp.fromDate(startDate));
-          }
+        if (category != null) {
+          query = query.where('category', isEqualTo: category);
         }
 
         firestore.QuerySnapshot querySnapshot = await query.get();
 
-        List<Transaction> transactions = querySnapshot.docs
-            .map((doc) =>
-                Transaction.fromMap(doc.data() as Map<String, dynamic>))
-            .toList();
+        List<Transaction> transactions = querySnapshot.docs.map((doc) {
+          final data = doc.data() as Map<String, dynamic>;
+          data['id'] = doc.id;
+          return Transaction.fromMap(data);
+        }).toList();
 
         // debugPrint(transactions.toString());
+        debugPrint(transactions.length.toString());
         return transactions;
       }
     } catch (e) {
@@ -103,6 +75,18 @@ class TransactionService {
       return true;
     } catch (e) {
       debugPrint('Error saving transaction: $e');
+      return false;
+    }
+  }
+
+  Future<bool> deleteTrans(String id) async {
+    try {
+  
+      await ref.doc(id).delete();
+      debugPrint('Transaction deleted successfully');
+      return true;
+    } catch (e) {
+      debugPrint('Error deleting transaction: $e');
       return false;
     }
   }
