@@ -31,14 +31,19 @@ class MyApp extends StatelessWidget {
         path: "/addTrans",
         name: "addTrans",
         builder: (context, state) => const AddTrans()),
+    // GoRoute(
+    //     path: "/transactions/:tab",
+    //     name: "transactions",
+    //     builder: (context, state) {
+    //       final tab = state.pathParameters['tab'] ?? 'income';
+    //       int initialTabIndex = tab == "income" ? 0 : 1;
+    //       return Transactions(initialTabIndex: initialTabIndex);
+    //     }),
     GoRoute(
-        path: "/transactions/:tab",
+        path: "/home/:tab",
         name: "transactions",
-        builder: (context, state) {
-          final tab = state.pathParameters['tab'] ?? 'income';
-          int initialTabIndex = tab == "income" ? 0 : 1;
-          return Transactions(initialTabIndex: initialTabIndex);
-        }),
+        builder: (context, state) =>
+            Home(tabState: state.pathParameters["tab"] ?? "")),
   ];
 
   @override
