@@ -200,7 +200,7 @@ class _HomeTabState extends State<HomeTab> {
               child: _photoUrl.isNotEmpty
                   ? Image.network(_photoUrl)
                   : Image.asset(
-                      "assets/images/logo.jpg",
+                      "assets/images/logo.png",
                       fit: BoxFit.cover,
                     ),
             ),

@@ -125,18 +125,19 @@ class _AddTransState extends State<AddTrans> {
             if (value == true)
               {
                 showToast("Added successfully!"),
-                if (_type == "income")
-                  {
-                    context.go("/home?initialTabIndex=1&subTabIndex=0")
-                    // context.go("/home/transactions/income")
-                  }
-                else
-                  {
-                    {
-                      context.go("/home?initialTabIndex=1&subTabIndex=1")
-                      // context.go("home/transactions/expense")
-                    }
-                  }
+                context.go("/home/$_type")
+                // if (_type == "income")
+                //   {
+                //     context.go("/home?initialTabIndex=1&subTabIndex=0");
+                //     context.go("/home/transactions/income");
+                //   }
+                // else
+                //   {
+                //     {
+                //       context.go("/home?initialTabIndex=1&subTabIndex=1");
+                //       context.go("home/transactions/expense");
+                //     }
+                //   }
               }
           });
     }

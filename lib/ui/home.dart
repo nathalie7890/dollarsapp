@@ -10,13 +10,23 @@ import 'package:dollar_app/ui/home_tabs/news.dart';
 import 'package:dollar_app/ui/home_tabs/profile.dart';
 
 class Home extends StatefulWidget {
-  const Home({super.key});
+  final String? tabState;
+
+  const Home({Key? key, this.tabState}) : super(key: key);
 
   @override
   State<Home> createState() => _HomeState();
 }
 
-class _HomeState extends State<Home>{
+class _HomeState extends State<Home> {
+  late String tabState;
+
+  @override
+  void initState() {
+    super.initState();
+    tabState = widget.tabState ?? "";
+  }
+
   _goToAddTrans() {
     context.push("/addTrans");
   }
@@ -25,17 +35,19 @@ class _HomeState extends State<Home>{
   Widget build(BuildContext context) {
     return DefaultTabController(
         length: 5,
+        initialIndex: tabState == "" ? 0 : 1,
         child: Scaffold(
-          body: const Padding(
-            padding: EdgeInsets.only(top: 25.0),
+          body: Padding(
+            padding: const EdgeInsets.only(top: 25.0),
             child: TabBarView(children: [
-              HomeTab(),
+              const HomeTab(),
               Transactions(
                 initialTabIndex: 0,
+                tabState: tabState,
               ),
-              SizedBox(),
-              News(),
-              Profile()
+              const SizedBox(),
+              const News(),
+              const Profile()
             ]),
           ),
           bottomNavigationBar: Container(
@@ -50,7 +62,6 @@ class _HomeState extends State<Home>{
               ],
             ),
             child: TabBar(
-
                 padding: const EdgeInsets.symmetric(vertical: 10),
                 unselectedLabelColor: Colors.grey.shade500,
                 indicatorSize: TabBarIndicatorSize.label,
