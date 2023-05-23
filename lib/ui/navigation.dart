@@ -1,6 +1,5 @@
 import 'package:dollar_app/ui/home.dart';
 import 'package:dollar_app/ui/home_tabs/transaction.dart';
-import 'package:dollar_app/ui/home_tabs/transactions.dart';
 import 'package:dollar_app/ui/home_tabs/transactions_tabs/add_transaction.dart';
 import 'package:dollar_app/ui/register.dart';
 import 'package:dollar_app/ui/splash_screen.dart';
@@ -24,21 +23,16 @@ class MyApp extends StatelessWidget {
         name: "register",
         builder: (context, state) => const Register()),
     GoRoute(
-        path: "/transaction",
+        path: "/transaction/:id",
         name: "transaction",
-        builder: (context, state) => const Transaction()),
+        builder: (context, state) {
+          String id = state.pathParameters['id']!;
+          return Transaction(id: id);
+          }),
     GoRoute(
         path: "/addTrans",
         name: "addTrans",
         builder: (context, state) => const AddTrans()),
-    // GoRoute(
-    //     path: "/transactions/:tab",
-    //     name: "transactions",
-    //     builder: (context, state) {
-    //       final tab = state.pathParameters['tab'] ?? 'income';
-    //       int initialTabIndex = tab == "income" ? 0 : 1;
-    //       return Transactions(initialTabIndex: initialTabIndex);
-    //     }),
     GoRoute(
         path: "/home/:tab",
         name: "transactions",

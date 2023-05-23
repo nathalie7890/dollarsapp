@@ -31,11 +31,16 @@ class _HomeTabState extends State<HomeTab> {
     super.initState();
     _getCurrentUser();
     _fetchTrans();
+    // _uploadSampleData();
   }
 
 // set username
   String _username = "";
   String _photoUrl = "";
+
+  Future _uploadSampleData() async {
+    await transService.importDataFromJson();
+  }
 
 // fetch current user
   _getCurrentUser() {

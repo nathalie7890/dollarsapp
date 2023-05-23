@@ -32,7 +32,6 @@ class TransactionService {
         }
 
         query = query.orderBy('date', descending: true);
-        // debugPrint(query.parameters.toString());
         firestore.QuerySnapshot querySnapshot = await query.get();
 
         List<Transaction> transactions = querySnapshot.docs.map((doc) {
@@ -95,8 +94,27 @@ class TransactionService {
     }
   }
 
-  // delete everything this user has
+  // fetch one transaction with id
+  Future<Transaction?> getTransactionById(String id) async {
+    try {
+      final snapshot = await ref.doc(id).get();
 
+      if (snapshot.data() != null) {
+        final transactionData = snapshot.data() as Map<String, dynamic>;
+        final transaction = Transaction.fromMap(transactionData);
+        transaction.id = snapshot.id; // Set the transaction ID
+
+        return transaction;
+      } else {
+        return null;
+      }
+    } catch (e) {
+      debugPrint('Error retrieving transaction: $e');
+      return null;
+    }
+  }
+
+  // delete everything this user has
   Future<void> deleteAllWithUid() async {
     try {
       final collectionRef =
@@ -120,4 +138,23 @@ class TransactionService {
     }
   }
 
+  // import sample data
+
+  Future<void> importDataFromJson() async {
+    final jsonString = await rootBundle.loadString('assets/sample_data.json');
+    List<dynamic> data = jsonDecode(jsonString);
+
+    for (var transactionData in data) {
+      Transaction transaction = Transaction.fromMap(transactionData);
+      debugPrint(transaction.toString());
+      firestore.FirebaseFirestore.instance
+          .collection('transaction') // Replace with your collection name
+          .add(transaction.toMap())
+          .then((value) {
+        debugPrint('Transaction added successfully.');
+      }).catchError((error) {
+        debugPrint('Failed to add transaction: $error');
+      });
+    }
+  }
 }

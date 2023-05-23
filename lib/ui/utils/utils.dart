@@ -28,7 +28,7 @@ class Utils {
 
 // 2023-05-28
   static String getDateFromDateTime(DateTime dateTime) {
-    String formattedDate = DateFormat('yyyy-MM-dd').format(dateTime.toLocal());
+    String formattedDate = DateFormat('dd/MM/yyyy').format(dateTime.toLocal());
     return formattedDate;
   }
 

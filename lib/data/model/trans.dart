@@ -42,12 +42,23 @@ class Transaction {
       uid: map['uid'],
       title: map['title'],
       amount: map['amount'] as double,
-      date: (map['date'] as Timestamp).toDate(),
+      // date: (map['date'] as Timestamp).toDate(),
+      date: _parseDate(map['date']),
       category: map['category'],
       type: map['type'],
       note: map['note'],
       image: map['image'],
     );
+  }
+
+  static DateTime _parseDate(dynamic dateValue) {
+    if (dateValue is String) {
+      return DateTime.parse(dateValue);
+    } else if (dateValue is Timestamp) {
+      return dateValue.toDate();
+    } else {
+      throw ArgumentError("Invalid date format");
+    }
   }
 
   @override

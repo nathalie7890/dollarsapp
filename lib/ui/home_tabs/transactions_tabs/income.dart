@@ -1,5 +1,6 @@
 import 'package:dollar_app/service/trans_service.dart';
 import 'package:dollar_app/ui/home_tabs/transactions_tabs/lists.dart';
+import 'package:dollar_app/ui/home_tabs/transactions_tabs/sort.dart';
 import 'package:dollar_app/ui/home_tabs/transactions_tabs/widgets/trans_list.dart';
 import 'package:flutter/material.dart';
 
@@ -40,6 +41,9 @@ class _IncomeState extends State<Income> {
       setState(() {
         _incomes = res;
       });
+
+      debugPrint(
+          SortTrans.groupTransactionsByWeek(_incomes, null, null).toString());
     }
   }
 

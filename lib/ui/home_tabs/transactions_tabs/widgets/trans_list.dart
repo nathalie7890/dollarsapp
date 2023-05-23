@@ -2,6 +2,7 @@ import 'package:dollar_app/service/trans_service.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
+import "package:go_router/go_router.dart";
 
 import '../../../../data/model/trans.dart';
 import '../../../colors.dart';
@@ -15,12 +16,19 @@ Future onConfirmDelete(String id) async {
   await transService.deleteTrans(id);
 }
 
+goToTransDetails(BuildContext context, String id) {
+  context.push("/transaction/$id");
+}
+
 ListView transList(BuildContext context, List transactions) {
   return ListView.separated(
     itemCount: transactions.length,
     itemBuilder: (context, index) {
       final trans = transactions[index];
-      return deleteDismissible(context, trans);
+      final id = trans.id;
+      return GestureDetector(
+          onTap: () => {goToTransDetails(context, id)},
+          child: deleteDismissible(context, trans));
     },
     separatorBuilder: (context, index) {
       return const SizedBox(height: 15);
