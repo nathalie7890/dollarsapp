@@ -32,6 +32,7 @@ class _IncomeState extends State<Income> with SingleTickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
+    
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1200),
