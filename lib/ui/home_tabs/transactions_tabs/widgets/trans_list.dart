@@ -1,4 +1,5 @@
 import 'package:dollar_app/service/trans_service.dart';
+import 'package:dollar_app/ui/home_tabs/transactions_tabs/lists.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -16,8 +17,19 @@ Future onConfirmDelete(String id) async {
   await transService.deleteTrans(id);
 }
 
-goToTransDetails(BuildContext context, String id) {
-  context.push("/transaction/$id");
+goToTransDetails(BuildContext context, String? id) {
+  if (id != null) {
+    context.push("/transaction/$id");
+  }
+}
+
+IconData getIconByValue(List<Map<String, dynamic>> categories, String value) {
+  for (var category in categories) {
+    if (category['value'] == value) {
+      return category['icon']['iconData'];
+    }
+  }
+  return FontAwesomeIcons.moneyBill; // Default icon if no match is found
 }
 
 ListView transList(BuildContext context, List transactions) {
@@ -61,6 +73,7 @@ Dismissible deleteDismissible(BuildContext context, Transaction trans) {
 Container transItem(Transaction trans) {
   final title = trans.title;
   final date = trans.date;
+  final category = trans.category;
   double amount = trans.amount;
   bool isIncome = trans.type == "income";
 
@@ -70,7 +83,7 @@ Container transItem(Transaction trans) {
           color: Colors.grey.shade200, borderRadius: BorderRadius.circular(15)),
       child: Row(
         children: [
-          transIcon(),
+          transIcon(category, isIncome),
           const SizedBox(
             width: 10,
           ),
@@ -107,12 +120,14 @@ Column transTitleDate(String title, DateTime date) {
   );
 }
 
-CircleAvatar transIcon() {
+CircleAvatar transIcon(String category, bool isIncome) {
+  final IconData iconData =
+      getIconByValue(isIncome ? incomeCategories : expenseCategories, category);
   return CircleAvatar(
     radius: 30,
     backgroundColor: primary,
     child: Icon(
-      FontAwesomeIcons.utensils,
+      iconData,
       color: tertiary,
       size: 20.0,
     ),

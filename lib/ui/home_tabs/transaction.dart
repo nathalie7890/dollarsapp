@@ -19,19 +19,28 @@ class Transaction extends StatefulWidget {
 }
 
 class _TransactionState extends State<Transaction>
-    with TickerProviderStateMixin {
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
   final transService = TransactionService();
   late trans_model.Transaction trans;
-  bool isLoading = false;
+  bool isLoading = true;
   bool _isIncome = false;
 
   @override
   void initState() {
     super.initState();
-    setState(() {
-      isLoading = true;
-    });
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1200),
+    );
+    _controller.repeat();
     _fetchTrans();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
   Future<trans_model.Transaction?> _fetchTrans() async {
@@ -51,6 +60,8 @@ class _TransactionState extends State<Transaction>
     return null;
   }
 
+  _onTapEdit() {}
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -59,7 +70,7 @@ class _TransactionState extends State<Transaction>
         backgroundColor: primary,
       ),
       body: isLoading
-          ? loadingSpinner(this, 50)
+          ? loadingSpinner(_controller)
           : SingleChildScrollView(
               child: Container(
                 color: bg,
@@ -73,10 +84,15 @@ class _TransactionState extends State<Transaction>
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         nunitoText(trans.title, 28, FontWeight.bold, primary),
-                        Icon(
-                          FontAwesomeIcons.pen,
-                          size: 15,
-                          color: Colors.grey.shade700,
+                        GestureDetector(
+                          onTap: () {
+                            _onTapEdit();
+                          },
+                          child: Icon(
+                            FontAwesomeIcons.pen,
+                            size: 15,
+                            color: Colors.grey.shade700,
+                          ),
                         )
                       ],
                     ),
@@ -108,7 +124,8 @@ class _TransactionState extends State<Transaction>
                     trans.note == null
                         ? nunitoText("No note for this transaction.", 18,
                             FontWeight.w500, primary)
-                        : nunitoText(trans.note!, 18, FontWeight.w500, primary),
+                        : nunitoText(
+                            trans.note ?? "", 18, FontWeight.w500, primary),
                     _divider(),
                     nunitoText("Image:", 17, FontWeight.w500, primary),
                     trans.image == null

@@ -1,6 +1,7 @@
 import 'package:dollar_app/service/trans_service.dart';
 import 'package:dollar_app/ui/home_tabs/transactions_tabs/lists.dart';
 import 'package:dollar_app/ui/home_tabs/transactions_tabs/sort.dart';
+import 'package:dollar_app/ui/home_tabs/transactions_tabs/widgets/loading.dart';
 import 'package:dollar_app/ui/home_tabs/transactions_tabs/widgets/trans_list.dart';
 import 'package:flutter/material.dart';
 
@@ -20,16 +21,29 @@ class Income extends StatefulWidget {
   State<Income> createState() => _IncomeState();
 }
 
-class _IncomeState extends State<Income> {
+class _IncomeState extends State<Income> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
   final transService = TransactionService();
   List<Transaction> _incomes = [];
   String? _period;
   String? _category;
+  bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1200),
+    );
+    _controller.repeat();
     _fetchTransWithType();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
 // fetch income
@@ -42,6 +56,9 @@ class _IncomeState extends State<Income> {
         _incomes = res;
       });
 
+      setState(() {
+        _isLoading = false;
+      });
       debugPrint(
           SortTrans.groupTransactionsByWeek(_incomes, null, null).toString());
     }
@@ -68,40 +85,42 @@ class _IncomeState extends State<Income> {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(10),
-      child: Column(
-        children: [
-          // weekly monthly yearly btns
-          SizedBox(
-            height: 40,
-            child: periodBtnRow(periods, _periodBtnClicked, _period),
-          ),
-          const SizedBox(
-            height: 15,
-          ),
+      child: _isLoading
+          ? loadingSpinner(_controller)
+          : Column(
+              children: [
+                // weekly monthly yearly btns
+                SizedBox(
+                  height: 40,
+                  child: periodBtnRow(periods, _periodBtnClicked, _period),
+                ),
+                const SizedBox(
+                  height: 15,
+                ),
 
-          // total income
-          nunitoText("RM 2037.67", 25, FontWeight.w700, primary),
-          const SizedBox(height: 20),
+                // total income
+                nunitoText("RM 2037.67", 25, FontWeight.w700, primary),
+                const SizedBox(height: 20),
 
-          // category btns
-          SizedBox(
-            height: 40,
-            child: categoryBtnRow(
-                incomeCategories, _categoryBtnClicked, _category),
-          ),
-          const SizedBox(
-            height: 30,
-          ),
+                // category btns
+                SizedBox(
+                  height: 40,
+                  child: categoryBtnRow(
+                      incomeCategories, _categoryBtnClicked, _category),
+                ),
+                const SizedBox(
+                  height: 30,
+                ),
 
-          // income list
-          Expanded(
-            // child: transList(context, _incomes),
-            child: _period == null
-                ? transList(context, _incomes)
-                : weekList(context, _incomes),
-          )
-        ],
-      ),
+                // income list
+                Expanded(
+                  // child: transList(context, _incomes),
+                  child: _period == null
+                      ? transList(context, _incomes)
+                      : weekList(context, _incomes),
+                )
+              ],
+            ),
     );
   }
 }
