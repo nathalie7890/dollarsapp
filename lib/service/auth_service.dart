@@ -65,9 +65,12 @@ class AuthService {
     try {
       final user = getCurrentUser();
       if (user != null) {
+        AuthCredential authCredential = EmailAuthProvider.credential(
+            email: user.email!, password: password);
+        await user.reauthenticateWithCredential(authCredential);
         await user.updateDisplayName(username);
         await user.updateEmail(email);
-        await user.updatePassword(password);
+        // await user.updatePassword(password);
 
         if (imageFile != null) {
           String fileName = Utils.generateFileName(imageFile, user.uid);
@@ -82,9 +85,10 @@ class AuthService {
           // Update the user's photo URL in Firebase Authentication
           await user.updatePhotoURL(downloadURL);
         }
+        return true;
       }
 
-      return true;
+      return false;
     } catch (e) {
       debugPrint("Failed to update user: $e");
       return false;
