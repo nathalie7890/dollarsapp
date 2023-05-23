@@ -36,8 +36,8 @@ class _AddTransState extends State<AddTrans> {
   final TextEditingController _note = TextEditingController();
   final TextEditingController _amount = TextEditingController();
   DateTime _date = DateTime.now();
-  String _category = 'grocery';
   String _type = "income";
+  String _category = "salary";
 
   bool _titleError = false;
 
@@ -62,24 +62,33 @@ class _AddTransState extends State<AddTrans> {
   }
 
 // drop down options for category drop down
-  List<String> dropdownItems = [
+  final List<String> _expenseCategories = [
     'grocery',
     'transport',
-    'entertainment',
+    'recreation',
     "food",
     "bills",
-    "clothing"
+    "clothing",
+    "medical",
+  ];
+  final List<String> _incomeCategories = [
+    'salary',
+    'investment',
+    'passive',
+    "bonus",
   ];
 
   _onIncomeBtnClicked() {
     setState(() {
       _type = "income";
+      _category = "salary";
     });
   }
 
   _onExpenseBtnClicked() {
     setState(() {
       _type = "expense";
+      _category = "grocery";
     });
   }
 
@@ -157,6 +166,11 @@ class _AddTransState extends State<AddTrans> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // type
+
+                _typeBtns(),
+                const SizedBox(height: 15),
+
                 // title input
                 _transInput("Title", _title),
                 const SizedBox(
@@ -176,24 +190,19 @@ class _AddTransState extends State<AddTrans> {
                 nunitoText("Date", 15, FontWeight.bold, Colors.grey.shade700),
                 const SizedBox(height: 10),
                 _dateRow(),
-                const SizedBox(height: 10),
+                const SizedBox(height: 6),
                 _datePickerDropDown ? _datePicker() : Container(),
                 divider(color: Colors.grey.shade500),
 
                 // category dropdown
                 nunitoText(
                     "Category", 15, FontWeight.bold, Colors.grey.shade700),
-                _categoryDropDown(),
+                _categoryDropDown(
+                    _type == "income" ? _incomeCategories : _expenseCategories),
                 const SizedBox(height: 15),
 
                 // note input
                 _transInput("Note (Optional)", _note),
-                const SizedBox(height: 15),
-
-                // type
-                nunitoText("Type", 15, FontWeight.bold, Colors.grey.shade700),
-                const SizedBox(height: 10),
-                _typeBtns(),
                 const SizedBox(height: 15),
 
                 // upload image
@@ -330,7 +339,8 @@ class _AddTransState extends State<AddTrans> {
   }
 
 // category dropdown
-  DropdownButtonFormField<String> _categoryDropDown() {
+  DropdownButtonFormField<String> _categoryDropDown(
+      List<String> dropdownItems) {
     return DropdownButtonFormField<String>(
       value: _category,
       hint: nunitoText("Select a category", 17, FontWeight.w500, primary),

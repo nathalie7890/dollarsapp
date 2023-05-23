@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
 // ui
+import '../../data/model/trans.dart';
 import "../colors.dart";
 import '../widgets/nunito_text.dart';
 import "package:font_awesome_flutter/font_awesome_flutter.dart";
@@ -9,8 +9,9 @@ import "package:font_awesome_flutter/font_awesome_flutter.dart";
 // utils
 import '../utils/utils.dart';
 
-// repo
+// service
 import 'package:dollar_app/service/auth_service.dart';
+import 'package:dollar_app/service/trans_service.dart';
 
 class HomeTab extends StatefulWidget {
   const HomeTab({super.key});
@@ -21,17 +22,21 @@ class HomeTab extends StatefulWidget {
 
 class _HomeTabState extends State<HomeTab> {
   final auth = AuthService();
+  final transService = TransactionService();
+  List<Transaction> _trans = [];
 
   @override
   void initState() {
     super.initState();
     _getCurrentUser();
+    _fetchTrans();
   }
 
 // set username
   String _username = "";
   String _photoUrl = "";
 
+// fetch current user
   _getCurrentUser() {
     final user = auth.getCurrentUser();
     // debugPrint(user.toString());
@@ -43,8 +48,15 @@ class _HomeTabState extends State<HomeTab> {
     }
   }
 
-  _goToTransaction() {
-    context.push("/transaction");
+  // fetch income
+  Future _fetchTrans() async {
+    final res = await transService.getTransWithType(type: null, category: null);
+
+    if (res != null) {
+      setState(() {
+        _trans = res;
+      });
+    }
   }
 
   @override
@@ -81,46 +93,55 @@ class _HomeTabState extends State<HomeTab> {
 // recent transaction list
   ListView _transactionList() {
     return ListView.separated(
+      itemCount: _trans.length,
       itemBuilder: (context, index) {
-        return GestureDetector(
-          onTap: () => _goToTransaction(),
-          child: Container(
-              padding: const EdgeInsets.all(15),
-              decoration: BoxDecoration(
-                  color: Colors.grey.shade200,
-                  borderRadius: BorderRadius.circular(15)),
-              child: Row(
-                children: [
-                  CircleAvatar(
-                    radius: 30,
-                    backgroundColor: primary,
-                    child: Icon(
-                      FontAwesomeIcons.utensils,
-                      color: tertiary,
-                      size: 20.0,
-                    ),
+        final tran = _trans[index];
+        final title = tran.title;
+        final date = tran.date;
+        double amount = tran.amount;
+        bool isIncome = tran.type == "income";
+
+        return Container(
+            padding: const EdgeInsets.all(15),
+            decoration: BoxDecoration(
+                color: Colors.grey.shade200,
+                borderRadius: BorderRadius.circular(15)),
+            child: Row(
+              children: [
+                CircleAvatar(
+                  radius: 30,
+                  backgroundColor: primary,
+                  child: Icon(
+                    FontAwesomeIcons.utensils,
+                    color: tertiary,
+                    size: 20.0,
                   ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      nunitoText(
-                          "Hoshino Omakase", 15, FontWeight.w800, primary),
-                      nunitoText("14/10/2023", 13, FontWeight.w500, primary)
-                    ],
-                  ),
-                  const Spacer(),
-                  nunitoText("RM4.50", 15, FontWeight.w700, primary)
-                ],
-              )),
-        );
+                ),
+                const SizedBox(
+                  width: 10,
+                ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    nunitoText(title, 15, FontWeight.w800, primary),
+                    nunitoText(Utils.getDateFromDateTime(date), 13,
+                        FontWeight.w500, primary)
+                  ],
+                ),
+                const Spacer(),
+                nunitoText(
+                    isIncome
+                        ? "+ RM ${amount.toStringAsFixed(2)}"
+                        : "- RM ${amount.toStringAsFixed(2)}",
+                    15,
+                    FontWeight.w700,
+                    isIncome ? Colors.blue.shade700 : expense_red)
+              ],
+            ));
       },
       separatorBuilder: (context, index) {
         return const SizedBox(height: 15);
       },
-      itemCount: 10,
     );
   }
 
