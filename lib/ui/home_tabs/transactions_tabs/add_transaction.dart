@@ -85,6 +85,7 @@ class _AddTransState extends State<AddTrans> {
 
   // image upload
   File? selectedImage;
+
   _onTapImageUpload() async {
     final picker = ImagePicker();
     final image = await picker.pickImage(source: ImageSource.gallery);
@@ -121,25 +122,25 @@ class _AddTransState extends State<AddTrans> {
           date: _date,
           category: _category,
           type: _type);
-      _addTransaction(transaction, selectedImage).then((value) => {
-            if (value == true)
-              {
-                showToast("Added successfully!"),
-                context.go("/home/$_type")
-                // if (_type == "income")
-                //   {
-                //     context.go("/home?initialTabIndex=1&subTabIndex=0");
-                //     context.go("/home/transactions/income");
-                //   }
-                // else
-                //   {
-                //     {
-                //       context.go("/home?initialTabIndex=1&subTabIndex=1");
-                //       context.go("home/transactions/expense");
-                //     }
-                //   }
-              }
-          });
+      _addTransaction(transaction, selectedImage).then((value) {
+        if (value == true) {
+          showToast("Added successfully!");
+          context.pop(_type);
+          debugPrint("add transaction: $_type");
+          // if (_type == "income")
+          //   {
+          //     context.go("/home?initialTabIndex=1&subTabIndex=0");
+          //     context.go("/home/transactions/income");
+          //   }
+          // else
+          //   {
+          //     {
+          //       context.go("/home?initialTabIndex=1&subTabIndex=1");
+          //       context.go("home/transactions/expense");
+          //     }
+          //   }
+        }
+      });
     }
   }
 
@@ -214,7 +215,7 @@ class _AddTransState extends State<AddTrans> {
                     : Container(),
                 const SizedBox(height: 15),
 
-                // add transation button
+                // add transaction button
                 SizedBox(
                     width: MediaQuery.of(context).size.width,
                     height: 50,
