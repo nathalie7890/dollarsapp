@@ -9,7 +9,7 @@ import '../../../widgets/delete_confirm_dialog.dart';
 import '../../../widgets/nunito_text.dart';
 
 // delete income
-Future _onConfirmDelete(String id) async {
+Future onConfirmDelete(String id) async {
   final transService = TransactionService();
   await transService.deleteTrans(id);
 }
@@ -19,7 +19,7 @@ ListView transList(BuildContext context, List transactions) {
     itemCount: transactions.length,
     itemBuilder: (context, index) {
       final trans = transactions[index];
-      return _deleteDismissible(context, trans);
+      return deleteDismissible(context, trans);
     },
     separatorBuilder: (context, index) {
       return const SizedBox(height: 15);
@@ -27,10 +27,10 @@ ListView transList(BuildContext context, List transactions) {
   );
 }
 
-Dismissible _deleteDismissible(BuildContext context, Transaction trans) {
+Dismissible deleteDismissible(BuildContext context, Transaction trans) {
   return Dismissible(
     key: UniqueKey(),
-    onDismissed: (dir) => {_onConfirmDelete(trans.id ?? "")},
+    onDismissed: (dir) => {onConfirmDelete(trans.id ?? "")},
     confirmDismiss: (dir) async {
       return await ConfirmDismissDialog.show(context);
     },
@@ -45,11 +45,11 @@ Dismissible _deleteDismissible(BuildContext context, Transaction trans) {
       child: Center(
           child: nunitoText("Remove", 20, FontWeight.w500, Colors.white)),
     ),
-    child: _transItem(trans),
+    child: transItem(trans),
   );
 }
 
-Container _transItem(Transaction trans) {
+Container transItem(Transaction trans) {
   final title = trans.title;
   final date = trans.date;
   double amount = trans.amount;
@@ -61,18 +61,18 @@ Container _transItem(Transaction trans) {
           color: Colors.grey.shade200, borderRadius: BorderRadius.circular(15)),
       child: Row(
         children: [
-          _transIcon(),
+          transIcon(),
           const SizedBox(
             width: 10,
           ),
-          _transTitleDate(title, date),
+          transTitleDate(title, date),
           const Spacer(),
-          _transAmount(amount, isIncome)
+          transAmount(amount, isIncome)
         ],
       ));
 }
 
-Text _transAmount(double amount, bool isIncome) {
+Text transAmount(double amount, bool isIncome) {
   return nunitoText(
       isIncome
           ? "+ RM ${amount.toStringAsFixed(2)}"
@@ -82,7 +82,7 @@ Text _transAmount(double amount, bool isIncome) {
       isIncome ? Colors.blue.shade700 : expense_red);
 }
 
-Column _transTitleDate(String title, DateTime date) {
+Column transTitleDate(String title, DateTime date) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
@@ -92,7 +92,7 @@ Column _transTitleDate(String title, DateTime date) {
   );
 }
 
-CircleAvatar _transIcon() {
+CircleAvatar transIcon() {
   return CircleAvatar(
     radius: 30,
     backgroundColor: primary,
@@ -101,5 +101,35 @@ CircleAvatar _transIcon() {
       color: tertiary,
       size: 20.0,
     ),
+  );
+}
+
+ListView weekList(BuildContext context, List transactions) {
+  return ListView.separated(
+    itemCount: transactions.length,
+    reverse: true,
+    itemBuilder: (context, index) {
+      return Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+              color: Colors.grey.shade200,
+              borderRadius: BorderRadius.circular(15)),
+          child: Row(
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  nunitoText("Week ${index + 1}", 15, FontWeight.w800, primary),
+                  nunitoText("12/1/23 - 17/1/23", 13, FontWeight.w500, primary)
+                ],
+              ),
+              const Spacer(),
+              nunitoText("+ RM 281.95", 15, FontWeight.w700, primary)
+            ],
+          ));
+    },
+    separatorBuilder: (context, index) {
+      return const SizedBox(height: 15);
+    },
   );
 }
