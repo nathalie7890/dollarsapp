@@ -18,14 +18,28 @@ class Home extends StatefulWidget {
   State<Home> createState() => _HomeState();
 }
 
-class _HomeState extends State<Home> {
+class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   late String tabState;
+  late TabController _tabController;
 
   @override
   void initState() {
     super.initState();
     tabState = widget.tabState ?? "";
-    debugPrint("Home init: $tabState");
+    _tabController = TabController(
+        length: 5, vsync: this, initialIndex: tabState == "" ? 0 : 1);
+  }
+
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  void _navigateToTab(int index) {
+    setState(() {
+      _tabController.animateTo(index);
+    });
   }
 
   _goToAddTrans() async {
@@ -33,9 +47,28 @@ class _HomeState extends State<Home> {
     if (res != null) {
       setState(() {
         tabState = res.toString();
-        debugPrint("Home context: $tabState");
         context.push("/home/$tabState");
       });
+    }
+  }
+
+  _scrollTabs(DragEndDetails details) {
+    if (details.primaryVelocity! < 0) {
+      if (_tabController.index == 0) {
+        _navigateToTab(1);
+      } else if (_tabController.index == 1) {
+        _navigateToTab(3);
+      } else if (_tabController.index == 3) {
+        _navigateToTab(4);
+      }
+    } else if (details.primaryVelocity! > 0) {
+      if (_tabController.index == 4) {
+        _navigateToTab(3);
+      } else if (_tabController.index == 3) {
+        _navigateToTab(1);
+      } else if (_tabController.index == 1) {
+        _navigateToTab(0);
+      }
     }
   }
 
@@ -47,15 +80,21 @@ class _HomeState extends State<Home> {
         child: Scaffold(
           body: Padding(
             padding: const EdgeInsets.only(top: 25.0),
-            child: TabBarView(children: [
-              const HomeTab(),
-              Transactions(
-                tabState: tabState,
-              ),
-              const SizedBox(),
-              const News(),
-              const Profile()
-            ]),
+            child: GestureDetector(
+              onHorizontalDragEnd: (details) => _scrollTabs(details),
+              child: TabBarView(
+                  controller: _tabController,
+                  physics: const NeverScrollableScrollPhysics(),
+                  children: [
+                    const HomeTab(),
+                    Transactions(
+                      tabState: tabState,
+                    ),
+                    const SizedBox(),
+                    const News(),
+                    const Profile()
+                  ]),
+            ),
           ),
           bottomNavigationBar: Container(
             decoration: BoxDecoration(
@@ -69,6 +108,7 @@ class _HomeState extends State<Home> {
               ],
             ),
             child: TabBar(
+                controller: _tabController,
                 padding: const EdgeInsets.symmetric(vertical: 10),
                 unselectedLabelColor: Colors.grey.shade500,
                 indicatorSize: TabBarIndicatorSize.label,
