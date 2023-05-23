@@ -25,13 +25,18 @@ class _HomeState extends State<Home> {
   void initState() {
     super.initState();
     tabState = widget.tabState ?? "";
+    debugPrint("Home init: $tabState");
   }
 
-  _goToAddTrans() {
-    context.push("/addTrans");
-    setState(() {
-      tabState = "";
-    });
+  _goToAddTrans() async {
+    var res = await context.push("/addTrans");
+    if (res != null) {
+      setState(() {
+        tabState = res.toString();
+        debugPrint("Home context: $tabState");
+        context.push("/home/$tabState");
+      });
+    }
   }
 
   @override
@@ -45,7 +50,6 @@ class _HomeState extends State<Home> {
             child: TabBarView(children: [
               const HomeTab(),
               Transactions(
-                initialTabIndex: 0,
                 tabState: tabState,
               ),
               const SizedBox(),

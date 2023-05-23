@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
   final _routes = [
     GoRoute(path: "/splash", builder: (context, state) => const SplashScreen()),
     GoRoute(path: "/login", builder: (context, state) => const Login()),
-    GoRoute(path: "/", builder: (context, state) => const Home()),
+    // GoRoute(path: "/", builder: (context, state) => const Home()),
     GoRoute(
         path: "/home", name: "home", builder: (context, state) => const Home()),
     GoRoute(
@@ -43,7 +43,7 @@ class MyApp extends StatelessWidget {
         path: "/home/:tab",
         name: "transactions",
         builder: (context, state) =>
-            Home(tabState: state.pathParameters["tab"] ?? "")),
+            Home(tabState: state.pathParameters["tab"])),
   ];
 
   @override

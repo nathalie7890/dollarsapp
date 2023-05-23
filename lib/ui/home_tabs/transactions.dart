@@ -7,34 +7,42 @@ import 'package:dollar_app/ui/home_tabs/transactions_tabs/income.dart';
 
 class Transactions extends StatefulWidget {
   final String? tabState;
-  final int initialTabIndex;
 
-  const Transactions({Key? key, required this.initialTabIndex, this.tabState})
+  // final int initialTabIndex;
+
+  const Transactions(
+      {Key? key,
+      // required this.initialTabIndex,
+      this.tabState})
       : super(key: key);
 
   @override
   State<Transactions> createState() => _TransactionsState();
 }
 
-class _TransactionsState extends State<Transactions>
-    with SingleTickerProviderStateMixin {
-  late TabController _tabController;
+class _TransactionsState
+    extends State<Transactions> // with SingleTickerProviderStateMixin
+{
+  // late TabController _tabController;
   late String tabState;
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(
-      length: 2,
-      initialIndex: widget.initialTabIndex,
-      vsync: this,
-    );
-    tabState = widget.tabState ?? "";
+    // _tabController = TabController(
+    //   length: 2,
+    //   initialIndex: widget.initialTabIndex,
+    //   vsync: this,
+    // );
+    setState(() {
+      tabState = widget.tabState ?? "";
+      debugPrint("transactions: $tabState");
+    });
   }
 
   @override
   void dispose() {
-    _tabController.dispose();
+    // _tabController.dispose();
     super.dispose();
   }
 
@@ -51,7 +59,7 @@ class _TransactionsState extends State<Transactions>
               padding: const EdgeInsets.symmetric(vertical: 5),
               color: primary,
               child: TabBar(
-                controller: _tabController,
+                // controller: _tabController,
                 tabs: const [
                   Tab(text: 'Income'),
                   Tab(text: 'Expense'),
@@ -66,9 +74,9 @@ class _TransactionsState extends State<Transactions>
               ),
             ),
           ),
-          body: TabBarView(
-            controller: _tabController,
-            children: const [Income(), Expenses()],
+          body: const TabBarView(
+            // controller: _tabController,
+            children: [Income(), Expenses()],
           ),
         ));
   }
