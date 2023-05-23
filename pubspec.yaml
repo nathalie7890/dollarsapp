@@ -37,3 +37,4 @@ flutter:
     - assets/images/receipt_1.png
     - assets/images/receipt_2.jpg
     - assets/images/omakase.jpg
+    - assets/sample_data.json

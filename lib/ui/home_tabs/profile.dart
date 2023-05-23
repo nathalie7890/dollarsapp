@@ -12,7 +12,6 @@ import 'package:dollar_app/ui/widgets/nunito_text.dart';
 // utils
 import '../utils/utils.dart';
 
-
 class Profile extends StatefulWidget {
   const Profile({super.key});
 
@@ -107,7 +106,6 @@ class _ProfileState extends State<Profile> {
         _username.text, _email.text, _password.text, selectedImage);
   }
 
-
 // select image
   File? selectedImage;
 
@@ -121,7 +119,6 @@ class _ProfileState extends State<Profile> {
       });
     }
   }
-
 
 // when cancel btn is clicked
   _onCancelClick() {
@@ -215,11 +212,14 @@ class _ProfileState extends State<Profile> {
           child: CircleAvatar(
             radius: 50,
             child: ClipOval(
-                child: selectedImage != null
-                    ? Image.file(selectedImage!)
-                    : photoUrl.isNotEmpty
-                        ? Image.network(photoUrl)
-                        : Image.asset("assets/images/logo.png")),
+                child: AspectRatio(
+              aspectRatio: 1.0,
+              child: selectedImage != null
+                  ? Image.file(selectedImage!)
+                  : photoUrl.isNotEmpty
+                      ? Image.network(photoUrl)
+                      : Image.asset("assets/images/logo.png"),
+            )),
           ),
         ),
       ),

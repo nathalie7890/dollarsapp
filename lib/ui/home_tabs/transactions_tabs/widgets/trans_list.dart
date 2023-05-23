@@ -1,6 +1,7 @@
 import 'package:dollar_app/service/trans_service.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 import '../../../../data/model/trans.dart';
 import '../../../colors.dart';
@@ -65,9 +66,8 @@ Container transItem(Transaction trans) {
           const SizedBox(
             width: 10,
           ),
-          transTitleDate(title, date),
-          const Spacer(),
-          transAmount(amount, isIncome)
+          Expanded(flex: 3, child: transTitleDate(title, date)),
+          Container(child: transAmount(amount, isIncome))
         ],
       ));
 }
@@ -86,7 +86,14 @@ Column transTitleDate(String title, DateTime date) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      nunitoText(title, 15, FontWeight.w800, primary),
+      Text(
+        title,
+        style: GoogleFonts.nunito(
+            fontSize: 15, color: primary, fontWeight: FontWeight.bold),
+        softWrap: true,
+        maxLines: 2,
+      ),
+      // nunitoText(title, 15, FontWeight.w800, primary),
       nunitoText(Utils.getDateFromDateTime(date), 13, FontWeight.w500, primary)
     ],
   );
@@ -107,7 +114,6 @@ CircleAvatar transIcon() {
 ListView weekList(BuildContext context, List transactions) {
   return ListView.separated(
     itemCount: transactions.length,
-    reverse: true,
     itemBuilder: (context, index) {
       return Container(
           padding: const EdgeInsets.all(20),

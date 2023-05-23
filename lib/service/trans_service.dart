@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart' as firestore;
 import 'package:dollar_app/service/auth_service.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'dart:io';
 
 import '../data/model/trans.dart';
@@ -10,15 +13,15 @@ import '../ui/utils/utils.dart';
 class TransactionService {
   final ref = firestore.FirebaseFirestore.instance.collection('transaction');
 
-  Future<List<Transaction>?> getTransWithType({String? type,
-      String? category, String? period}) async {
+  Future<List<Transaction>?> getTransWithType(
+      {String? type, String? category, String? period}) async {
     try {
       final repo = AuthService();
       final user = repo.getCurrentUser();
 
       if (user != null) {
         final uid = user.uid;
-       firestore.Query query = ref.where('uid', isEqualTo: uid);
+        firestore.Query query = ref.where('uid', isEqualTo: uid);
 
         if (type != null) {
           query = query.where('type', isEqualTo: type);
@@ -28,6 +31,8 @@ class TransactionService {
           query = query.where('category', isEqualTo: category);
         }
 
+        query = query.orderBy('date', descending: true);
+        // debugPrint(query.parameters.toString());
         firestore.QuerySnapshot querySnapshot = await query.get();
 
         List<Transaction> transactions = querySnapshot.docs.map((doc) {
@@ -81,7 +86,6 @@ class TransactionService {
 
   Future<bool> deleteTrans(String id) async {
     try {
-  
       await ref.doc(id).delete();
       debugPrint('Transaction deleted successfully');
       return true;
@@ -90,4 +94,30 @@ class TransactionService {
       return false;
     }
   }
+
+  // delete everything this user has
+
+  Future<void> deleteAllWithUid() async {
+    try {
+      final collectionRef =
+          firestore.FirebaseFirestore.instance.collection('transactions');
+
+      // Retrieve documents with matching UID
+      final querySnapshot = await collectionRef
+          .where('uid', isEqualTo: "39Et8vlpfZXqVfE0Nj2kInLWwN13")
+          .get();
+
+      // Delete documents
+      final batch = firestore.FirebaseFirestore.instance.batch();
+      for (final doc in querySnapshot.docs) {
+        batch.delete(doc.reference);
+      }
+
+      await batch.commit();
+      debugPrint('Documents deleted successfully.');
+    } catch (e) {
+      debugPrint('Error deleting documents: $e');
+    }
+  }
+
 }

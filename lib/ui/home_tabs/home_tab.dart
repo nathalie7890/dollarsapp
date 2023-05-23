@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 // ui
 import '../../data/model/trans.dart';
@@ -120,13 +121,24 @@ class _HomeTabState extends State<HomeTab> {
                 const SizedBox(
                   width: 10,
                 ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    nunitoText(title, 15, FontWeight.w800, primary),
-                    nunitoText(Utils.getDateFromDateTime(date), 13,
-                        FontWeight.w500, primary)
-                  ],
+                Expanded(
+                  flex: 3,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: GoogleFonts.nunito(
+                            fontSize: 15,
+                            color: primary,
+                            fontWeight: FontWeight.bold),
+                        softWrap: true,
+                        maxLines: 2,
+                      ),
+                      nunitoText(Utils.getDateFromDateTime(date), 13,
+                          FontWeight.w500, primary)
+                    ],
+                  ),
                 ),
                 const Spacer(),
                 nunitoText(
