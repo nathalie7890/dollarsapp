@@ -1,6 +1,7 @@
 import 'package:dollar_app/data/model/trans.dart';
 import 'package:dollar_app/service/auth_service.dart';
 import 'package:dollar_app/service/trans_service.dart';
+import 'package:dollar_app/ui/home_tabs/transactions_tabs/widgets/loading.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
@@ -25,9 +26,28 @@ class AddTrans extends StatefulWidget {
   State<AddTrans> createState() => _AddTransState();
 }
 
-class _AddTransState extends State<AddTrans> {
+class _AddTransState extends State<AddTrans>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
   final auth = AuthService();
   final transService = TransactionService();
+
+  @override
+  void initState() {
+    super.initState();
+
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1200),
+    );
+    _controller.repeat();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   // visibility of date picker
   bool _datePickerDropDown = false;
@@ -38,6 +58,7 @@ class _AddTransState extends State<AddTrans> {
   DateTime _date = DateTime.now();
   String _type = "income";
   String _category = "salary";
+  bool _isLoading = false;
 
   bool _titleError = false;
 
@@ -94,7 +115,6 @@ class _AddTransState extends State<AddTrans> {
 
   // image upload
   File? selectedImage;
-
   _onTapImageUpload() async {
     final picker = ImagePicker();
     final image = await picker.pickImage(source: ImageSource.gallery);
@@ -123,6 +143,10 @@ class _AddTransState extends State<AddTrans> {
     final uid = auth.getUid();
 
     if (uid.isNotEmpty) {
+      setState(() {
+        _isLoading = true;
+      });
+
       final transaction = Transaction(
           uid: uid,
           title: _title.text,
@@ -131,26 +155,15 @@ class _AddTransState extends State<AddTrans> {
           date: _date,
           category: _category,
           type: _type);
-      _addTransaction(transaction, selectedImage).then((value) {
-        if (value == true) {
-          showToast("Added successfully!");
-          context.pop(_type);
-          debugPrint("add transaction: $_type");
-          // if (_type == "income")
-          //   {
-          //     context.go("/home?initialTabIndex=1&subTabIndex=0");
-          //     context.go("/home/transactions/income");
-          //   }
-          // else
-          //   {
-          //     {
-          //       context.go("/home?initialTabIndex=1&subTabIndex=1");
-          //       context.go("home/transactions/expense");
-          //     }
-          //   }
-        }
-      });
+      _addTransaction(transaction, selectedImage).then((value) => {
+            if (value == true)
+              {showToast("Added successfully!"), context.go("/home/$_type")}
+          });
     }
+
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   @override
@@ -224,11 +237,13 @@ class _AddTransState extends State<AddTrans> {
                     : Container(),
                 const SizedBox(height: 15),
 
-                // add transaction button
+                // add transation button
                 SizedBox(
                     width: MediaQuery.of(context).size.width,
                     height: 50,
-                    child: _btn(_onAddBtnClicked, "Add Transaction"))
+                    child: _isLoading
+                        ? loadingSpinner(_controller)
+                        : _btn(_onAddBtnClicked, "Add Transaction"))
               ],
             )),
       ),

@@ -8,11 +8,9 @@ import 'package:dollar_app/ui/home_tabs/transactions_tabs/income.dart';
 class Transactions extends StatefulWidget {
   final String? tabState;
 
-  // final int initialTabIndex;
 
   const Transactions(
       {Key? key,
-      // required this.initialTabIndex,
       this.tabState})
       : super(key: key);
 
@@ -21,19 +19,14 @@ class Transactions extends StatefulWidget {
 }
 
 class _TransactionsState
-    extends State<Transactions> // with SingleTickerProviderStateMixin
+    extends State<Transactions>
 {
-  // late TabController _tabController;
+  
   late String tabState;
 
   @override
   void initState() {
     super.initState();
-    // _tabController = TabController(
-    //   length: 2,
-    //   initialIndex: widget.initialTabIndex,
-    //   vsync: this,
-    // );
     setState(() {
       tabState = widget.tabState ?? "";
       debugPrint("transactions: $tabState");

@@ -1,6 +1,9 @@
 import 'package:dollar_app/service/trans_service.dart';
+import 'package:dollar_app/ui/home_tabs/transactions_tabs/lists.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:google_fonts/google_fonts.dart';
+import "package:go_router/go_router.dart";
 
 import '../../../../data/model/trans.dart';
 import '../../../colors.dart';
@@ -14,12 +17,30 @@ Future onConfirmDelete(String id) async {
   await transService.deleteTrans(id);
 }
 
+goToTransDetails(BuildContext context, String? id) {
+  if (id != null) {
+    context.push("/transaction/$id");
+  }
+}
+
+IconData getIconByValue(List<Map<String, dynamic>> categories, String value) {
+  for (var category in categories) {
+    if (category['value'] == value) {
+      return category['icon']['iconData'];
+    }
+  }
+  return FontAwesomeIcons.moneyBill; // Default icon if no match is found
+}
+
 ListView transList(BuildContext context, List transactions) {
   return ListView.separated(
     itemCount: transactions.length,
     itemBuilder: (context, index) {
       final trans = transactions[index];
-      return deleteDismissible(context, trans);
+      final id = trans.id;
+      return GestureDetector(
+          onTap: () => {goToTransDetails(context, id)},
+          child: deleteDismissible(context, trans));
     },
     separatorBuilder: (context, index) {
       return const SizedBox(height: 15);
@@ -52,6 +73,7 @@ Dismissible deleteDismissible(BuildContext context, Transaction trans) {
 Container transItem(Transaction trans) {
   final title = trans.title;
   final date = trans.date;
+  final category = trans.category;
   double amount = trans.amount;
   bool isIncome = trans.type == "income";
 
@@ -61,13 +83,12 @@ Container transItem(Transaction trans) {
           color: Colors.grey.shade200, borderRadius: BorderRadius.circular(15)),
       child: Row(
         children: [
-          transIcon(),
+          transIcon(category, isIncome),
           const SizedBox(
             width: 10,
           ),
-          transTitleDate(title, date),
-          const Spacer(),
-          transAmount(amount, isIncome)
+          Expanded(flex: 3, child: transTitleDate(title, date)),
+          Container(child: transAmount(amount, isIncome))
         ],
       ));
 }
@@ -86,18 +107,27 @@ Column transTitleDate(String title, DateTime date) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      nunitoText(title, 15, FontWeight.w800, primary),
+      Text(
+        title,
+        style: GoogleFonts.nunito(
+            fontSize: 15, color: primary, fontWeight: FontWeight.bold),
+        softWrap: true,
+        maxLines: 2,
+      ),
+      // nunitoText(title, 15, FontWeight.w800, primary),
       nunitoText(Utils.getDateFromDateTime(date), 13, FontWeight.w500, primary)
     ],
   );
 }
 
-CircleAvatar transIcon() {
+CircleAvatar transIcon(String category, bool isIncome) {
+  final IconData iconData =
+      getIconByValue(isIncome ? incomeCategories : expenseCategories, category);
   return CircleAvatar(
     radius: 30,
     backgroundColor: primary,
     child: Icon(
-      FontAwesomeIcons.utensils,
+      iconData,
       color: tertiary,
       size: 20.0,
     ),
@@ -107,7 +137,6 @@ CircleAvatar transIcon() {
 ListView weekList(BuildContext context, List transactions) {
   return ListView.separated(
     itemCount: transactions.length,
-    reverse: true,
     itemBuilder: (context, index) {
       return Container(
           padding: const EdgeInsets.all(20),

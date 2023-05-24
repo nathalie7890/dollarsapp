@@ -1,4 +1,6 @@
+import 'package:dollar_app/ui/home_tabs/transactions_tabs/widgets/loading.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 // ui
 import '../../data/model/trans.dart';
@@ -20,21 +22,39 @@ class HomeTab extends StatefulWidget {
   State<HomeTab> createState() => _HomeTabState();
 }
 
-class _HomeTabState extends State<HomeTab> {
+class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
   final auth = AuthService();
   final transService = TransactionService();
   List<Transaction> _trans = [];
+  bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1200),
+    );
+    _controller.repeat();
     _getCurrentUser();
     _fetchTrans();
+    // _uploadSampleData();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 
 // set username
   String _username = "";
   String _photoUrl = "";
+
+  // Future _uploadSampleData() async {
+  //   await transService.importDataFromJson();
+  // }
 
 // fetch current user
   _getCurrentUser() {
@@ -56,6 +76,10 @@ class _HomeTabState extends State<HomeTab> {
       setState(() {
         _trans = res;
       });
+
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -64,29 +88,31 @@ class _HomeTabState extends State<HomeTab> {
     return Container(
       padding: const EdgeInsets.all(15),
       color: bg,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // usernam and profile pic
-          _userIntro(),
-          const SizedBox(
-            height: 20,
-          ),
+      child: _isLoading
+          ? loadingSpinner(_controller)
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // usernam and profile pic
+                _userIntro(),
+                const SizedBox(
+                  height: 20,
+                ),
 
-          // date, income and expense
-          _mainCard(),
-          const SizedBox(height: 30),
+                // date, income and expense
+                _mainCard(),
+                const SizedBox(height: 30),
 
-          // recent transaction
-          nunitoText("Recent transaction", 20, FontWeight.w600, primary),
-          const SizedBox(
-            height: 10,
-          ),
-          Expanded(
-            child: _transactionList(),
-          )
-        ],
-      ),
+                // recent transaction
+                nunitoText("Recent transaction", 20, FontWeight.w600, primary),
+                const SizedBox(
+                  height: 10,
+                ),
+                Expanded(
+                  child: _transactionList(),
+                )
+              ],
+            ),
     );
   }
 
@@ -120,13 +146,24 @@ class _HomeTabState extends State<HomeTab> {
                 const SizedBox(
                   width: 10,
                 ),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    nunitoText(title, 15, FontWeight.w800, primary),
-                    nunitoText(Utils.getDateFromDateTime(date), 13,
-                        FontWeight.w500, primary)
-                  ],
+                Expanded(
+                  flex: 3,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: GoogleFonts.nunito(
+                            fontSize: 15,
+                            color: primary,
+                            fontWeight: FontWeight.bold),
+                        softWrap: true,
+                        maxLines: 2,
+                      ),
+                      nunitoText(Utils.getDateFromDateTime(date), 13,
+                          FontWeight.w500, primary)
+                    ],
+                  ),
                 ),
                 const Spacer(),
                 nunitoText(

@@ -33,7 +33,7 @@ final List<Map<String, dynamic>> expenseCategories = [
   },
   {
     "title": "Recreation",
-    "value": 'Recreation',
+    "value": 'recreation',
     "icon": {
       "iconData": FontAwesomeIcons.headphones,
       "defaultColor": Colors.black54,
