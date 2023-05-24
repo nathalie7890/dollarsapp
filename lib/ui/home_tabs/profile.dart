@@ -94,6 +94,8 @@ class _ProfileState extends State<Profile> {
                   {
                     setState(() {
                       _isEditing = false;
+                      _password.text = "";
+                      _confirmPass.text = "";
                     })
                   }
               })
@@ -135,6 +137,20 @@ class _ProfileState extends State<Profile> {
     auth.logout().then((value) => context.go("/login"));
   }
 
+  _onPasswordChange() async {
+    debugPrint(email);
+    await auth.auth.sendPasswordResetEmail(email: email);
+  }
+
+  @override
+  dispose() {
+    _username.dispose();
+    _email.dispose();
+    _password.dispose();
+    _confirmPass.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
@@ -164,6 +180,20 @@ class _ProfileState extends State<Profile> {
             // body content
             _isEditing ? _editUser() : _nameEmail(),
             const SizedBox(height: 20),
+
+            // change password using email from firebase service
+            _isEditing
+                ? const SizedBox(
+                    height: 1,
+                  )
+                : SizedBox(
+                    height: 50,
+                    width: double.infinity,
+                    child: _btn(_onPasswordChange, "Change Password"),
+                  ),
+            const SizedBox(
+              height: 10,
+            ),
 
             // edit profile/save edit btn
             SizedBox(
@@ -266,6 +296,7 @@ class _ProfileState extends State<Profile> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        _divider(),
         _userEditInput("Name", _username, false),
         _invalidInput(_nameError, "Invalid username"),
         const SizedBox(
@@ -273,6 +304,16 @@ class _ProfileState extends State<Profile> {
         ),
         _userEditInput("Email", _email, false),
         _invalidInput(_emailError, "Invalid email"),
+        const SizedBox(height: 30),
+        _divider(),
+        Center(
+          child: nunitoText(
+              "Credentials needed to confirm Profile Image, Name and Email change. Please key in your password below for authentication.",
+              18,
+              FontWeight.w400,
+              Colors.black87),
+        ),
+        _divider(),
         const SizedBox(
           height: 8,
         ),
