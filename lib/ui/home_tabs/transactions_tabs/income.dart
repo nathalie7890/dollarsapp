@@ -38,6 +38,7 @@ class _IncomeState extends State<Income> with SingleTickerProviderStateMixin {
       duration: const Duration(milliseconds: 1200),
     );
     _controller.repeat();
+    
     _fetchTransWithType();
   }
 
