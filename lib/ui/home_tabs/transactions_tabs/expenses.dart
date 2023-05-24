@@ -51,9 +51,6 @@ class _ExpensesState extends State<Expenses> with SingleTickerProviderStateMixin
     if (res != null) {
       setState(() {
         _expenses = res;
-      });
-
-      setState(() {
         _isLoading = false;
       });
     }
@@ -105,7 +102,7 @@ class _ExpensesState extends State<Expenses> with SingleTickerProviderStateMixin
 
                 // income list
                 Expanded(
-                  child: transList(context, _expenses),
+                  child: transList(context, _expenses, false),
                 )
               ],
             ),

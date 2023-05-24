@@ -1,15 +1,18 @@
 import 'package:dollar_app/service/trans_service.dart';
-import 'package:dollar_app/ui/home_tabs/transactions_tabs/lists.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:google_fonts/google_fonts.dart';
 import "package:go_router/go_router.dart";
-
 import '../../../../data/model/trans.dart';
+
+// ui
 import '../../../colors.dart';
-import '../../../utils/utils.dart';
-import '../../../widgets/delete_confirm_dialog.dart';
 import '../../../widgets/nunito_text.dart';
+import '../../../widgets/delete_confirm_dialog.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:dollar_app/ui/home_tabs/transactions_tabs/lists.dart';
+
+// utils
+import '../../../utils/utils.dart';
 
 // delete income
 Future onConfirmDelete(String id) async {
@@ -32,7 +35,7 @@ IconData getIconByValue(List<Map<String, dynamic>> categories, String value) {
   return FontAwesomeIcons.moneyBill; // Default icon if no match is found
 }
 
-ListView transList(BuildContext context, List transactions) {
+ListView transList(BuildContext context, List transactions, bool getAll) {
   return ListView.separated(
     itemCount: transactions.length,
     itemBuilder: (context, index) {
@@ -40,7 +43,7 @@ ListView transList(BuildContext context, List transactions) {
       final id = trans.id;
       return GestureDetector(
           onTap: () => {goToTransDetails(context, id)},
-          child: deleteDismissible(context, trans));
+          child: getAll ? transItem(trans) : deleteDismissible(context, trans));
     },
     separatorBuilder: (context, index) {
       return const SizedBox(height: 15);
@@ -134,10 +137,20 @@ CircleAvatar transIcon(String category, bool isIncome) {
   );
 }
 
-ListView weekList(BuildContext context, List transactions) {
+ListView periodList(
+    BuildContext context, List items, bool isIncome, String type) {
   return ListView.separated(
-    itemCount: transactions.length,
+    itemCount: items.length,
     itemBuilder: (context, index) {
+      final item = items[index];
+      final title = type == "week"
+          ? item['week']
+          : type == "month"
+              ? item['month']
+              : item['year'];
+      final range = item['range'];
+      final total = item['total'];
+
       return Container(
           padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
@@ -145,20 +158,49 @@ ListView weekList(BuildContext context, List transactions) {
               borderRadius: BorderRadius.circular(15)),
           child: Row(
             children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  nunitoText("Week ${index + 1}", 15, FontWeight.w800, primary),
-                  nunitoText("12/1/23 - 17/1/23", 13, FontWeight.w500, primary)
-                ],
-              ),
+              type == "week" || type == 'month'
+                  ? Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        nunitoText(title, 15, FontWeight.w800, primary),
+                        nunitoText(
+                            range.toString(), 13, FontWeight.w500, primary)
+                      ],
+                    )
+                  : Container(),
               const Spacer(),
-              nunitoText("+ RM 281.95", 15, FontWeight.w700, primary)
+              nunitoText("+ RM $total", 15, FontWeight.w700,
+                  isIncome ? Colors.blue.shade700 : expense_red)
             ],
           ));
     },
     separatorBuilder: (context, index) {
       return const SizedBox(height: 15);
     },
+  );
+}
+
+Column weekMonthListTile(dynamic item) {
+  final title = item['week'];
+  final range = item['range'];
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      nunitoText(title, 15, FontWeight.w800, primary),
+      nunitoText(range.toString(), 13, FontWeight.w500, primary)
+    ],
+  );
+}
+
+Row monthListTile(dynamic item) {
+  final month = item['month'].split(" ")[0];
+  final year = item['month'].split(" ")[1];
+  return Row(
+    crossAxisAlignment: CrossAxisAlignment.center,
+    children: [
+      nunitoText(month, 17, FontWeight.w800, primary),
+      const SizedBox(width: 4),
+      nunitoText(year.toString(), 17, FontWeight.w500, primary)
+    ],
   );
 }

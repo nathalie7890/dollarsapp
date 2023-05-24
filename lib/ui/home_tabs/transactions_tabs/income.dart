@@ -25,6 +25,9 @@ class _IncomeState extends State<Income> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   final transService = TransactionService();
   List<Transaction> _incomes = [];
+  List<Map<String, dynamic>> _weeklyIncome = [];
+  List<Map<String, dynamic>> _monthlyIncome = [];
+
   String? _period;
   String? _category;
   bool _isLoading = true;
@@ -32,13 +35,13 @@ class _IncomeState extends State<Income> with SingleTickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    
+
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1200),
     );
     _controller.repeat();
-    
+
     _fetchTransWithType();
   }
 
@@ -56,19 +59,16 @@ class _IncomeState extends State<Income> with SingleTickerProviderStateMixin {
     if (res != null) {
       setState(() {
         _incomes = res;
-      });
-
-      setState(() {
         _isLoading = false;
+        _weeklyIncome = sortByWeek(_incomes);
+        _monthlyIncome = sortByMonth(_incomes);
       });
-      debugPrint(
-          SortTrans.groupTransactionsByWeek(_incomes, null, null).toString());
     }
   }
 
 // select period
   _periodBtnClicked(value) {
-    debugPrint(_period);
+    debugPrint("_period: $_period");
     setState(() {
       _period = value;
     });
@@ -116,11 +116,12 @@ class _IncomeState extends State<Income> with SingleTickerProviderStateMixin {
 
                 // income list
                 Expanded(
-                  // child: transList(context, _incomes),
-                  child: _period == null
-                      ? transList(context, _incomes)
-                      : weekList(context, _incomes),
-                )
+                    // child: transList(context, _incomes),
+                    child: _period == "weekly"
+                        ? periodList(context, _weeklyIncome, true, "week")
+                        : _period == "monthly"
+                            ? periodList(context, _monthlyIncome, true, "month")
+                            : transList(context, _incomes, false))
               ],
             ),
     );
