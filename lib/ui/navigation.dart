@@ -28,7 +28,7 @@ class MyApp extends StatelessWidget {
         builder: (context, state) {
           String id = state.pathParameters['id']!;
           return Transaction(id: id);
-          }),
+        }),
     GoRoute(
         path: "/addTrans",
         name: "addTrans",
@@ -42,11 +42,13 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        home: MaterialApp.router(
-          routerConfig:
-              GoRouter(initialLocation: initialRoute, routes: _routes),
-        ));
+    return SafeArea(
+      child: MaterialApp(
+          debugShowCheckedModeBanner: false,
+          home: MaterialApp.router(
+            routerConfig:
+                GoRouter(initialLocation: initialRoute, routes: _routes),
+          )),
+    );
   }
 }

@@ -17,10 +17,10 @@ class News extends StatefulWidget {
 
 class _NewsState extends State<News> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
-  late List<dynamic> _news;
-  bool isLoading = true;
+  late List<dynamic>? _news;
+  bool _isLoading = true;
 
-  Future<List<dynamic>> fetchNewsData() async {
+  Future<List<dynamic>?> fetchNewsData() async {
     final response = await http.get(Uri.parse(
         'https://newsapi.org/v2/top-headlines?country=us&category=business&apiKey=5b90c5912c5e412c80f27d1b8b96a88e'));
 
@@ -28,7 +28,7 @@ class _NewsState extends State<News> with SingleTickerProviderStateMixin {
       final jsonData = json.decode(response.body);
       return jsonData['articles'];
     } else {
-      throw Exception('Failed to fetch news data');
+      return null;
     }
   }
 
@@ -51,47 +51,52 @@ class _NewsState extends State<News> with SingleTickerProviderStateMixin {
 
   Future _fetchNews() async {
     final res = await fetchNewsData();
-    setState(() {
-      _news = res;
-    });
+    if (res != null) {
+      setState(() {
+        _news = res;
+      });
+    }
 
     setState(() {
-      isLoading = false;
+      _isLoading = false;
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: isLoading
+      body: _isLoading
           ? loadingSpinner(_controller)
-          : Container(
-              color: bg,
-              padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  nunitoText("Articles", 25, FontWeight.bold, primary),
-                  nunitoText(
-                      "Find articles that might help you plan your budget better!",
-                      16,
-                      FontWeight.w500,
-                      Colors.grey.shade600),
-                  divider(color: Colors.grey.shade600),
-                  Expanded(
-                    child: MasonryGridView.count(
-                      crossAxisCount: 2,
-                      mainAxisSpacing: 10,
-                      crossAxisSpacing: 10,
-                      itemCount: _news.length,
-                      itemBuilder: (context, index) {
-                        final article = _news[index];
-                        return gridTile(article);
-                      },
-                    ),
-                  ),
-                ],
-              )),
+          : !_isLoading && _news == null || _news != null && _news!.isEmpty
+              ? nunitoText("Failed to fetch news", 20, FontWeight.w600, primary)
+              : Container(
+                  color: bg,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      nunitoText("Articles", 25, FontWeight.bold, primary),
+                      nunitoText(
+                          "Find articles that might help you plan your budget better!",
+                          16,
+                          FontWeight.w500,
+                          Colors.grey.shade600),
+                      divider(color: Colors.grey.shade600),
+                      Expanded(
+                        child: MasonryGridView.count(
+                          crossAxisCount: 2,
+                          mainAxisSpacing: 10,
+                          crossAxisSpacing: 10,
+                          itemCount: _news?.length,
+                          itemBuilder: (context, index) {
+                            final article = _news?[index];
+                            return gridTile(article);
+                          },
+                        ),
+                      ),
+                    ],
+                  )),
     );
   }
 

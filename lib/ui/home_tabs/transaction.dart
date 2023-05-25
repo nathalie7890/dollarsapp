@@ -53,8 +53,11 @@ class _TransactionState extends State<Transaction>
       if (trans.type == "income") {
         _isIncome = true;
       }
-      isLoading = false;
     }
+
+    setState(() {
+      isLoading = false;
+    });
     return null;
   }
 

@@ -59,12 +59,10 @@ class _ProfileState extends State<Profile> {
   bool _nameError = false;
   bool _emailError = false;
   bool _passError = false;
-  bool _confirmPassError = false;
 
   final TextEditingController _username = TextEditingController();
   final TextEditingController _email = TextEditingController();
   final TextEditingController _password = TextEditingController();
-  final TextEditingController _confirmPass = TextEditingController();
 
   // validate every input
   bool _isValid() {
@@ -72,14 +70,12 @@ class _ProfileState extends State<Profile> {
       _nameError = _username.text.length < 3;
       _emailError = !Utils.isEmailValid(_email.text);
       _passError = _password.text.length < 5;
-      _confirmPassError = _password.text != _confirmPass.text;
     });
 
     List<bool> boolList = [
       _nameError,
       _emailError,
       _passError,
-      _confirmPassError
     ];
 
     return !boolList.contains(true);
@@ -95,7 +91,12 @@ class _ProfileState extends State<Profile> {
                     setState(() {
                       _isEditing = false;
                       _password.text = "";
-                      _confirmPass.text = "";
+                    })
+                  }
+                else
+                  {
+                    setState(() {
+                      _passError = true;
                     })
                   }
               })
@@ -147,7 +148,6 @@ class _ProfileState extends State<Profile> {
     _username.dispose();
     _email.dispose();
     _password.dispose();
-    _confirmPass.dispose();
     super.dispose();
   }
 
@@ -181,20 +181,6 @@ class _ProfileState extends State<Profile> {
             _isEditing ? _editUser() : _nameEmail(),
             const SizedBox(height: 20),
 
-            // change password using email from firebase service
-            _isEditing
-                ? const SizedBox(
-                    height: 1,
-                  )
-                : SizedBox(
-                    height: 50,
-                    width: double.infinity,
-                    child: _btn(_onPasswordChange, "Change Password"),
-                  ),
-            const SizedBox(
-              height: 10,
-            ),
-
             // edit profile/save edit btn
             SizedBox(
                 height: 50,
@@ -207,6 +193,35 @@ class _ProfileState extends State<Profile> {
           ],
         ),
       ),
+    );
+  }
+
+  void _showDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: nunitoText("Link sent!", 15, FontWeight.bold, primary),
+          content: nunitoText(
+              "A reset password link has been sent your email. Follow the instructions to change the password and log in again.",
+              15,
+              FontWeight.w500,
+              primary),
+          actions: <Widget>[
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: primary,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8))),
+              onPressed: () {
+                _onPasswordChange();
+                Navigator.of(context).pop();
+              },
+              child: const Text("OK"),
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -304,16 +319,9 @@ class _ProfileState extends State<Profile> {
         ),
         _userEditInput("Email", _email, false),
         _invalidInput(_emailError, "Invalid email"),
-        const SizedBox(height: 30),
-        _divider(),
-        Center(
-          child: nunitoText(
-              "Credentials needed to confirm Profile Image, Name and Email change. Please key in your password below for authentication.",
-              18,
-              FontWeight.w400,
-              Colors.black87),
-        ),
-        _divider(),
+        const SizedBox(height: 10),
+        nunitoText("Enter your password before saving.", 15, FontWeight.w400,
+            Colors.blue.shade700),
         const SizedBox(
           height: 8,
         ),
@@ -322,8 +330,15 @@ class _ProfileState extends State<Profile> {
         const SizedBox(
           height: 8,
         ),
-        _userEditInput("Confirm Password", _confirmPass, true),
-        _invalidInput(_passError, "Passwords don't match"),
+        Align(
+          alignment: Alignment.bottomRight,
+          child: GestureDetector(
+              onTap: () {
+                _showDialog(context);
+              },
+              child: nunitoText("Change password?", 15, FontWeight.bold,
+                  Colors.blue.shade700)),
+        )
       ],
     );
   }

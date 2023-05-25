@@ -1,15 +1,13 @@
 import 'package:dollar_app/ui/home_tabs/transactions_tabs/sort.dart';
+import 'package:dollar_app/ui/home_tabs/transactions_tabs/widgets/emptyList.dart';
 import 'package:dollar_app/ui/home_tabs/transactions_tabs/widgets/loading.dart';
 import 'package:dollar_app/ui/home_tabs/transactions_tabs/widgets/trans_list.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 // ui
 import '../../data/model/trans.dart';
 import "../colors.dart";
 import '../widgets/nunito_text.dart';
-import "package:font_awesome_flutter/font_awesome_flutter.dart";
 
 // utils
 import '../utils/utils.dart';
@@ -76,11 +74,14 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
     if (res != null) {
       setState(() {
         _trans = res;
-        _totalIncome = getTotalAmount(_trans, "income");
-        _totalExpense = getTotalAmount(_trans, "expense");
-        _isLoading = false;
+        _totalIncome = getTotalAmount(_trans, "income", DateTime.now().year);
+        _totalExpense = getTotalAmount(_trans, "expense", DateTime.now().year);
       });
     }
+
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   @override
@@ -109,7 +110,9 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                   height: 10,
                 ),
                 Expanded(
-                  child: transList(context, _trans, true),
+                  child: _trans.isEmpty
+                      ? emptyList()
+                      : transList(context, _trans, true),
                 )
               ],
             ),

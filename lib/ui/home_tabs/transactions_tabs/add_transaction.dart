@@ -3,6 +3,7 @@ import 'package:dollar_app/service/auth_service.dart';
 import 'package:dollar_app/service/trans_service.dart';
 import 'package:dollar_app/ui/home_tabs/transactions_tabs/widgets/loading.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
@@ -92,6 +93,7 @@ class _AddTransState extends State<AddTrans>
     "clothing",
     "medical",
   ];
+  
   final List<String> _incomeCategories = [
     'salary',
     'investment',
@@ -113,7 +115,7 @@ class _AddTransState extends State<AddTrans>
     });
   }
 
-  // image upload
+  // image upload2
   File? selectedImage;
   _onTapImageUpload() async {
     final picker = ImagePicker();
@@ -157,7 +159,7 @@ class _AddTransState extends State<AddTrans>
           type: _type);
       _addTransaction(transaction, selectedImage).then((value) => {
             if (value == true)
-              {showToast("Added successfully!"), context.go("/home/$_type")}
+              {showToast("Added successfully!"), context.push("/home/$_type")}
           });
     }
 
@@ -332,24 +334,24 @@ class _AddTransState extends State<AddTrans>
   }
 
 // displays title Date with down icon btn
-  Row _dateRow() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        nunitoText(
-            Utils.getDateFromDateTime(_date), 17, FontWeight.w500, primary),
-        GestureDetector(
-          onTap: () {
-            setState(() {
-              _datePickerDropDown = !_datePickerDropDown;
-            });
-          },
-          child: const HeroIcon(
+  Widget _dateRow() {
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          _datePickerDropDown = !_datePickerDropDown;
+        });
+      },
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          nunitoText(
+              Utils.getDateFromDateTime(_date), 17, FontWeight.w500, primary),
+          const HeroIcon(
             HeroIcons.chevronDown,
             size: 15,
-          ),
-        )
-      ],
+          )
+        ],
+      ),
     );
   }
 

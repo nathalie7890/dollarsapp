@@ -67,7 +67,14 @@ class AuthService {
       if (user != null) {
         AuthCredential authCredential = EmailAuthProvider.credential(
             email: user.email!, password: password);
-        await user.reauthenticateWithCredential(authCredential);
+
+        try {
+          await user.reauthenticateWithCredential(authCredential);
+        } catch (e) {
+          debugPrint("Failed to reauthenticate user: $e");
+          return false;
+        }
+
         await user.updateDisplayName(username);
         await user.updateEmail(email);
         // await user.updatePassword(password);

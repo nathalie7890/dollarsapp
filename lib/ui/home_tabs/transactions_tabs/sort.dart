@@ -8,6 +8,7 @@ List<Map<String, dynamic>> sortByWeek(List<Transaction> transactions) {
   // Sort the transactions by date in ascending order
   transactions.sort((a, b) => a.date.compareTo(b.date));
 
+
   List<Map<String, dynamic>> result = [];
 
   double totalAmount = 0;
@@ -50,6 +51,7 @@ List<Map<String, dynamic>> sortByWeek(List<Transaction> transactions) {
     'total': totalAmount.toStringAsFixed(2),
   });
 
+  debugPrint(result.reversed.toString());
   return List.from(result.reversed);
 }
 
@@ -123,16 +125,14 @@ List<Map<String, dynamic>> sortByMonth(List<Transaction> transactions) {
   return List.from(result.reversed);
 }
 
-double getTotalAmount(List<Transaction> transactions, String type) {
+double getTotalAmount(List<Transaction> transactions, String type, int year) {
   double totalAmount = 0;
-  
+
   for (var transaction in transactions) {
-    if (transaction.type == type) {
+    if (transaction.type == type && transaction.date.year == year) {
       totalAmount += transaction.amount;
     }
   }
-  
+
   return totalAmount;
 }
-
-

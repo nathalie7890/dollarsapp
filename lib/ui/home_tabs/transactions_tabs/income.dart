@@ -1,6 +1,7 @@
 import 'package:dollar_app/service/trans_service.dart';
 import 'package:dollar_app/ui/home_tabs/transactions_tabs/lists.dart';
 import 'package:dollar_app/ui/home_tabs/transactions_tabs/sort.dart';
+import 'package:dollar_app/ui/home_tabs/transactions_tabs/widgets/emptyList.dart';
 import 'package:dollar_app/ui/home_tabs/transactions_tabs/widgets/loading.dart';
 import 'package:dollar_app/ui/home_tabs/transactions_tabs/widgets/trans_list.dart';
 import 'package:flutter/material.dart';
@@ -59,16 +60,19 @@ class _IncomeState extends State<Income> with SingleTickerProviderStateMixin {
     if (res != null) {
       setState(() {
         _incomes = res;
-        _isLoading = false;
+
         _weeklyIncome = sortByWeek(_incomes);
-        _monthlyIncome = sortByMonth(_incomes);
+        sortByWeek(_incomes);
       });
     }
+
+    setState(() {
+      _isLoading = false;
+    });
   }
 
 // select period
   _periodBtnClicked(value) {
-    debugPrint("_period: $_period");
     setState(() {
       _period = value;
     });
@@ -86,44 +90,48 @@ class _IncomeState extends State<Income> with SingleTickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Container(
+      color: bg,
       padding: const EdgeInsets.all(10),
       child: _isLoading
           ? loadingSpinner(_controller)
-          : Column(
-              children: [
-                // weekly monthly yearly btns
-                SizedBox(
-                  height: 40,
-                  child: periodBtnRow(periods, _periodBtnClicked, _period),
-                ),
-                const SizedBox(
-                  height: 15,
-                ),
+          : !_isLoading && _incomes.isEmpty
+              ? emptyList()
+              : Column(
+                  children: [
+                    // weekly monthly yearly btns
+                    SizedBox(
+                      height: 40,
+                      child: periodBtnRow(periods, _periodBtnClicked, _period),
+                    ),
+                    const SizedBox(
+                      height: 15,
+                    ),
 
-                // total income
-                nunitoText("RM 2037.67", 25, FontWeight.w700, primary),
-                const SizedBox(height: 20),
+                    // total income
+                    nunitoText("RM 2037.67", 25, FontWeight.w700, primary),
+                    const SizedBox(height: 20),
 
-                // category btns
-                SizedBox(
-                  height: 40,
-                  child: categoryBtnRow(
-                      incomeCategories, _categoryBtnClicked, _category),
-                ),
-                const SizedBox(
-                  height: 30,
-                ),
+                    // category btns
+                    SizedBox(
+                      height: 40,
+                      child: categoryBtnRow(
+                          incomeCategories, _categoryBtnClicked, _category),
+                    ),
+                    const SizedBox(
+                      height: 30,
+                    ),
 
-                // income list
-                Expanded(
-                    // child: transList(context, _incomes),
-                    child: _period == "weekly"
-                        ? periodList(context, _weeklyIncome, true, "week")
-                        : _period == "monthly"
-                            ? periodList(context, _monthlyIncome, true, "month")
-                            : transList(context, _incomes, false))
-              ],
-            ),
+                    // income list
+                    Expanded(
+                        // child: transList(context, _incomes),
+                        child: _period == "weekly"
+                            ? periodList(context, _weeklyIncome, true, "week")
+                            : _period == "monthly"
+                                ? periodList(
+                                    context, _monthlyIncome, true, "month")
+                                : transList(context, _incomes, false))
+                  ],
+                ),
     );
   }
 }
