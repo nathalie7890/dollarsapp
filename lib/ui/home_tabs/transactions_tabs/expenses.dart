@@ -50,9 +50,12 @@ class _ExpensesState extends State<Expenses>
     final res = await transService.getTransWithType(
         type: "expense", category: _category);
 
-    if (res != null) {
+    if (res != null && res.isNotEmpty) {
       setState(() {
         _expenses = res;
+      });
+
+      setState(() {
         _isLoading = false;
       });
     }

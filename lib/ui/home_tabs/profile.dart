@@ -11,6 +11,7 @@ import 'package:dollar_app/ui/widgets/nunito_text.dart';
 
 // utils
 import '../utils/utils.dart';
+import '../widgets/toast.dart';
 
 class Profile extends StatefulWidget {
   const Profile({super.key});
@@ -141,6 +142,7 @@ class _ProfileState extends State<Profile> {
   _onPasswordChange() async {
     debugPrint(email);
     await auth.auth.sendPasswordResetEmail(email: email);
+    showToast("Link is sent!");
   }
 
   @override
@@ -201,13 +203,23 @@ class _ProfileState extends State<Profile> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: nunitoText("Link sent!", 15, FontWeight.bold, primary),
+          title: nunitoText("Change password", 16, FontWeight.bold, primary),
           content: nunitoText(
-              "A reset password link has been sent your email. Follow the instructions to change the password and log in again.",
+              "A link with reset password instructions will be sent to your email. Click Ok to conirm.",
               15,
               FontWeight.w500,
               primary),
           actions: <Widget>[
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: expense_red,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8))),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text("Cancel"),
+            ),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                   backgroundColor: primary,

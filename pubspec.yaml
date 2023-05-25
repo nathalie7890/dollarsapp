@@ -25,6 +25,7 @@ dependencies:
   http: ^0.13.6
   image_picker: ^0.8.7+5
   syncfusion_flutter_datepicker: ^21.2.5
+  url_launcher: ^6.1.11
 
 dev_dependencies:
   flutter_test:
@@ -35,10 +36,10 @@ flutter:
   uses-material-design: true
   assets:
     - assets/images/logo.png
-    - assets/images/card.png
     - assets/images/bob_marley.jpg
     - assets/images/receipt_1.png
     - assets/images/receipt_2.jpg
     - assets/images/omakase.jpg
     - assets/sample_data.json
     - assets/images/market.jpg
+    - assets/images/no_image.png

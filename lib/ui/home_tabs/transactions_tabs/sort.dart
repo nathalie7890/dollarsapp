@@ -2,127 +2,119 @@ import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 
 import '../../../data/model/trans.dart';
+import '../../utils/utils.dart';
 
-// Function to group transactions by week and calculate the total amount
 List<Map<String, dynamic>> sortByWeek(List<Transaction> transactions) {
-  // Sort the transactions by date in ascending order
-  transactions.sort((a, b) => a.date.compareTo(b.date));
+  List<Transaction> sorted = List.from(transactions);
+  sorted.sort((a, b) => a.date.compareTo(b.date));
 
+  List<List<Transaction>> weeks = [];
+  List<Transaction> currentWeek = [];
+
+  for (int i = 0; i < sorted.length; i++) {
+    if (currentWeek.isEmpty) {
+      currentWeek.add(sorted[i]);
+    } else {
+      DateTime currentWeekStartDate = getStartOfWeek(currentWeek.first.date);
+      DateTime transactionDate = sorted[i].date;
+
+      if (transactionDate
+          .isBefore(currentWeekStartDate.add(Duration(days: 7)))) {
+        currentWeek.add(sorted[i]);
+      } else {
+        weeks.add(currentWeek);
+        currentWeek = [sorted[i]];
+      }
+    }
+  }
+
+  if (currentWeek.isNotEmpty) {
+    weeks.add(currentWeek);
+  }
 
   List<Map<String, dynamic>> result = [];
 
-  double totalAmount = 0;
-  DateTime currentWeek = transactions[0]
-      .date
-      .subtract(Duration(days: transactions[0].date.weekday - 1));
-
-  for (var transaction in transactions) {
-    // Check if the transaction belongs to the current week
-    if (transaction.date.difference(currentWeek).inDays >= 7) {
-      // Format the date range as "start date - end date"
-      String formattedDateRange =
-          '${DateFormat('dd/MM/yyyy').format(currentWeek)} - ${DateFormat('dd/MM/yyyy').format(transaction.date)}';
-
-      // Add the current week, formatted date range, and total amount to the result list
-      result.add({
-        'week': 'Week ${result.length + 1}',
-        'range': formattedDateRange,
-        'total': totalAmount.toStringAsFixed(2),
-      });
-
-      // Move to the next week
-      currentWeek = transaction.date
-          .subtract(Duration(days: transaction.date.weekday - 1));
-
-      // Reset the total amount for the new week
-      totalAmount = 0;
-    }
-
-    // Add the transaction amount to the total amount
-    totalAmount += transaction.amount;
+  for (int i = 0; i < weeks.length; i++) {
+    Map<String, dynamic> newMap = {};
+    newMap["week"] = "Week ${i + 1}";
+    newMap["range"] = combineFirstAndLast(weeks[i]);
+    newMap["total"] = calculateTotals(weeks[i]);
+    result.add(newMap);
   }
-
-  // Add the last week, formatted date range, and total amount to the result list
-  String formattedDateRange =
-      '${DateFormat('dd/MM/yyyy').format(currentWeek)} - ${DateFormat('dd/MM/yyyy').format(DateTime.now())}';
-  result.add({
-    'week': 'Week ${result.length + 1}',
-    'range': formattedDateRange,
-    'total': totalAmount.toStringAsFixed(2),
-  });
-
-  debugPrint(result.reversed.toString());
-  return List.from(result.reversed);
+  List<Map<String, dynamic>> reversed = result.reversed.toList();
+  return reversed;
 }
 
-// Function to group transactions by month and calculate the total amount
-List<Map<String, dynamic>> sortByMonth(List<Transaction> transactions) {
-  debugPrint("Before sort: ${transactions.toString()}");
-  // Sort the transactions by date in ascending order
-  transactions.sort((a, b) {
-    return b.date.compareTo(a.date); // Compare in descending order
-  });
+List<String> sortByMonth(List<Transaction> transactions) {
+  List<String> groupedMonths = [];
 
-  debugPrint(transactions.toString());
+  for (Transaction transaction in transactions) {
+    String monthYear =
+        '${_getMonthName(transaction.date.month)} ${transaction.date.year}';
 
-  List<Map<String, dynamic>> result = [];
-
-  double totalAmount = 0;
-  int currentMonth = transactions[0].date.month;
-  int currentYear = transactions[0].date.year;
-  DateTime firstDateOfMonth = transactions[0].date;
-  DateTime lastDateOfMonth = transactions[0].date;
-
-  for (var transaction in transactions) {
-    // Check if the transaction belongs to the current month
-    if (transaction.date.month != currentMonth ||
-        transaction.date.year != currentYear) {
-      // Format the month and year as "Month Year"
-      String formattedMonthYear =
-          DateFormat('MMMM yyyy').format(DateTime(currentYear, currentMonth));
-
-      // Format the date range as "dd/MM/yyyy - dd/MM/yyyy"
-      String dateRange =
-          '${DateFormat('dd/MM/yyyy').format(firstDateOfMonth)} - ${DateFormat('dd/MM/yyyy').format(lastDateOfMonth)}';
-
-      // Add the current month, formatted month and year, date range, and total amount to the result list
-      result.add({
-        'month': formattedMonthYear,
-        'range': dateRange,
-        'total': totalAmount.toStringAsFixed(2),
-      });
-
-      // Move to the next month
-      currentMonth = transaction.date.month;
-      currentYear = transaction.date.year;
-      firstDateOfMonth = transaction.date;
-      lastDateOfMonth = transaction.date;
-
-      // Reset the total amount for the new month
-      totalAmount = 0;
+    if (!groupedMonths.contains(monthYear)) {
+      groupedMonths.add(monthYear);
     }
+  }
+  print(groupedMonths);
+  return groupedMonths;
+}
 
-    // Update the last date of the month
-    if (transaction.date.isAfter(lastDateOfMonth)) {
-      lastDateOfMonth = transaction.date;
-    }
+String _getMonthName(int month) {
+  switch (month) {
+    case 1:
+      return 'January';
+    case 2:
+      return 'February';
+    case 3:
+      return 'March';
+    case 4:
+      return 'April';
+    case 5:
+      return 'May';
+    case 6:
+      return 'June';
+    case 7:
+      return 'July';
+    case 8:
+      return 'August';
+    case 9:
+      return 'September';
+    case 10:
+      return 'October';
+    case 11:
+      return 'November';
+    case 12:
+      return 'December';
+    default:
+      return 'Unknown';
+  }
+}
 
-    // Add the transaction amount to the total amount
-    totalAmount += transaction.amount;
+DateTime getStartOfWeek(DateTime date) {
+  return date.subtract(Duration(days: date.weekday - 1));
+}
+
+double calculateTotals(List<Transaction> period) {
+  double totalAmount = 0.0;
+
+  for (int i = 0; i < period.length; i++) {
+    totalAmount += period[i].amount;
   }
 
-  // Add the last month, formatted month and year, date range, and total amount to the result list
-  String formattedMonthYear =
-      DateFormat('MMMM yyyy').format(DateTime(currentYear, currentMonth));
-  String dateRange =
-      '${DateFormat('dd/MM/yyyy').format(firstDateOfMonth)} - ${DateFormat('dd/MM/yyyy').format(lastDateOfMonth)}';
-  result.add({
-    'month': formattedMonthYear,
-    'range': dateRange,
-    'total': totalAmount.toStringAsFixed(2),
-  });
+  String roundedUp = totalAmount.toStringAsFixed(2);
+  totalAmount = double.tryParse(roundedUp) ?? 0.0;
+  return totalAmount;
+}
 
-  return List.from(result.reversed);
+String combineFirstAndLast(List<Transaction> list) {
+  if (list.length == 1) {
+    return Utils.getDateFromDateTime(list.first.date).toString();
+  } else {
+    String firstDate = Utils.getDateFromDateTime(list.first.date);
+    String lastDate = Utils.getDateFromDateTime(list.last.date);
+    return '$firstDate - $lastDate';
+  }
 }
 
 double getTotalAmount(List<Transaction> transactions, String type, int year) {

@@ -32,16 +32,19 @@ class TransactionService {
         }
 
         query = query.orderBy('date', descending: true);
+
         firestore.QuerySnapshot querySnapshot = await query.get();
 
-        List<Transaction> transactions = querySnapshot.docs.map((doc) {
-          final data = doc.data() as Map<String, dynamic>;
-          data['id'] = doc.id;
-          return Transaction.fromMap(data);
-        }).toList();
+        List<Transaction> transactions = [];
+        if (querySnapshot.docs.isNotEmpty) {
+          transactions = querySnapshot.docs.map((doc) {
+            final data = doc.data() as Map<String, dynamic>;
+            data['id'] = doc.id;
+            return Transaction.fromMap(data);
+          }).toList();
+        }
 
-        // debugPrint(transactions.toString());
-        debugPrint(transactions.length.toString());
+        // debugPrint("Transaction: ${transactions.toString()}");
         return transactions;
       }
     } catch (e) {

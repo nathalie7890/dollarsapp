@@ -57,13 +57,13 @@ class _IncomeState extends State<Income> with SingleTickerProviderStateMixin {
     final res = await transService.getTransWithType(
         type: "income", category: _category);
 
-    if (res != null) {
+    if (res != null && res.isNotEmpty) {
       setState(() {
         _incomes = res;
-
         _weeklyIncome = sortByWeek(_incomes);
-        sortByWeek(_incomes);
       });
+
+      sortByMonth(_incomes);
     }
 
     setState(() {

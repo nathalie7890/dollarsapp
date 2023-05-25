@@ -62,6 +62,7 @@ class _AddTransState extends State<AddTrans>
   bool _isLoading = false;
 
   bool _titleError = false;
+  bool _amountError = false;
 
 // value of date picker
   void _onDateSelected(DateRangePickerSelectionChangedArgs args) {
@@ -93,7 +94,7 @@ class _AddTransState extends State<AddTrans>
     "clothing",
     "medical",
   ];
-  
+
   final List<String> _incomeCategories = [
     'salary',
     'investment',
@@ -142,6 +143,13 @@ class _AddTransState extends State<AddTrans>
       return;
     }
 
+    if (_amount.text.isNotEmpty && double.tryParse(_amount.text)! < 0.01) {
+      setState(() {
+        _amountError = true;
+      });
+      return;
+    }
+
     final uid = auth.getUid();
 
     if (uid.isNotEmpty) {
@@ -182,7 +190,6 @@ class _AddTransState extends State<AddTrans>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // type
-
                 _typeBtns(),
                 const SizedBox(height: 15),
 
@@ -199,6 +206,11 @@ class _AddTransState extends State<AddTrans>
 
                 // amount input
                 _transInput("Amount", _amount, isNumber: true),
+                const SizedBox(height: 15),
+                _amountError
+                    ? nunitoText(
+                        "Amount is required", 15, FontWeight.w500, expense_red)
+                    : Container(),
                 const SizedBox(height: 15),
 
                 // date dropdown
