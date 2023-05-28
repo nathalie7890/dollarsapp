@@ -1,6 +1,7 @@
 import 'package:dollar_app/ui/home.dart';
 import 'package:dollar_app/ui/home_tabs/transaction.dart';
 import 'package:dollar_app/ui/home_tabs/transactions_tabs/add_transaction.dart';
+import 'package:dollar_app/ui/home_tabs/transactions_tabs/edit_transaction.dart';
 import 'package:dollar_app/ui/register.dart';
 import 'package:dollar_app/ui/splash_screen.dart';
 import 'package:flutter/material.dart';
@@ -8,11 +9,11 @@ import 'package:go_router/go_router.dart';
 import 'login.dart';
 
 class MyApp extends StatelessWidget {
-  MyApp({super.key, required this.initialRoute});
+  const MyApp({super.key, required this.initialRoute});
 
   final String initialRoute;
 
-  final _routes = [
+  static final List<GoRoute> routes = [
     GoRoute(path: "/splash", builder: (context, state) => const SplashScreen()),
     GoRoute(path: "/login", builder: (context, state) => const Login()),
     // GoRoute(path: "/", builder: (context, state) => const Home()),
@@ -28,7 +29,7 @@ class MyApp extends StatelessWidget {
         builder: (context, state) {
           String id = state.pathParameters['id']!;
           return Transaction(id: id);
-          }),
+        }),
     GoRoute(
         path: "/addTrans",
         name: "addTrans",
@@ -38,6 +39,13 @@ class MyApp extends StatelessWidget {
         name: "transactions",
         builder: (context, state) =>
             Home(tabState: state.pathParameters["tab"])),
+    GoRoute(
+        path: "/editTrans/:id",
+        name: "editTrans",
+        builder: (context, state) {
+          final id = state.pathParameters["id"]!;
+          return EditTransaction(id: id);
+        }),
   ];
 
   @override
@@ -45,8 +53,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         home: MaterialApp.router(
-          routerConfig:
-              GoRouter(initialLocation: initialRoute, routes: _routes),
+          routerConfig: GoRouter(initialLocation: initialRoute, routes: routes),
         ));
   }
 }

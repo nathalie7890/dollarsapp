@@ -15,7 +15,8 @@ import 'package:dollar_app/ui/home_tabs/transactions_tabs/widgets/category_btn_r
 import '../../../data/model/trans.dart';
 
 class Income extends StatefulWidget {
-  const Income({super.key});
+  final bool? refresh;
+  const Income({super.key, this.refresh});
 
   @override
   State<Income> createState() => _IncomeState();
@@ -28,6 +29,7 @@ class _IncomeState extends State<Income> with SingleTickerProviderStateMixin {
   String? _period;
   String? _category;
   bool _isLoading = true;
+  late bool _refresh;
 
   @override
   void initState() {
@@ -40,6 +42,12 @@ class _IncomeState extends State<Income> with SingleTickerProviderStateMixin {
     _controller.repeat();
     
     _fetchTransWithType();
+    setState(() {
+      _refresh = widget.refresh ?? false;
+    });
+    if(_refresh) {
+      _fetchTransWithType();
+    }
   }
 
   @override

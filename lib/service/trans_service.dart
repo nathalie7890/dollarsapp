@@ -50,6 +50,36 @@ class TransactionService {
     return null;
   }
 
+  Future<bool> editTransaction(Transaction transaction, File? imageFile) async {
+    try {
+      String? imageUrl;
+      debugPrint(transaction.toString());
+      if (imageFile != null) {
+        final fileName = Utils.generateFileName(imageFile, "");
+        final storageRef = FirebaseStorage.instance
+            .ref()
+            .child('transaction_images')
+            .child(fileName);
+        await storageRef.putFile(imageFile);
+        imageUrl = await storageRef.getDownloadURL();
+      }
+      ref.doc(transaction.id).update({
+        'title': transaction.title,
+        'amount': transaction.amount,
+        'date': transaction.date,
+        'category': transaction.category,
+        'type': transaction.type,
+        'note': transaction.note,
+        'image': imageUrl ?? transaction.image,
+      });
+      debugPrint('Transaction saved successfully');
+      return true;
+    } catch (e) {
+      debugPrint('Error saving transaction: $e');
+      return false;
+    }
+  }
+
   Future<bool> addTrans(Transaction transaction, File? imageFile) async {
     try {
       String? imageUrl;

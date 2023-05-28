@@ -3,13 +3,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class Transaction {
   String? id;
   String uid;
-  String title;
-  double amount;
-  DateTime date;
-  String category;
-  String type;
-  String? note;
-  String? image;
+  String title; //
+  double amount; //
+  DateTime date; //
+  String category; //
+  String type; //
+  String? note; //
+  String? image; //
 
   Transaction({
     this.id,
