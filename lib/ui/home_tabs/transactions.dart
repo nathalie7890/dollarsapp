@@ -7,11 +7,11 @@ import 'package:dollar_app/ui/home_tabs/transactions_tabs/income.dart';
 
 class Transactions extends StatefulWidget {
   final String? tabState;
-
+  final bool? refresh;
 
   const Transactions(
       {Key? key,
-      this.tabState})
+      this.tabState, this.refresh})
       : super(key: key);
 
   @override
@@ -23,12 +23,14 @@ class _TransactionsState
 {
   
   late String tabState;
+  late bool refresh;
 
   @override
   void initState() {
     super.initState();
     setState(() {
       tabState = widget.tabState ?? "";
+      refresh = widget.refresh ?? false;
       debugPrint("transactions: $tabState");
     });
   }

@@ -2,6 +2,7 @@ import 'package:dollar_app/service/trans_service.dart';
 import 'package:dollar_app/ui/home_tabs/transactions_tabs/widgets/loading.dart';
 import 'package:dollar_app/ui/widgets/nunito_text.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import "../../data/model/trans.dart" as trans_model;
 
 // ui
@@ -12,6 +13,7 @@ import '../utils/utils.dart';
 
 class Transaction extends StatefulWidget {
   final String id;
+
   const Transaction({super.key, required this.id});
 
   @override
@@ -61,7 +63,12 @@ class _TransactionState extends State<Transaction>
     return null;
   }
 
-  _onTapEdit() {}
+  _onTapEdit(String id) async {
+    var res = await context.push("/editTrans/$id");
+    if (res == "true") {
+      _fetchTrans();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -84,10 +91,12 @@ class _TransactionState extends State<Transaction>
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        nunitoText(trans.title, 28, FontWeight.bold, primary),
+                        Expanded(
+                            child: nunitoText(
+                                trans.title, 28, FontWeight.bold, primary)),
                         GestureDetector(
                           onTap: () {
-                            _onTapEdit();
+                            _onTapEdit(widget.id);
                           },
                           child: Icon(
                             FontAwesomeIcons.pen,
@@ -122,7 +131,7 @@ class _TransactionState extends State<Transaction>
                     const SizedBox(
                       height: 5,
                     ),
-                    trans.note == null
+                    trans.note == null || trans.note == ""
                         ? nunitoText("No note for this transaction.", 18,
                             FontWeight.w500, primary)
                         : nunitoText(

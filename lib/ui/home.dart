@@ -21,6 +21,7 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   late String tabState;
   late TabController _tabController;
+  late bool refresh;
 
   @override
   void initState() {
@@ -28,6 +29,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     tabState = widget.tabState ?? "";
     _tabController = TabController(
         length: 5, vsync: this, initialIndex: tabState == "" ? 0 : 1);
+    refresh = false;
   }
 
   @override
@@ -43,13 +45,17 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   }
 
   _goToAddTrans() async {
-    var res = await context.push("/addTrans");
+    final res = await context.push("/addTrans");
+    debugPrint("addTrans res: ${res.toString()}");
     if (res != null) {
       setState(() {
         tabState = res.toString();
         context.go("/home/$tabState");
       });
     }
+    setState(() {
+      refresh = false;
+    });
   }
 
   _scrollTabs(DragEndDetails details) {
@@ -89,6 +95,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                     const HomeTab(),
                     Transactions(
                       tabState: tabState,
+                      refresh: refresh,
                     ),
                     const SizedBox(),
                     const News(),
