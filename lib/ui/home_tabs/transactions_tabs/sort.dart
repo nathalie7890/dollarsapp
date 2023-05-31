@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 
 import '../../../data/model/trans.dart';
@@ -147,7 +146,20 @@ String combineFirstAndLast(List<Transaction> list) {
   }
 }
 
-double getTotalAmount(List<Transaction> transactions, String type, int year) {
+double getTotalAmount(List<Transaction> transactions, String type) {
+  double totalAmount = 0;
+
+  for (var transaction in transactions) {
+    if (transaction.type == type) {
+      totalAmount += transaction.amount;
+    }
+  }
+
+  return totalAmount;
+}
+
+
+double getTotalAmountByYear(List<Transaction> transactions, String type, int year) {
   double totalAmount = 0;
 
   for (var transaction in transactions) {

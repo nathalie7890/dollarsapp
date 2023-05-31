@@ -14,8 +14,7 @@ import 'package:dollar_app/ui/home_tabs/transactions_tabs/widgets/period_btn_row
 import 'package:dollar_app/ui/home_tabs/transactions_tabs/widgets/category_btn_row.dart';
 
 class Expenses extends StatefulWidget {
-  final bool? refresh;
-  const Expenses({super.key, this.refresh});
+  const Expenses({super.key});
 
   @override
   State<Expenses> createState() => _ExpensesState();
@@ -25,15 +24,17 @@ class _ExpensesState extends State<Expenses>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   final transService = TransactionService();
+
+  // expenses, weekly, monthly and yearly
   List<Transaction> _expenses = [];
   List<Map<String, dynamic>> _weeklyExpenses = [];
   List<Map<String, dynamic>> _monthlyExpenses = [];
   List<Map<String, dynamic>> _yearlyExpenses = [];
+  double _total = 0;
 
   String? _period;
   String? _category;
   bool _isLoading = true;
-  late bool _refresh;
 
   @override
   void initState() {
@@ -43,13 +44,8 @@ class _ExpensesState extends State<Expenses>
       duration: const Duration(milliseconds: 1200),
     );
     _controller.repeat();
+
     _fetchTransWithType();
-    setState(() {
-      _refresh = widget.refresh ?? false;
-    });
-    if(_refresh) {
-      _fetchTransWithType();
-    }
   }
 
   @override
@@ -69,6 +65,8 @@ class _ExpensesState extends State<Expenses>
         _weeklyExpenses = sortByWeek(_expenses);
         _monthlyExpenses = sortByMonth(_expenses);
         _yearlyExpenses = sortByYear(_expenses);
+        _total = getTotalAmount(_expenses, "expense");
+        _total = double.tryParse(_total.toStringAsFixed(2)) ?? 0;
       });
 
       setState(() {
@@ -115,7 +113,7 @@ class _ExpensesState extends State<Expenses>
                       height: 15,
                     ),
                     // total income
-                    nunitoText("RM 2037.67", 25, FontWeight.w700, primary),
+                    nunitoText("RM $_total", 25, FontWeight.w700, primary),
                     const SizedBox(height: 20),
 
                     // category btns

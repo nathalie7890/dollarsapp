@@ -46,16 +46,13 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
   _goToAddTrans() async {
     final res = await context.push("/addTrans");
-    debugPrint("addTrans res: ${res.toString()}");
+    // debugPrint(res.toString());
     if (res != null) {
       setState(() {
         tabState = res.toString();
         context.go("/home/$tabState");
       });
     }
-    setState(() {
-      refresh = false;
-    });
   }
 
   _scrollTabs(DragEndDetails details) {
@@ -95,7 +92,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                     const HomeTab(),
                     Transactions(
                       tabState: tabState,
-                      refresh: refresh,
                     ),
                     const SizedBox(),
                     const News(),

@@ -44,7 +44,7 @@ class TransactionService {
           }).toList();
         }
 
-        // debugPrint("Transaction: ${transactions.toString()}");
+        debugPrint("Transaction: ${transactions.toString()}");
         return transactions;
       }
     } catch (e) {
@@ -76,7 +76,7 @@ class TransactionService {
         'note': transaction.note,
         'image': imageUrl ?? transaction.image,
       });
-      
+
       return true;
     } catch (e) {
       debugPrint('Error saving transaction: $e');

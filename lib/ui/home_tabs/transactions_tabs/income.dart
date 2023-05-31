@@ -16,8 +16,7 @@ import 'package:dollar_app/ui/home_tabs/transactions_tabs/widgets/category_btn_r
 import '../../../data/model/trans.dart';
 
 class Income extends StatefulWidget {
-  final bool? refresh;
-  const Income({super.key, this.refresh});
+  const Income({super.key});
 
   @override
   State<Income> createState() => _IncomeState();
@@ -26,20 +25,21 @@ class Income extends StatefulWidget {
 class _IncomeState extends State<Income> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   final transService = TransactionService();
+
+  // income, weekly, monthly and yearly
   List<Transaction> _incomes = [];
   List<Map<String, dynamic>> _weeklyIncome = [];
   List<Map<String, dynamic>> _monthlyIncome = [];
   List<Map<String, dynamic>> _yearlyIncome = [];
+  double _total = 0;
 
   String? _period;
   String? _category;
   bool _isLoading = true;
-  late bool _refresh;
 
   @override
   void initState() {
     super.initState();
-
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1200),
@@ -47,12 +47,6 @@ class _IncomeState extends State<Income> with SingleTickerProviderStateMixin {
     _controller.repeat();
 
     _fetchTransWithType();
-    setState(() {
-      _refresh = widget.refresh ?? false;
-    });
-    if(_refresh) {
-      _fetchTransWithType();
-    }
   }
 
   @override
@@ -72,8 +66,9 @@ class _IncomeState extends State<Income> with SingleTickerProviderStateMixin {
         _weeklyIncome = sortByWeek(_incomes);
         _monthlyIncome = sortByMonth(_incomes);
         _yearlyIncome = sortByYear(_incomes);
+        _total = getTotalAmount(_incomes, "income");
+        _total = double.tryParse(_total.toStringAsFixed(2)) ?? 0;
       });
-      sortByYear(_incomes);
     }
 
     setState(() {
@@ -87,7 +82,6 @@ class _IncomeState extends State<Income> with SingleTickerProviderStateMixin {
       _period = value;
       _category = null;
     });
-
     _fetchTransWithType();
   }
 
@@ -121,7 +115,7 @@ class _IncomeState extends State<Income> with SingleTickerProviderStateMixin {
                     ),
 
                     // total income
-                    nunitoText("RM 2037.67", 25, FontWeight.w700, primary),
+                    nunitoText("RM $_total", 25, FontWeight.w700, primary),
                     const SizedBox(height: 20),
 
                     // category btns

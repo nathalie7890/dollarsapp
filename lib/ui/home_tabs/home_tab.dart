@@ -25,8 +25,10 @@ class HomeTab extends StatefulWidget {
 
 class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
+
   final auth = AuthService();
   final transService = TransactionService();
+
   List<Transaction> _trans = [];
   double _totalIncome = 0.0;
   double _totalExpense = 0.0;
@@ -42,7 +44,6 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
     _controller.repeat();
     _getCurrentUser();
     _fetchTrans();
-    // _uploadSampleData();
   }
 
   @override
@@ -58,7 +59,6 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
 // fetch current user
   _getCurrentUser() {
     final user = auth.getCurrentUser();
-    // debugPrint(user.toString());
     if (user != null) {
       setState(() {
         _username = user.displayName ?? "";
@@ -74,8 +74,10 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
     if (res != null) {
       setState(() {
         _trans = res;
-        _totalIncome = getTotalAmount(_trans, "income", DateTime.now().year);
-        _totalExpense = getTotalAmount(_trans, "expense", DateTime.now().year);
+        _totalIncome =
+            getTotalAmountByYear(_trans, "income", DateTime.now().year);
+        _totalExpense =
+            getTotalAmountByYear(_trans, "expense", DateTime.now().year);
       });
     }
 

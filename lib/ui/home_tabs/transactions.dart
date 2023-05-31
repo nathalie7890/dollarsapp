@@ -7,11 +7,10 @@ import 'package:dollar_app/ui/home_tabs/transactions_tabs/income.dart';
 
 class Transactions extends StatefulWidget {
   final String? tabState;
-  final bool? refresh;
 
   const Transactions(
       {Key? key,
-      this.tabState, this.refresh})
+      this.tabState})
       : super(key: key);
 
   @override
@@ -30,7 +29,6 @@ class _TransactionsState
     super.initState();
     setState(() {
       tabState = widget.tabState ?? "";
-      refresh = widget.refresh ?? false;
       debugPrint("transactions: $tabState");
     });
   }
@@ -54,7 +52,6 @@ class _TransactionsState
               padding: const EdgeInsets.symmetric(vertical: 5),
               color: primary,
               child: TabBar(
-                // controller: _tabController,
                 tabs: const [
                   Tab(text: 'Income'),
                   Tab(text: 'Expense'),
@@ -70,7 +67,6 @@ class _TransactionsState
             ),
           ),
           body: const TabBarView(
-            // controller: _tabController,
             children: [Income(), Expenses()],
           ),
         ));

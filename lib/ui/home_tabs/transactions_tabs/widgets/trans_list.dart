@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:dollar_app/service/trans_service.dart';
 import 'package:flutter/material.dart';
 import "package:go_router/go_router.dart";
