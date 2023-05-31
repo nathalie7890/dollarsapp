@@ -11,6 +11,7 @@ import 'package:dollar_app/ui/widgets/nunito_text.dart';
 
 // utils
 import '../utils/utils.dart';
+import '../widgets/toast.dart';
 
 class Profile extends StatefulWidget {
   const Profile({super.key});
@@ -59,12 +60,10 @@ class _ProfileState extends State<Profile> {
   bool _nameError = false;
   bool _emailError = false;
   bool _passError = false;
-  bool _confirmPassError = false;
 
   final TextEditingController _username = TextEditingController();
   final TextEditingController _email = TextEditingController();
   final TextEditingController _password = TextEditingController();
-  final TextEditingController _confirmPass = TextEditingController();
 
   // validate every input
   bool _isValid() {
@@ -72,14 +71,12 @@ class _ProfileState extends State<Profile> {
       _nameError = _username.text.length < 3;
       _emailError = !Utils.isEmailValid(_email.text);
       _passError = _password.text.length < 5;
-      _confirmPassError = _password.text != _confirmPass.text;
     });
 
     List<bool> boolList = [
       _nameError,
       _emailError,
       _passError,
-      _confirmPassError
     ];
 
     return !boolList.contains(true);
@@ -95,7 +92,12 @@ class _ProfileState extends State<Profile> {
                     setState(() {
                       _isEditing = false;
                       _password.text = "";
-                      _confirmPass.text = "";
+                    })
+                  }
+                else
+                  {
+                    setState(() {
+                      _passError = true;
                     })
                   }
               })
@@ -140,6 +142,7 @@ class _ProfileState extends State<Profile> {
   _onPasswordChange() async {
     debugPrint(email);
     await auth.auth.sendPasswordResetEmail(email: email);
+    showToast("Link is sent!");
   }
 
   @override
@@ -147,7 +150,6 @@ class _ProfileState extends State<Profile> {
     _username.dispose();
     _email.dispose();
     _password.dispose();
-    _confirmPass.dispose();
     super.dispose();
   }
 
@@ -207,6 +209,45 @@ class _ProfileState extends State<Profile> {
           ],
         ),
       ),
+    );
+  }
+
+  void _showDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: nunitoText("Change password", 16, FontWeight.bold, primary),
+          content: nunitoText(
+              "A link with reset password instructions will be sent to your email. Click Ok to conirm.",
+              15,
+              FontWeight.w500,
+              primary),
+          actions: <Widget>[
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: expense_red,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8))),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text("Cancel"),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: primary,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8))),
+              onPressed: () {
+                _onPasswordChange();
+                Navigator.of(context).pop();
+              },
+              child: const Text("OK"),
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -304,16 +345,9 @@ class _ProfileState extends State<Profile> {
         ),
         _userEditInput("Email", _email, false),
         _invalidInput(_emailError, "Invalid email"),
-        const SizedBox(height: 30),
-        _divider(),
-        Center(
-          child: nunitoText(
-              "Credentials needed to confirm Profile Image, Name and Email change. Please key in your password below for authentication.",
-              18,
-              FontWeight.w400,
-              Colors.black87),
-        ),
-        _divider(),
+        const SizedBox(height: 10),
+        nunitoText("Enter your password before saving.", 15, FontWeight.w400,
+            Colors.blue.shade700),
         const SizedBox(
           height: 8,
         ),
@@ -322,8 +356,15 @@ class _ProfileState extends State<Profile> {
         const SizedBox(
           height: 8,
         ),
-        _userEditInput("Confirm Password", _confirmPass, true),
-        _invalidInput(_passError, "Passwords don't match"),
+        Align(
+          alignment: Alignment.bottomRight,
+          child: GestureDetector(
+              onTap: () {
+                _showDialog(context);
+              },
+              child: nunitoText("Change password?", 15, FontWeight.bold,
+                  Colors.blue.shade700)),
+        )
       ],
     );
   }

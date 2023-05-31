@@ -56,6 +56,7 @@ class _TransactionState extends State<Transaction>
         _isIncome = true;
       }
     }
+
     setState(() {
       isLoading = false;
     });

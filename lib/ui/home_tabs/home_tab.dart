@@ -1,12 +1,13 @@
+import 'package:dollar_app/ui/home_tabs/transactions_tabs/sort.dart';
+import 'package:dollar_app/ui/home_tabs/transactions_tabs/widgets/emptyList.dart';
 import 'package:dollar_app/ui/home_tabs/transactions_tabs/widgets/loading.dart';
+import 'package:dollar_app/ui/home_tabs/transactions_tabs/widgets/trans_list.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 // ui
 import '../../data/model/trans.dart';
 import "../colors.dart";
 import '../widgets/nunito_text.dart';
-import "package:font_awesome_flutter/font_awesome_flutter.dart";
 
 // utils
 import '../utils/utils.dart';
@@ -27,6 +28,8 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
   final auth = AuthService();
   final transService = TransactionService();
   List<Transaction> _trans = [];
+  double _totalIncome = 0.0;
+  double _totalExpense = 0.0;
   bool _isLoading = true;
 
   @override
@@ -52,10 +55,6 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
   String _username = "";
   String _photoUrl = "";
 
-  // Future _uploadSampleData() async {
-  //   await transService.importDataFromJson();
-  // }
-
 // fetch current user
   _getCurrentUser() {
     final user = auth.getCurrentUser();
@@ -75,12 +74,14 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
     if (res != null) {
       setState(() {
         _trans = res;
-      });
-
-      setState(() {
-        _isLoading = false;
+        _totalIncome = getTotalAmount(_trans, "income", DateTime.now().year);
+        _totalExpense = getTotalAmount(_trans, "expense", DateTime.now().year);
       });
     }
+
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   @override
@@ -109,76 +110,12 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
                   height: 10,
                 ),
                 Expanded(
-                  child: _transactionList(),
+                  child: _trans.isEmpty
+                      ? emptyList()
+                      : transList(context, _trans, true),
                 )
               ],
             ),
-    );
-  }
-
-// recent transaction list
-  ListView _transactionList() {
-    return ListView.separated(
-      itemCount: _trans.length,
-      itemBuilder: (context, index) {
-        final tran = _trans[index];
-        final title = tran.title;
-        final date = tran.date;
-        double amount = tran.amount;
-        bool isIncome = tran.type == "income";
-
-        return Container(
-            padding: const EdgeInsets.all(15),
-            decoration: BoxDecoration(
-                color: Colors.grey.shade200,
-                borderRadius: BorderRadius.circular(15)),
-            child: Row(
-              children: [
-                CircleAvatar(
-                  radius: 30,
-                  backgroundColor: primary,
-                  child: Icon(
-                    FontAwesomeIcons.utensils,
-                    color: tertiary,
-                    size: 20.0,
-                  ),
-                ),
-                const SizedBox(
-                  width: 10,
-                ),
-                Expanded(
-                  flex: 3,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        title,
-                        style: GoogleFonts.nunito(
-                            fontSize: 15,
-                            color: primary,
-                            fontWeight: FontWeight.bold),
-                        softWrap: true,
-                        maxLines: 2,
-                      ),
-                      nunitoText(Utils.getDateFromDateTime(date), 13,
-                          FontWeight.w500, primary)
-                    ],
-                  ),
-                ),
-                const Spacer(),
-                nunitoText(
-                    isIncome
-                        ? "+ RM ${amount.toStringAsFixed(2)}"
-                        : "- RM ${amount.toStringAsFixed(2)}",
-                    15,
-                    FontWeight.w700,
-                    isIncome ? Colors.blue.shade700 : expense_red)
-              ],
-            ));
-      },
-      separatorBuilder: (context, index) {
-        return const SizedBox(height: 15);
-      },
     );
   }
 
@@ -205,13 +142,15 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
         Row(
           children: [
             Expanded(
-              child: _moneyCard("Income", "RM 341, 972"),
+              child:
+                  _moneyCard("Income", "RM ${_totalIncome.toStringAsFixed(2)}"),
             ),
             const SizedBox(
               width: 8,
             ),
             Expanded(
-              child: _moneyCard("Expense", "RM 67, 108"),
+              child: _moneyCard(
+                  "Expense", "RM ${_totalExpense.toStringAsFixed(2)}"),
             )
           ],
         )
@@ -232,7 +171,7 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
           const SizedBox(
             height: 5,
           ),
-          nunitoText(value, 20, FontWeight.w500, primary),
+          nunitoText(value, 17, FontWeight.w500, primary),
         ],
       ),
     );

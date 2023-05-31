@@ -50,10 +50,13 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-        debugShowCheckedModeBanner: false,
-        home: MaterialApp.router(
-          routerConfig: GoRouter(initialLocation: initialRoute, routes: routes),
-        ));
+    return SafeArea(
+      child: MaterialApp(
+          debugShowCheckedModeBanner: false,
+          home: MaterialApp.router(
+            routerConfig:
+                GoRouter(initialLocation: initialRoute, routes: _routes),
+          )),
+    );
   }
 }

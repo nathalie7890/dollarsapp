@@ -50,7 +50,6 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
     if (res != null) {
       setState(() {
         tabState = res.toString();
-        refresh = true;
         context.go("/home/$tabState");
       });
     }
@@ -86,7 +85,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
         initialIndex: tabState == "" ? 0 : 1,
         child: Scaffold(
           body: Padding(
-            padding: const EdgeInsets.only(top: 25.0),
+            padding: const EdgeInsets.only(top: 0.0),
             child: GestureDetector(
               onHorizontalDragEnd: (details) => _scrollTabs(details),
               child: TabBarView(

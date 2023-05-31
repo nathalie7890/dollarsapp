@@ -3,6 +3,7 @@ import 'package:dollar_app/service/auth_service.dart';
 import 'package:dollar_app/service/trans_service.dart';
 import 'package:dollar_app/ui/home_tabs/transactions_tabs/widgets/loading.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
@@ -61,6 +62,7 @@ class _AddTransState extends State<AddTrans>
   bool _isLoading = false;
 
   bool _titleError = false;
+  bool _amountError = false;
 
 // value of date picker
   void _onDateSelected(DateRangePickerSelectionChangedArgs args) {
@@ -92,6 +94,7 @@ class _AddTransState extends State<AddTrans>
     "clothing",
     "medical",
   ];
+
   final List<String> _incomeCategories = [
     'salary',
     'investment',
@@ -113,7 +116,7 @@ class _AddTransState extends State<AddTrans>
     });
   }
 
-  // image upload
+  // image upload2
   File? selectedImage;
   _onTapImageUpload() async {
     final picker = ImagePicker();
@@ -140,6 +143,13 @@ class _AddTransState extends State<AddTrans>
       return;
     }
 
+    if ((double.tryParse(_amount.text) ?? 0.0) < 0) {
+      setState(() {
+        _amountError = true;
+      });
+      return;
+    }
+
     final uid = auth.getUid();
 
     if (uid.isNotEmpty) {
@@ -157,7 +167,7 @@ class _AddTransState extends State<AddTrans>
           type: _type);
       _addTransaction(transaction, selectedImage).then((value) => {
             if (value == true)
-              {showToast("Added successfully!"), context.pop(_type)}
+              {showToast("Added successfully!"), context.push("/home/$_type")}
           });
     }
 
@@ -180,7 +190,6 @@ class _AddTransState extends State<AddTrans>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // type
-
                 _typeBtns(),
                 const SizedBox(height: 15),
 
@@ -197,6 +206,11 @@ class _AddTransState extends State<AddTrans>
 
                 // amount input
                 _transInput("Amount", _amount, isNumber: true),
+                const SizedBox(height: 15),
+                _amountError
+                    ? nunitoText(
+                        "Amount is required", 15, FontWeight.w500, expense_red)
+                    : Container(),
                 const SizedBox(height: 15),
 
                 // date dropdown
@@ -332,24 +346,24 @@ class _AddTransState extends State<AddTrans>
   }
 
 // displays title Date with down icon btn
-  Row _dateRow() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        nunitoText(
-            Utils.getDateFromDateTime(_date), 17, FontWeight.w500, primary),
-        GestureDetector(
-          onTap: () {
-            setState(() {
-              _datePickerDropDown = !_datePickerDropDown;
-            });
-          },
-          child: const HeroIcon(
+  Widget _dateRow() {
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          _datePickerDropDown = !_datePickerDropDown;
+        });
+      },
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          nunitoText(
+              Utils.getDateFromDateTime(_date), 17, FontWeight.w500, primary),
+          const HeroIcon(
             HeroIcons.chevronDown,
             size: 15,
-          ),
-        )
-      ],
+          )
+        ],
+      ),
     );
   }
 
