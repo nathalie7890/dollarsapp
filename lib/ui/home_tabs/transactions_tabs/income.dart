@@ -11,7 +11,7 @@ import 'package:dollar_app/ui/colors.dart';
 import 'package:dollar_app/ui/widgets/nunito_text.dart';
 import 'package:dollar_app/ui/home_tabs/transactions_tabs/widgets/period_btn_row.dart';
 import 'package:dollar_app/ui/home_tabs/transactions_tabs/widgets/category_btn_row.dart';
-import 'package:syncfusion_flutter_charts/charts.dart';
+import 'package:flutter_scroll_to_top/flutter_scroll_to_top.dart';
 
 // model
 import '../../../data/model/trans.dart';

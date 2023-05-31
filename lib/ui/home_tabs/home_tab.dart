@@ -3,6 +3,7 @@ import 'package:dollar_app/ui/home_tabs/transactions_tabs/widgets/emptyList.dart
 import 'package:dollar_app/ui/home_tabs/transactions_tabs/widgets/loading.dart';
 import 'package:dollar_app/ui/home_tabs/transactions_tabs/widgets/trans_list.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_scroll_to_top/flutter_scroll_to_top.dart';
 
 // ui
 import '../../data/model/trans.dart';
@@ -93,30 +94,39 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
       color: bg,
       child: _isLoading
           ? loadingSpinner(_controller)
-          : SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // usernam and profile pic
-                  _userIntro(),
-                  const SizedBox(
-                    height: 20,
+          : ScrollWrapper(
+              promptAlignment: Alignment.topCenter,
+              promptTheme: const PromptButtonTheme(
+                  icon: Icon(
+                    Icons.arrow_upward,
+                    color: Colors.white,
                   ),
+                  color: primary),
+              builder: (context, properties) => SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // usernam and profile pic
+                    _userIntro(),
+                    const SizedBox(
+                      height: 20,
+                    ),
 
-                  // date, income and expense
-                  _mainCard(),
-                  const SizedBox(height: 30),
+                    // date, income and expense
+                    _mainCard(),
+                    const SizedBox(height: 30),
 
-                  // recent transaction
-                  nunitoText(
-                      "Recent transaction", 20, FontWeight.w600, primary),
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  _trans.isEmpty
-                      ? emptyList()
-                      : transList(context, _trans, true)
-                ],
+                    // recent transaction
+                    nunitoText(
+                        "Recent transaction", 20, FontWeight.w600, primary),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    _trans.isEmpty
+                        ? emptyList()
+                        : transList(context, _trans, true),
+                  ],
+                ),
               ),
             ),
     );

@@ -4,7 +4,6 @@ import 'package:dollar_app/ui/home_tabs/transactions_tabs/widgets/emptyList.dart
 import 'package:dollar_app/ui/home_tabs/transactions_tabs/widgets/loading.dart';
 import 'package:dollar_app/ui/home_tabs/transactions_tabs/widgets/trans_list.dart';
 import 'package:flutter/material.dart';
-import 'package:syncfusion_flutter_charts/charts.dart';
 import '../../../data/model/trans.dart';
 import '../../../service/trans_service.dart';
 
