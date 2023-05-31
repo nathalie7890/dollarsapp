@@ -1,4 +1,5 @@
 import 'package:dollar_app/ui/home_tabs/transactions_tabs/lists.dart';
+import 'package:dollar_app/ui/home_tabs/transactions_tabs/sort.dart';
 import 'package:dollar_app/ui/home_tabs/transactions_tabs/widgets/emptyList.dart';
 import 'package:dollar_app/ui/home_tabs/transactions_tabs/widgets/loading.dart';
 import 'package:dollar_app/ui/home_tabs/transactions_tabs/widgets/trans_list.dart';
@@ -24,6 +25,10 @@ class _ExpensesState extends State<Expenses>
   late AnimationController _controller;
   final transService = TransactionService();
   List<Transaction> _expenses = [];
+  List<Map<String, dynamic>> _weeklyExpenses = [];
+  List<Map<String, dynamic>> _monthlyExpenses = [];
+  List<Map<String, dynamic>> _yearlyExpenses = [];
+
   String? _period;
   String? _category;
   bool _isLoading = true;
@@ -53,6 +58,9 @@ class _ExpensesState extends State<Expenses>
     if (res != null && res.isNotEmpty) {
       setState(() {
         _expenses = res;
+        _weeklyExpenses = sortByWeek(_expenses);
+        _monthlyExpenses = sortByMonth(_expenses);
+        _yearlyExpenses = sortByYear(_expenses);
       });
 
       setState(() {
@@ -65,9 +73,13 @@ class _ExpensesState extends State<Expenses>
   _periodBtnClicked(value) {
     setState(() {
       _period = value;
+      _category = null;
     });
+
+    _fetchTransWithType();
   }
 
+// select category
   _categoryBtnClicked(value) {
     setState(() {
       _category = value;
@@ -109,7 +121,15 @@ class _ExpensesState extends State<Expenses>
 
                     // income list
                     Expanded(
-                      child: transList(context, _expenses, false),
+                      child: _period == "weekly"
+                          ? periodList(context, _weeklyExpenses, false, "week")
+                          : _period == "monthly"
+                              ? periodList(
+                                  context, _monthlyExpenses, false, "month")
+                              : _period == 'yearly'
+                                  ? periodList(
+                                      context, _yearlyExpenses, false, "year")
+                                  : transList(context, _expenses, false),
                     )
                   ],
                 ),

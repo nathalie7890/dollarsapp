@@ -45,50 +45,80 @@ List<Map<String, dynamic>> sortByWeek(List<Transaction> transactions) {
   return reversed;
 }
 
-List<String> sortByMonth(List<Transaction> transactions) {
-  List<String> groupedMonths = [];
+List<Map<String, dynamic>> sortByMonth(List<Transaction> transactions) {
+  // Create a map to store the total amount for each month
+  Map<String, double> monthTotalMap = {};
 
-  for (Transaction transaction in transactions) {
-    String monthYear =
-        '${_getMonthName(transaction.date.month)} ${transaction.date.year}';
+  // Iterate over the transactions and calculate the total amount for each month
+  for (var transaction in transactions) {
+    // Get the month and year of the transaction's date
+    String monthYear = '${transaction.date.month} ${transaction.date.year}';
 
-    if (!groupedMonths.contains(monthYear)) {
-      groupedMonths.add(monthYear);
+    // Update the total amount for the corresponding month
+    if (monthTotalMap.containsKey(monthYear)) {
+      // Update the total amount for the corresponding month
+      monthTotalMap[monthYear] =
+          (monthTotalMap[monthYear] ?? 0) + transaction.amount;
+    } else {
+      monthTotalMap[monthYear] = transaction.amount;
     }
   }
-  print(groupedMonths);
-  return groupedMonths;
+
+  // Convert the monthTotalMap into a list of maps with 'month' and 'total' keys
+  List<Map<String, dynamic>> result = monthTotalMap.entries.map((entry) {
+    String month = _getMonthName(entry.key);
+    String roundedTotal = entry.value.toStringAsFixed(2);
+    double total = double.tryParse(roundedTotal) ?? 0;
+
+    return {'month': month, 'total': total};
+  }).toList();
+
+  return result;
 }
 
-String _getMonthName(int month) {
-  switch (month) {
-    case 1:
-      return 'January';
-    case 2:
-      return 'February';
-    case 3:
-      return 'March';
-    case 4:
-      return 'April';
-    case 5:
-      return 'May';
-    case 6:
-      return 'June';
-    case 7:
-      return 'July';
-    case 8:
-      return 'August';
-    case 9:
-      return 'September';
-    case 10:
-      return 'October';
-    case 11:
-      return 'November';
-    case 12:
-      return 'December';
-    default:
-      return 'Unknown';
+List<Map<String, dynamic>> sortByYear(
+    List<Transaction> transactions) {
+  // Create a map to store the total amount for each year
+  Map<int, double> yearTotalMap = {};
+
+  // Iterate over the transactions and calculate the total amount for each year
+  for (var transaction in transactions) {
+    // Get the year of the transaction's date
+    int year = transaction.date.year;
+
+    // Update the total amount for the corresponding year
+    if (yearTotalMap.containsKey(year)) {
+      (yearTotalMap[year] ?? 0) + transaction.amount;
+    } else {
+      yearTotalMap[year] = transaction.amount;
+    }
   }
+
+  // Convert the yearTotalMap into a list of maps with 'year' and 'total' keys
+  List<Map<String, dynamic>> result = yearTotalMap.entries.map((entry) {
+    int year = entry.key;
+    double total = entry.value;
+
+    return {'year': year, 'total': total};
+  }).toList();
+
+print(result);
+  return result;
+}
+
+String _getMonthName(String monthYear) {
+  // Extract the month and year from the 'monthYear' string
+  List<String> parts = monthYear.split(' ');
+  int month = int.parse(parts[0]);
+  int year = int.parse(parts[1]);
+
+  // Create a DateTime object with the month and year
+  DateTime dateTime = DateTime(year, month);
+
+  // Format the DateTime object to get the month name
+  String monthName = DateFormat('MMMM yyyy').format(dateTime);
+
+  return monthName;
 }
 
 DateTime getStartOfWeek(DateTime date) {

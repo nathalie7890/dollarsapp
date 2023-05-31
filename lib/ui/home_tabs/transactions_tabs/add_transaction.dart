@@ -143,7 +143,7 @@ class _AddTransState extends State<AddTrans>
       return;
     }
 
-    if (_amount.text.isNotEmpty && double.tryParse(_amount.text)! < 0.01) {
+    if ((double.tryParse(_amount.text) ?? 0.0) < 0) {
       setState(() {
         _amountError = true;
       });

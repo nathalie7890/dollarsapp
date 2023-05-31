@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:dollar_app/service/trans_service.dart';
 import 'package:flutter/material.dart';
 import "package:go_router/go_router.dart";
@@ -143,12 +145,6 @@ ListView periodList(
     itemCount: items.length,
     itemBuilder: (context, index) {
       final item = items[index];
-      final title = type == "week"
-          ? item['week']
-          : type == "month"
-              ? item['month']
-              : item['year'];
-      final range = item['range'];
       final total = item['total'];
 
       return Container(
@@ -158,16 +154,13 @@ ListView periodList(
               borderRadius: BorderRadius.circular(15)),
           child: Row(
             children: [
-              type == "week" || type == 'month'
-                  ? Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        nunitoText(title, 15, FontWeight.w800, primary),
-                        nunitoText(
-                            range.toString(), 13, FontWeight.w500, primary)
-                      ],
-                    )
-                  : Container(),
+              type == "week"
+                  ? weekMonthListTile(item)
+                  : type == "month"
+                      ? monthListTile(item)
+                      : type == "year"
+                          ? yearListTile(item)
+                          : Container(),
               const Spacer(),
               nunitoText("+ RM $total", 15, FontWeight.w700,
                   isIncome ? Colors.blue.shade700 : expense_red)
@@ -192,15 +185,12 @@ Column weekMonthListTile(dynamic item) {
   );
 }
 
-Row monthListTile(dynamic item) {
-  final month = item['month'].split(" ")[0];
-  final year = item['month'].split(" ")[1];
-  return Row(
-    crossAxisAlignment: CrossAxisAlignment.center,
-    children: [
-      nunitoText(month, 17, FontWeight.w800, primary),
-      const SizedBox(width: 4),
-      nunitoText(year.toString(), 17, FontWeight.w500, primary)
-    ],
-  );
+Text monthListTile(dynamic item) {
+  final month = item['month'];
+  return nunitoText(month, 15, FontWeight.w800, primary);
+}
+
+Text yearListTile(dynamic item) {
+  final year = item['year'].toString();
+  return nunitoText(year, 15, FontWeight.w800, primary);
 }

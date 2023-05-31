@@ -28,6 +28,7 @@ class _IncomeState extends State<Income> with SingleTickerProviderStateMixin {
   List<Transaction> _incomes = [];
   List<Map<String, dynamic>> _weeklyIncome = [];
   List<Map<String, dynamic>> _monthlyIncome = [];
+  List<Map<String, dynamic>> _yearlyIncome = [];
 
   String? _period;
   String? _category;
@@ -61,9 +62,10 @@ class _IncomeState extends State<Income> with SingleTickerProviderStateMixin {
       setState(() {
         _incomes = res;
         _weeklyIncome = sortByWeek(_incomes);
+        _monthlyIncome = sortByMonth(_incomes);
+        _yearlyIncome = sortByYear(_incomes);
       });
-
-      sortByMonth(_incomes);
+      sortByYear(_incomes);
     }
 
     setState(() {
@@ -75,7 +77,10 @@ class _IncomeState extends State<Income> with SingleTickerProviderStateMixin {
   _periodBtnClicked(value) {
     setState(() {
       _period = value;
+      _category = null;
     });
+
+    _fetchTransWithType();
   }
 
 // select category
@@ -129,7 +134,10 @@ class _IncomeState extends State<Income> with SingleTickerProviderStateMixin {
                             : _period == "monthly"
                                 ? periodList(
                                     context, _monthlyIncome, true, "month")
-                                : transList(context, _incomes, false))
+                                : _period == "yearly"
+                                    ? periodList(
+                                        context, _yearlyIncome, true, "year")
+                                    : transList(context, _incomes, false))
                   ],
                 ),
     );
