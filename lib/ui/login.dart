@@ -1,7 +1,11 @@
-import 'package:flutter/material.dart';
-import "package:google_fonts/google_fonts.dart";
-import "colors.dart";
+import 'package:dollar_app/service/auth_service.dart';
+import 'package:dollar_app/ui/widgets/toast.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter/material.dart';
+
+import "colors.dart";
+import "package:google_fonts/google_fonts.dart";
+import 'package:dollar_app/ui/widgets/nunito_text.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -11,12 +15,26 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+  final auth = AuthService();
+
+  final TextEditingController _email = TextEditingController();
+  final TextEditingController _password = TextEditingController();
+
   _goToRegister(BuildContext context) {
     context.push("/register");
   }
 
-  _goToHome(BuildContext context) {
-    context.push("/home");
+  _onLoginClicked() {
+    _login().then((value) => {
+          if (value == true)
+            {context.push("/home")}
+          else
+            {showToast("Incorrect username or password")}
+        });
+  }
+
+  Future<bool> _login() async {
+    return await auth.login(_email.text, _password.text);
   }
 
   @override
@@ -25,133 +43,76 @@ class _LoginState extends State<Login> {
       body: SingleChildScrollView(
         child: Container(
           color: bg,
-          child: Column(children: [
+          child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
             Container(
-              height: MediaQuery.of(context).size.height * 0.5,
-              padding: const EdgeInsets.all(10),
+              padding: const EdgeInsets.all(25),
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height,
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    "Dollars.",
-                    style: GoogleFonts.montserrat(
-                        color: secondary,
-                        fontSize: 30,
-                        fontWeight: FontWeight.bold),
-                  ),
-                  const SizedBox(
-                    height: 15,
-                  ),
-                  Image.asset(
-                    "assets/images/wallet.png",
-                    height: 200,
-                    width: 200,
-                  ),
-                  Text(
-                    "Sign in to your account",
-                    style: GoogleFonts.montserrat(
-                        color: Colors.grey.shade200,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w500),
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              height: MediaQuery.of(context).size.height * 0.5,
-              padding: const EdgeInsets.all(15),
-              child: Container(
-                decoration: BoxDecoration(
-                  borderRadius:
-                      BorderRadius.circular(30.0), // Set the border radius here
-                  color: primary,
-                ),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 30,
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text(
-                      "Incorrect username or password.",
-                      style: TextStyle(color: tertiary),
-                    ),
-                    const SizedBox(height: 20),
-                    TextField(
-                      onChanged: (value) => {},
-                      style: const TextStyle(color: Colors.white),
-                      decoration: InputDecoration(
-                        hintText: "Username",
-                        hintStyle: const TextStyle(color: secondary),
-                        labelStyle: const TextStyle(color: secondary),
-                        enabledBorder: OutlineInputBorder(
-                            borderSide:
-                                const BorderSide(width: 1, color: secondary),
-                            borderRadius: BorderRadius.circular(15.0)),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide:
-                              const BorderSide(color: secondary, width: 2),
-                          borderRadius: BorderRadius.circular(15.0),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    TextField(
-                      onChanged: (value) => {},
-                      style: const TextStyle(color: Colors.white),
-                      decoration: InputDecoration(
-                        hintText: "Password",
-                        hintStyle: const TextStyle(color: secondary),
-                        labelStyle: const TextStyle(color: secondary),
-                        enabledBorder: OutlineInputBorder(
-                            borderSide:
-                                const BorderSide(width: 1, color: secondary),
-                            borderRadius: BorderRadius.circular(15.0)),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide:
-                              const BorderSide(color: secondary, width: 2),
-                          borderRadius: BorderRadius.circular(15.0),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    ElevatedButton(
-                        onPressed: () {
-                          _goToHome(context);
-                        },
-                        style: ElevatedButton.styleFrom(
-                            minimumSize: const Size.fromHeight(20),
-                            backgroundColor: tertiary,
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 50, vertical: 20),
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(15))),
-                        child: const Text(
-                          "Sign in",
-                          style: TextStyle(color: secondary),
-                        )),
-                    const SizedBox(
-                      height: 20,
-                    ),
-                    GestureDetector(
+                  nunitoText("Welcome back,", 30, FontWeight.bold, primary),
+                  nunitoText("Login to your account.", 20, FontWeight.w500,
+                      Colors.grey.shade500),
+                  const SizedBox(height: 30),
+                  _loginInput("Email", _email, false),
+                  const SizedBox(height: 15),
+                  _loginInput("Password", _password, true),
+                  const SizedBox(height: 30),
+                  SizedBox(
+                      height: 50,
+                      width: MediaQuery.of(context).size.width,
+                      child: _loginBtn(() {
+                        _onLoginClicked();
+                      })),
+                  const SizedBox(height: 20),
+                  nunitoText("Don't have an account?", 17, FontWeight.w500,
+                      Colors.grey.shade700),
+                  GestureDetector(
                       onTap: () {
                         _goToRegister(context);
                       },
-                      child: const Text(
-                        "Create a new account",
-                        style: TextStyle(color: secondary),
-                      ),
-                    )
-                  ],
-                ),
+                      child: nunitoText(
+                          "Create one.", 17, FontWeight.bold, primary)),
+                ],
               ),
             ),
           ]),
         ),
+      ),
+    );
+  }
+
+  // login btn
+  ElevatedButton _loginBtn(void Function() onPressed) {
+    return ElevatedButton(
+        onPressed: onPressed,
+        style: ElevatedButton.styleFrom(
+            backgroundColor: primary,
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15))),
+        child: nunitoText("Log in", 15, FontWeight.w500, tertiary));
+  }
+
+// login input
+  TextField _loginInput(
+      String title, TextEditingController controller, bool isPass) {
+    return TextField(
+      obscureText: isPass,
+      controller: controller,
+      style: GoogleFonts.nunito(
+          color: primary, fontWeight: FontWeight.w600, fontSize: 17),
+      decoration: InputDecoration(
+        // enabledBorder: UnderlineInputBorder(
+        //     borderSide: BorderSide(width: 2, color: Colors.grey.shade500)),
+        enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.grey.shade400, width: 1),
+            borderRadius: BorderRadius.circular(8)),
+        focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8),
+            borderSide: const BorderSide(color: primary, width: 2)),
+        hintText: title,
       ),
     );
   }

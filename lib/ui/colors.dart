@@ -1,8 +1,8 @@
-import 'dart:ui';
+import 'package:flutter/material.dart';
 
-const primary = Color(0xff282a3f);
-const secondary = Color(0xfffee8d7);
-const tertiary = Color(0xfff35383);
-const purple = Color(0xff8a6ba5);
-const orange = Color(0xffef8666);
-const bg = Color(0xff1b1e2d);
+const Color primary = Colors.black87;
+Color secondary = Colors.grey.shade100;
+ Color tertiary = Colors.orange.shade50;
+Color bg = Colors.grey.shade50;
+const burgundy = Color(0xff800020);
+Color expense_red = Colors.red.shade700;
