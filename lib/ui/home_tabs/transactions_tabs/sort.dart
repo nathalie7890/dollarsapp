@@ -35,59 +35,99 @@ List<Map<String, dynamic>> sortByWeek(List<Transaction> transactions) {
 
   for (int i = 0; i < weeks.length; i++) {
     Map<String, dynamic> newMap = {};
-    newMap["week"] = "Week ${i + 1}";
+    newMap["period"] = "Week ${i + 1}";
     newMap["range"] = combineFirstAndLast(weeks[i]);
     newMap["total"] = calculateTotals(weeks[i]);
+    newMap['categoryTotals'] = calculateCategoryTotals(weeks[i]);
     result.add(newMap);
   }
+
   List<Map<String, dynamic>> reversed = result.reversed.toList();
 
   return reversed;
 }
 
 List<Map<String, dynamic>> sortByMonth(List<Transaction> transactions) {
-  Map<String, double> monthTotalMap = {};
+  Map<String, Map<String, double>> monthCategoryTotalMap = {};
 
   for (var transaction in transactions) {
     String monthYear = '${transaction.date.month} ${transaction.date.year}';
 
-    if (monthTotalMap.containsKey(monthYear)) {
-      monthTotalMap[monthYear] =
-          (monthTotalMap[monthYear] ?? 0) + transaction.amount;
+    if (monthCategoryTotalMap.containsKey(monthYear)) {
+      Map<String, double> categoryTotalMap = monthCategoryTotalMap[monthYear]!;
+      categoryTotalMap[transaction.category] =
+          (categoryTotalMap[transaction.category] ?? 0) + transaction.amount;
     } else {
-      monthTotalMap[monthYear] = transaction.amount;
+      Map<String, double> categoryTotalMap = {};
+      categoryTotalMap[transaction.category] = transaction.amount;
+      monthCategoryTotalMap[monthYear] = categoryTotalMap;
     }
   }
 
-  List<Map<String, dynamic>> result = monthTotalMap.entries.map((entry) {
+  List<Map<String, dynamic>> result =
+      monthCategoryTotalMap.entries.map((entry) {
     String month = _getMonthName(entry.key);
-    String roundedTotal = entry.value.toStringAsFixed(2);
-    double total = double.tryParse(roundedTotal) ?? 0;
+    Map<String, double> categoryTotalMap = entry.value;
 
-    return {'month': month, 'total': total};
+    List<Map<String, dynamic>> categoryTotals = categoryTotalMap.entries
+        .map((categoryEntry) => {
+              'category': categoryEntry.key,
+              'total': categoryEntry.value,
+            })
+        .toList();
+
+    double total = categoryTotalMap.values.reduce((a, b) => a + b);
+
+    return {
+      'period': month,
+      'total': total.toStringAsFixed(2),
+      'categoryTotals': categoryTotals
+    };
   }).toList();
 
   return result;
 }
 
 List<Map<String, dynamic>> sortByYear(List<Transaction> transactions) {
-  Map<int, double> yearTotalMap = {};
+  Map<int, Map<String, double>> yearCategoryTotalMap = {};
 
   for (var transaction in transactions) {
     int year = transaction.date.year;
 
-    if (yearTotalMap.containsKey(year)) {
-      (yearTotalMap[year] ?? 0) + transaction.amount;
+    if (yearCategoryTotalMap.containsKey(year)) {
+      Map<String, double> categoryTotalMap = yearCategoryTotalMap[year]!;
+      categoryTotalMap[transaction.category] =
+          (categoryTotalMap[transaction.category] ?? 0) + transaction.amount;
     } else {
-      yearTotalMap[year] = transaction.amount;
+      Map<String, double> categoryTotalMap = {};
+      categoryTotalMap[transaction.category] = transaction.amount;
+      yearCategoryTotalMap[year] = categoryTotalMap;
     }
   }
 
-  List<Map<String, dynamic>> result = yearTotalMap.entries.map((entry) {
+  List<Map<String, dynamic>> result = yearCategoryTotalMap.entries.map((entry) {
     int year = entry.key;
-    double total = entry.value;
+    Map<String, double> categoryTotalMap = entry.value;
 
-    return {'year': year, 'total': total};
+    List<Map<String, dynamic>> categoryTotals = [];
+    for (var categoryEntry in categoryTotalMap.entries) {
+      String category = categoryEntry.key;
+      String rounded = categoryEntry.value.toStringAsFixed(2);
+      double total = double.tryParse(rounded) ?? 0;
+
+      categoryTotals.add({
+        'category': category,
+        'total': total,
+      });
+    }
+
+    double total = categoryTotalMap.values.reduce((a, b) => a + b);
+
+    return {
+      'period': year,
+      'total': total.toStringAsFixed(2),
+      'categoryTotals': categoryTotals
+    };
   }).toList();
 
   return result;
@@ -131,7 +171,8 @@ String combineFirstAndLast(List<Transaction> list) {
   }
 }
 
-List<Map<String, dynamic>> calculateCategoryTotals(List<Transaction> transactions) {
+List<Map<String, dynamic>> calculateCategoryTotals(
+    List<Transaction> transactions) {
   List<Map<String, dynamic>> categoryTotalsList = [];
   Map<String, double> categoryTotals = {};
 

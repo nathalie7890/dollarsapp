@@ -15,6 +15,7 @@ import 'package:syncfusion_flutter_charts/charts.dart';
 
 // model
 import '../../../data/model/trans.dart';
+import '../../utils/utils.dart';
 
 class Income extends StatefulWidget {
   const Income({super.key});
@@ -25,9 +26,9 @@ class Income extends StatefulWidget {
 
 class _IncomeState extends State<Income> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
-  final transService = TransactionService();
+  final ScrollController _scrollController = ScrollController();
 
-  late List<GDPData> _chartData;
+  final transService = TransactionService();
 
   // income, weekly, monthly and yearly
   List<Transaction> _incomes = [];
@@ -49,7 +50,6 @@ class _IncomeState extends State<Income> with SingleTickerProviderStateMixin {
       duration: const Duration(milliseconds: 1200),
     );
     _controller.repeat();
-    _chartData = getChartData();
     _fetchTransWithType();
   }
 
@@ -73,6 +73,10 @@ class _IncomeState extends State<Income> with SingleTickerProviderStateMixin {
         _total = getTotalAmount(_incomes, "income");
         _total = double.tryParse(_total.toStringAsFixed(2)) ?? 0;
         _categoryTotals = calculateCategoryTotals(_incomes);
+      });
+    } else {
+      setState(() {
+        _incomes = [];
       });
     }
 
@@ -99,15 +103,35 @@ class _IncomeState extends State<Income> with SingleTickerProviderStateMixin {
     _fetchTransWithType();
   }
 
-  List<GDPData> getChartData() {
-    final List<GDPData> chartData = [
-      GDPData("Oceania", 1223),
-      GDPData("Africa", 434),
-      GDPData("America", 9583),
-      GDPData("Asia", 5743),
-      GDPData("Europe", 6934),
-    ];
-    return chartData;
+  void _periodChartData(String type, int index) {
+    Utils.scrollToTop(_scrollController);
+
+    switch (type) {
+      case 'week':
+        setState(() {
+          _categoryTotals = _weeklyIncome[index]['categoryTotals'];
+          _total = _weeklyIncome[index]['total'];
+        });
+        break;
+
+      case 'month':
+        setState(() {
+          _categoryTotals = _monthlyIncome[index]['categoryTotals'];
+          _total = double.tryParse(_monthlyIncome[index]['total']) ?? 0;
+        });
+        break;
+
+      case 'year':
+        setState(() {
+          _categoryTotals = _yearlyIncome[index]['categoryTotals'];
+          _total = double.tryParse(_yearlyIncome[index]['total']) ?? 0;
+        });
+        break;
+
+      default:
+        //
+        break;
+    }
   }
 
   @override
@@ -117,70 +141,56 @@ class _IncomeState extends State<Income> with SingleTickerProviderStateMixin {
       padding: const EdgeInsets.all(10),
       child: _isLoading
           ? loadingSpinner(_controller)
-          : !_isLoading && _incomes.isEmpty
-              ? emptyList()
-              : SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      // weekly monthly yearly btns
-                      SizedBox(
-                        height: 40,
-                        child:
-                            periodBtnRow(periods, _periodBtnClicked, _period),
-                      ),
-                      const SizedBox(
-                        height: 15,
-                      ),
-
-                      SfCircularChart(
-                        tooltipBehavior: TooltipBehavior(enable: true),
-                        legend: Legend(
-                            isVisible: true,
-                            position: LegendPosition.bottom,
-                            overflowMode: LegendItemOverflowMode.wrap),
-                        series: <CircularSeries>[
-                          PieSeries<Map<String, dynamic>, String>(
-                              dataSource: _categoryTotals,
-                              xValueMapper: (data, _) => data['category'],
-                              yValueMapper: (data, _) => data['total'],
-                              dataLabelSettings:
-                                  const DataLabelSettings(isVisible: true))
-                        ],
-                      ),
-
-                      // total income
-                      nunitoText("RM $_total", 25, FontWeight.w700, primary),
-                      const SizedBox(height: 20),
-
-                      // category btns
-                      SizedBox(
-                        height: 40,
-                        child: categoryBtnRow(
-                            incomeCategories, _categoryBtnClicked, _category),
-                      ),
-                      const SizedBox(
-                        height: 30,
-                      ),
-
-                      // income list
-                      _period == "weekly"
-                          ? periodList(context, _weeklyIncome, true, "week")
-                          : _period == "monthly"
-                              ? periodList(
-                                  context, _monthlyIncome, true, "month")
-                              : _period == "yearly"
-                                  ? periodList(
-                                      context, _yearlyIncome, true, "year")
-                                  : transList(context, _incomes, false)
-                    ],
+          : SingleChildScrollView(
+              controller: _scrollController,
+              child: Column(
+                children: [
+                  // weekly monthly yearly btns
+                  SizedBox(
+                    height: 40,
+                    child: periodBtnRow(periods, _periodBtnClicked, _period),
                   ),
-                ),
+                  const SizedBox(
+                    height: 15,
+                  ),
+
+                  // chart
+                  !_isLoading && _incomes.isEmpty
+                      ? Container()
+                      : chart(_categoryTotals),
+
+                  // total income
+                  !_isLoading && _incomes.isEmpty
+                      ? Container()
+                      : nunitoText("RM $_total", 25, FontWeight.w700, primary),
+                  const SizedBox(height: 20),
+
+                  // category btns
+                  SizedBox(
+                    height: 40,
+                    child: categoryBtnRow(
+                        incomeCategories, _categoryBtnClicked, _category),
+                  ),
+                  const SizedBox(
+                    height: 30,
+                  ),
+
+                  // income list
+                  !_isLoading && _incomes.isEmpty
+                      ? emptyList()
+                      : _period == "weekly"
+                          ? periodList(context, _weeklyIncome, true, "week",
+                              _periodChartData)
+                          : _period == "monthly"
+                              ? periodList(context, _monthlyIncome, true,
+                                  "month", _periodChartData)
+                              : _period == "yearly"
+                                  ? periodList(context, _yearlyIncome, true,
+                                      "year", _periodChartData)
+                                  : transList(context, _incomes, false)
+                ],
+              ),
+            ),
     );
   }
-}
-
-class GDPData {
-  GDPData(this.continent, this.gdp);
-  final String continent;
-  final int gdp;
 }

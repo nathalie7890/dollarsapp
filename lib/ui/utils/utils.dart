@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/material.dart';
 import "package:intl/intl.dart";
 
 class Utils {
@@ -34,5 +35,14 @@ class Utils {
 
   static String capitalize(String word) {
     return '${word[0].toUpperCase()}${word.substring(1)}';
+  }
+
+// scroll to the top of the page
+  static void scrollToTop(ScrollController controller) {
+    controller.animateTo(
+      0,
+      duration: const Duration(milliseconds: 500),
+      curve: Curves.easeInOut,
+    );
   }
 }

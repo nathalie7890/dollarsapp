@@ -44,6 +44,10 @@ class TransactionService {
           }).toList();
         }
 
+        if (transactions.isEmpty) {
+          return null;
+        }
+
         return transactions;
       }
     } catch (e) {

@@ -10,6 +10,7 @@ import '../../../service/trans_service.dart';
 
 // ui
 import '../../colors.dart';
+import '../../utils/utils.dart';
 import '../../widgets/nunito_text.dart';
 import 'package:dollar_app/ui/home_tabs/transactions_tabs/widgets/period_btn_row.dart';
 import 'package:dollar_app/ui/home_tabs/transactions_tabs/widgets/category_btn_row.dart';
@@ -24,6 +25,8 @@ class Expenses extends StatefulWidget {
 class _ExpensesState extends State<Expenses>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
+  final ScrollController _scrollController = ScrollController();
+
   final transService = TransactionService();
 
   // expenses, weekly, monthly and yearly
@@ -72,11 +75,15 @@ class _ExpensesState extends State<Expenses>
         _total = double.tryParse(_total.toStringAsFixed(2)) ?? 0;
         _categoryTotals = calculateCategoryTotals(_expenses);
       });
-
+    } else {
       setState(() {
-        _isLoading = false;
+        _expenses = [];
       });
     }
+
+    setState(() {
+      _isLoading = false;
+    });
   }
 
 // select category
@@ -98,6 +105,36 @@ class _ExpensesState extends State<Expenses>
     _fetchTransWithType();
   }
 
+  void _periodChartData(String type, int index) {
+    Utils.scrollToTop(_scrollController);
+
+    switch (type) {
+      case 'week':
+        setState(() {
+          _categoryTotals = _weeklyExpenses[index]['categoryTotals'];
+          _total = _weeklyExpenses[index]['total'];
+        });
+        break;
+
+      case 'month':
+        setState(() {
+          _categoryTotals = _monthlyExpenses[index]['categoryTotals'];
+          _total = double.tryParse(_monthlyExpenses[index]['total']) ?? 0;
+        });
+        break;
+
+      case 'year':
+        setState(() {
+          _categoryTotals = _yearlyExpenses[index]['categoryTotals'];
+          _total = double.tryParse(_monthlyExpenses[index]['total']) ?? 0;
+        });
+        break;
+
+      default:
+        break;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -107,6 +144,7 @@ class _ExpensesState extends State<Expenses>
           : !_isLoading && _expenses.isEmpty
               ? emptyList()
               : SingleChildScrollView(
+                  controller: _scrollController,
                   child: Column(
                     children: [
                       // weekly monthly yearly btns
@@ -119,24 +157,16 @@ class _ExpensesState extends State<Expenses>
                         height: 15,
                       ),
 
-                      SfCircularChart(
-                        tooltipBehavior: TooltipBehavior(enable: true),
-                        legend: Legend(
-                            isVisible: true,
-                            position: LegendPosition.bottom,
-                            overflowMode: LegendItemOverflowMode.wrap),
-                        series: <CircularSeries>[
-                          PieSeries<Map<String, dynamic>, String>(
-                              dataSource: _categoryTotals,
-                              xValueMapper: (data, _) => data['category'],
-                              yValueMapper: (data, _) => data['total'],
-                              dataLabelSettings:
-                                  const DataLabelSettings(isVisible: true))
-                        ],
-                      ),
+                      // chart
+                      !_isLoading && _expenses.isEmpty
+                          ? Container()
+                          : chart(_categoryTotals),
 
-                      // total income
-                      nunitoText("RM $_total", 25, FontWeight.w700, primary),
+                      // total expenses
+                      !_isLoading && _expenses.isEmpty
+                          ? Container()
+                          : nunitoText(
+                              "RM $_total", 25, FontWeight.w700, primary),
                       const SizedBox(height: 20),
 
                       // category btns
@@ -150,13 +180,14 @@ class _ExpensesState extends State<Expenses>
 
                       // income list
                       _period == "weekly"
-                          ? periodList(context, _weeklyExpenses, false, "week")
+                          ? periodList(context, _weeklyExpenses, false, "week",
+                              _periodChartData)
                           : _period == "monthly"
-                              ? periodList(
-                                  context, _monthlyExpenses, false, "month")
+                              ? periodList(context, _monthlyExpenses, false,
+                                  "month", _periodChartData)
                               : _period == 'yearly'
-                                  ? periodList(
-                                      context, _yearlyExpenses, false, "year")
+                                  ? periodList(context, _yearlyExpenses, false,
+                                      "year", _periodChartData)
                                   : transList(context, _expenses, false)
                     ],
                   ),
