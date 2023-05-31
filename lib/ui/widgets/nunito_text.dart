@@ -9,6 +9,9 @@ Text nunitoText(
 ) {
   return Text(
     text,
+    softWrap: true,
+    maxLines: 2,
+    overflow: TextOverflow.ellipsis,
     style: GoogleFonts.nunito(
       fontSize: size,
       fontWeight: weight,

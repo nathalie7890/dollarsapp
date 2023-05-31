@@ -90,7 +90,9 @@ class _TransactionState extends State<Transaction>
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        nunitoText(trans.title, 28, FontWeight.bold, primary),
+                        Expanded(
+                            child: nunitoText(
+                                trans.title, 28, FontWeight.bold, primary)),
                         GestureDetector(
                           onTap: () {
                             _onTapEdit(widget.id);
@@ -128,7 +130,7 @@ class _TransactionState extends State<Transaction>
                     const SizedBox(
                       height: 5,
                     ),
-                    trans.note == null
+                    trans.note == null || trans.note == ""
                         ? nunitoText("No note for this transaction.", 18,
                             FontWeight.w500, primary)
                         : nunitoText(

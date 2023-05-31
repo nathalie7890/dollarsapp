@@ -30,23 +30,28 @@ class EditTransaction extends StatefulWidget {
 
 class _EditTransactionState extends State<EditTransaction>
     with SingleTickerProviderStateMixin {
-  late String productId;
   late AnimationController _controller;
+
+  late String productId;
   final auth = AuthService();
   final transService = TransactionService();
 
   // visibility of date picker
   bool _datePickerDropDown = false;
+
+  // title, note, amount
   final TextEditingController _title = TextEditingController();
   final TextEditingController _note = TextEditingController();
   final TextEditingController _amount = TextEditingController();
+
   late DateTime _date;
   late String _type;
   late String _category;
-  late String _uid;
+  late String? _uploadedImageUrl;
+
   bool _isLoading = true;
+  bool _isSubmitLoading = false;
   bool _titleError = false;
-  late String _uploadedImageUrl;
 
   // image upload
   File? selectedImage;
@@ -62,8 +67,7 @@ class _EditTransactionState extends State<EditTransaction>
         _category = res.category;
         _type = res.type;
         _date = res.date;
-        _uploadedImageUrl = res.image ?? "";
-        _uid = res.uid;
+        _uploadedImageUrl = res.image;
       }
       _isLoading = false;
     });
@@ -123,6 +127,7 @@ class _EditTransactionState extends State<EditTransaction>
     });
   }
 
+// select income
   _onIncomeBtnClicked() {
     setState(() {
       _type = "income";
@@ -130,6 +135,7 @@ class _EditTransactionState extends State<EditTransaction>
     });
   }
 
+// select expense
   _onExpenseBtnClicked() {
     setState(() {
       _type = "expense";
@@ -137,6 +143,7 @@ class _EditTransactionState extends State<EditTransaction>
     });
   }
 
+// select image from gallery
   _onTapImageUpload() async {
     final picker = ImagePicker();
     final image = await picker.pickImage(source: ImageSource.gallery);
@@ -146,6 +153,13 @@ class _EditTransactionState extends State<EditTransaction>
         selectedImage = File(image.path);
       });
     }
+  }
+
+//revert back to orignal image
+  _useOriginalImage() {
+    setState(() {
+      selectedImage = null;
+    });
   }
 
 // add transaction
@@ -163,121 +177,140 @@ class _EditTransactionState extends State<EditTransaction>
       return;
     }
 
-    final uid = auth.getUid();
-
-    if (uid.isNotEmpty) {
-      setState(() {
-        _isLoading = true;
-      });
-
-      final transaction = Transaction(
-          id: productId,
-          uid: uid,
-          title: _title.text,
-          amount: double.tryParse(_amount.text) ?? 0.0,
-          note: _note.text,
-          date: _date,
-          category: _category,
-          type: _type);
-      _editTransaction(transaction, selectedImage).then((value) => {
-            if (value == true)
-              {showToast("Added successfully!"), context.go("/home/$_type")}
-          });
-    }
-
     setState(() {
-      _isLoading = false;
+      _isSubmitLoading = true;
     });
+
+    final transaction = Transaction(
+        id: productId,
+        uid: "",
+        title: _title.text,
+        amount: double.tryParse(_amount.text) ?? 0.0,
+        note: _note.text,
+        date: _date,
+        category: _category,
+        type: _type,
+        image: _uploadedImageUrl);
+    _editTransaction(transaction, selectedImage).then((value) => {
+          if (value == true)
+            {
+              setState(() {
+                _isSubmitLoading = false;
+              }),
+              showToast("Updated successfully!"),
+              context.go("/home/$_type")
+            }
+        });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Add Transaction"),
+        title: const Text("Update Transaction"),
         backgroundColor: primary,
       ),
-      body: SingleChildScrollView(
-        child: _isLoading
-            ? loadingSpinner(_controller)
-            : Container(
-                padding: const EdgeInsets.all(25),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // type
+      body: _isLoading
+          ? loadingSpinner(_controller)
+          : SingleChildScrollView(
+              child: Container(
+                  padding: const EdgeInsets.all(25),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // type
 
-                    _typeBtns(),
-                    const SizedBox(height: 15),
+                      _typeBtns(),
+                      const SizedBox(height: 15),
 
-                    // title input
-                    _transInput("Title", _title),
-                    const SizedBox(
-                      height: 3,
-                    ),
-                    _titleError
-                        ? nunitoText("Title is required", 15, FontWeight.w500,
-                            expense_red)
-                        : Container(),
-                    const SizedBox(height: 15),
+                      // title input
+                      _transInput("Title", _title),
+                      const SizedBox(
+                        height: 3,
+                      ),
+                      _titleError
+                          ? nunitoText("Title is required", 15, FontWeight.w500,
+                              expense_red)
+                          : Container(),
+                      const SizedBox(height: 15),
 
-                    // amount input
-                    _transInput("Amount", _amount, isNumber: true),
-                    const SizedBox(height: 15),
+                      // amount input
+                      _transInput("Amount", _amount, isNumber: true),
+                      const SizedBox(height: 15),
 
-                    // date dropdown
-                    nunitoText(
-                        "Date", 15, FontWeight.bold, Colors.grey.shade700),
-                    const SizedBox(height: 10),
-                    _dateRow(),
-                    const SizedBox(height: 6),
-                    _datePickerDropDown ? _datePicker() : Container(),
-                    divider(color: Colors.grey.shade500),
+                      // date dropdown
+                      nunitoText(
+                          "Date", 15, FontWeight.bold, Colors.grey.shade700),
+                      const SizedBox(height: 10),
+                      _dateRow(),
+                      const SizedBox(height: 6),
+                      _datePickerDropDown ? _datePicker() : Container(),
+                      divider(color: Colors.grey.shade500),
 
-                    // category dropdown
-                    nunitoText(
-                        "Category", 15, FontWeight.bold, Colors.grey.shade700),
-                    _categoryDropDown(_type == "income"
-                        ? _incomeCategories
-                        : _expenseCategories),
-                    const SizedBox(height: 15),
+                      // category dropdown
+                      nunitoText("Category", 15, FontWeight.bold,
+                          Colors.grey.shade700),
+                      _categoryDropDown(_type == "income"
+                          ? _incomeCategories
+                          : _expenseCategories),
+                      const SizedBox(height: 15),
 
-                    // note input
-                    _transInput("Note (Optional)", _note),
-                    const SizedBox(height: 15),
+                      // note input
+                      _transInput("Note (Optional)", _note),
+                      const SizedBox(height: 15),
 
-                    // upload image
-                    nunitoText("Image (Optional)", 15, FontWeight.bold,
-                        Colors.grey.shade700),
-                    const SizedBox(height: 15),
+                      // upload image
+                      nunitoText("Image (Optional)", 15, FontWeight.bold,
+                          Colors.grey.shade700),
+                      const SizedBox(height: 15),
 
-                    _uploadedImageUrl != ""
-                        ? Image.network(_uploadedImageUrl)
-                        : selectedImage != null
-                            ? Image.file(selectedImage!)
-                            : _imageUpload(context),
-                    const SizedBox(height: 15),
+                      // transaction image
+                      selectedImage != null
+                          ? Image.file(selectedImage!)
+                          : _uploadedImageUrl != null
+                              ? Image.network(_uploadedImageUrl!)
+                              : _imageUpload(context),
+                      const SizedBox(height: 15),
 
-                    // change image button
-                    _uploadedImageUrl != "" || selectedImage != null
-                        ? SizedBox(
-                            width: MediaQuery.of(context).size.width,
-                            height: 50,
-                            child: _btn(_onTapImageUpload, "Change Image",
-                                color: Colors.grey.shade800))
-                        : Container(),
-                    const SizedBox(height: 15),
+                      _uploadedImageUrl != null || selectedImage != null
+                          ? _changeImage()
+                          : Container(),
+                      const SizedBox(height: 15),
 
-                    // add transaction button
-                    SizedBox(
-                        width: MediaQuery.of(context).size.width,
-                        height: 50,
-                        child: _isLoading
-                            ? loadingSpinner(_controller)
-                            : _btn(_onAddBtnClicked, "Add Transaction"))
-                  ],
-                )),
-      ),
+                      // add transaction button
+                      _isSubmitLoading
+                          ? loadingSpinner(_controller)
+                          : SizedBox(
+                              width: MediaQuery.of(context).size.width,
+                              height: 50,
+                              child: _isLoading
+                                  ? loadingSpinner(_controller)
+                                  : _btn(_onAddBtnClicked, "Save Transaction"))
+                    ],
+                  )),
+            ),
+    );
+  }
+
+  Row _changeImage() {
+    return Row(
+      children: [
+        Expanded(
+          child: SizedBox(
+            height: 50,
+            child: _btn(_onTapImageUpload, "Change Image",
+                color: Colors.grey.shade800),
+          ),
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          child: SizedBox(
+            height: 50,
+            child: _btn(_useOriginalImage, "Use Original",
+                color: Colors.blue.shade800),
+          ),
+        )
+      ],
     );
   }
 
