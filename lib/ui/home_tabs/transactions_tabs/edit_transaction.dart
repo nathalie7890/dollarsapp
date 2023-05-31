@@ -52,6 +52,7 @@ class _EditTransactionState extends State<EditTransaction>
   bool _isLoading = true;
   bool _isSubmitLoading = false;
   bool _titleError = false;
+  bool _amountError = false;
 
   // image upload
   File? selectedImage;
@@ -177,6 +178,13 @@ class _EditTransactionState extends State<EditTransaction>
       return;
     }
 
+    if ((double.tryParse(_amount.text) ?? 0.0) < 0 || _amount.text.isEmpty) {
+      setState(() {
+        _amountError = true;
+      });
+      return;
+    }
+
     setState(() {
       _isSubmitLoading = true;
     });
@@ -236,6 +244,10 @@ class _EditTransactionState extends State<EditTransaction>
 
                       // amount input
                       _transInput("Amount", _amount, isNumber: true),
+                      _amountError
+                          ? nunitoText("Amount is required", 15,
+                              FontWeight.w500, expense_red)
+                          : Container(),
                       const SizedBox(height: 15),
 
                       // date dropdown
@@ -272,6 +284,7 @@ class _EditTransactionState extends State<EditTransaction>
                               : _imageUpload(context),
                       const SizedBox(height: 15),
 
+                      // change image/use original image btn
                       _uploadedImageUrl != null || selectedImage != null
                           ? _changeImage()
                           : Container(),
