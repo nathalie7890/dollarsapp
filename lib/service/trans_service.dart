@@ -44,7 +44,6 @@ class TransactionService {
           }).toList();
         }
 
-        debugPrint("Transaction: ${transactions.toString()}");
         return transactions;
       }
     } catch (e) {

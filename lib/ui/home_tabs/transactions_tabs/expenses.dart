@@ -4,6 +4,7 @@ import 'package:dollar_app/ui/home_tabs/transactions_tabs/widgets/emptyList.dart
 import 'package:dollar_app/ui/home_tabs/transactions_tabs/widgets/loading.dart';
 import 'package:dollar_app/ui/home_tabs/transactions_tabs/widgets/trans_list.dart';
 import 'package:flutter/material.dart';
+import 'package:syncfusion_flutter_charts/charts.dart';
 import '../../../data/model/trans.dart';
 import '../../../service/trans_service.dart';
 
@@ -30,6 +31,8 @@ class _ExpensesState extends State<Expenses>
   List<Map<String, dynamic>> _weeklyExpenses = [];
   List<Map<String, dynamic>> _monthlyExpenses = [];
   List<Map<String, dynamic>> _yearlyExpenses = [];
+  List<Map<String, dynamic>> _categoryTotals = [];
+
   double _total = 0;
 
   String? _period;
@@ -67,6 +70,7 @@ class _ExpensesState extends State<Expenses>
         _yearlyExpenses = sortByYear(_expenses);
         _total = getTotalAmount(_expenses, "expense");
         _total = double.tryParse(_total.toStringAsFixed(2)) ?? 0;
+        _categoryTotals = calculateCategoryTotals(_expenses);
       });
 
       setState(() {
@@ -102,32 +106,50 @@ class _ExpensesState extends State<Expenses>
           ? loadingSpinner(_controller)
           : !_isLoading && _expenses.isEmpty
               ? emptyList()
-              : Column(
-                  children: [
-                    // weekly monthly yearly btns
-                    SizedBox(
-                      height: 40,
-                      child: periodBtnRow(periods, _periodBtnClicked, _period),
-                    ),
-                    const SizedBox(
-                      height: 15,
-                    ),
-                    // total income
-                    nunitoText("RM $_total", 25, FontWeight.w700, primary),
-                    const SizedBox(height: 20),
-
-                    // category btns
-                    SizedBox(
+              : SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      // weekly monthly yearly btns
+                      SizedBox(
                         height: 40,
-                        child: categoryBtnRow(
-                            expenseCategories, _categoryBtnClicked, _category)),
-                    const SizedBox(
-                      height: 30,
-                    ),
+                        child:
+                            periodBtnRow(periods, _periodBtnClicked, _period),
+                      ),
+                      const SizedBox(
+                        height: 15,
+                      ),
 
-                    // income list
-                    Expanded(
-                      child: _period == "weekly"
+                      SfCircularChart(
+                        tooltipBehavior: TooltipBehavior(enable: true),
+                        legend: Legend(
+                            isVisible: true,
+                            position: LegendPosition.bottom,
+                            overflowMode: LegendItemOverflowMode.wrap),
+                        series: <CircularSeries>[
+                          PieSeries<Map<String, dynamic>, String>(
+                              dataSource: _categoryTotals,
+                              xValueMapper: (data, _) => data['category'],
+                              yValueMapper: (data, _) => data['total'],
+                              dataLabelSettings:
+                                  const DataLabelSettings(isVisible: true))
+                        ],
+                      ),
+
+                      // total income
+                      nunitoText("RM $_total", 25, FontWeight.w700, primary),
+                      const SizedBox(height: 20),
+
+                      // category btns
+                      SizedBox(
+                          height: 40,
+                          child: categoryBtnRow(expenseCategories,
+                              _categoryBtnClicked, _category)),
+                      const SizedBox(
+                        height: 30,
+                      ),
+
+                      // income list
+                      _period == "weekly"
                           ? periodList(context, _weeklyExpenses, false, "week")
                           : _period == "monthly"
                               ? periodList(
@@ -135,9 +157,9 @@ class _ExpensesState extends State<Expenses>
                               : _period == 'yearly'
                                   ? periodList(
                                       context, _yearlyExpenses, false, "year")
-                                  : transList(context, _expenses, false),
-                    )
-                  ],
+                                  : transList(context, _expenses, false)
+                    ],
+                  ),
                 ),
     );
   }

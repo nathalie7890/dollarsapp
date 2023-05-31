@@ -24,6 +24,7 @@ dependencies:
   heroicons: ^0.8.0
   http: ^0.13.6
   image_picker: ^0.8.7+5
+  syncfusion_flutter_charts: ^21.2.8
   syncfusion_flutter_datepicker: ^21.2.5
   url_launcher: ^6.1.11
 

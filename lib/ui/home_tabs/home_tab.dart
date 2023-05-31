@@ -93,30 +93,31 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
       color: bg,
       child: _isLoading
           ? loadingSpinner(_controller)
-          : Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // usernam and profile pic
-                _userIntro(),
-                const SizedBox(
-                  height: 20,
-                ),
+          : SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // usernam and profile pic
+                  _userIntro(),
+                  const SizedBox(
+                    height: 20,
+                  ),
 
-                // date, income and expense
-                _mainCard(),
-                const SizedBox(height: 30),
+                  // date, income and expense
+                  _mainCard(),
+                  const SizedBox(height: 30),
 
-                // recent transaction
-                nunitoText("Recent transaction", 20, FontWeight.w600, primary),
-                const SizedBox(
-                  height: 10,
-                ),
-                Expanded(
-                  child: _trans.isEmpty
+                  // recent transaction
+                  nunitoText(
+                      "Recent transaction", 20, FontWeight.w600, primary),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  _trans.isEmpty
                       ? emptyList()
-                      : transList(context, _trans, true),
-                )
-              ],
+                      : transList(context, _trans, true)
+                ],
+              ),
             ),
     );
   }

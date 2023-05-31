@@ -41,21 +41,17 @@ List<Map<String, dynamic>> sortByWeek(List<Transaction> transactions) {
     result.add(newMap);
   }
   List<Map<String, dynamic>> reversed = result.reversed.toList();
+
   return reversed;
 }
 
 List<Map<String, dynamic>> sortByMonth(List<Transaction> transactions) {
-  // Create a map to store the total amount for each month
   Map<String, double> monthTotalMap = {};
 
-  // Iterate over the transactions and calculate the total amount for each month
   for (var transaction in transactions) {
-    // Get the month and year of the transaction's date
     String monthYear = '${transaction.date.month} ${transaction.date.year}';
 
-    // Update the total amount for the corresponding month
     if (monthTotalMap.containsKey(monthYear)) {
-      // Update the total amount for the corresponding month
       monthTotalMap[monthYear] =
           (monthTotalMap[monthYear] ?? 0) + transaction.amount;
     } else {
@@ -63,7 +59,6 @@ List<Map<String, dynamic>> sortByMonth(List<Transaction> transactions) {
     }
   }
 
-  // Convert the monthTotalMap into a list of maps with 'month' and 'total' keys
   List<Map<String, dynamic>> result = monthTotalMap.entries.map((entry) {
     String month = _getMonthName(entry.key);
     String roundedTotal = entry.value.toStringAsFixed(2);
@@ -75,17 +70,12 @@ List<Map<String, dynamic>> sortByMonth(List<Transaction> transactions) {
   return result;
 }
 
-List<Map<String, dynamic>> sortByYear(
-    List<Transaction> transactions) {
-  // Create a map to store the total amount for each year
+List<Map<String, dynamic>> sortByYear(List<Transaction> transactions) {
   Map<int, double> yearTotalMap = {};
 
-  // Iterate over the transactions and calculate the total amount for each year
   for (var transaction in transactions) {
-    // Get the year of the transaction's date
     int year = transaction.date.year;
 
-    // Update the total amount for the corresponding year
     if (yearTotalMap.containsKey(year)) {
       (yearTotalMap[year] ?? 0) + transaction.amount;
     } else {
@@ -93,7 +83,6 @@ List<Map<String, dynamic>> sortByYear(
     }
   }
 
-  // Convert the yearTotalMap into a list of maps with 'year' and 'total' keys
   List<Map<String, dynamic>> result = yearTotalMap.entries.map((entry) {
     int year = entry.key;
     double total = entry.value;
@@ -101,20 +90,16 @@ List<Map<String, dynamic>> sortByYear(
     return {'year': year, 'total': total};
   }).toList();
 
-print(result);
   return result;
 }
 
 String _getMonthName(String monthYear) {
-  // Extract the month and year from the 'monthYear' string
   List<String> parts = monthYear.split(' ');
   int month = int.parse(parts[0]);
   int year = int.parse(parts[1]);
 
-  // Create a DateTime object with the month and year
   DateTime dateTime = DateTime(year, month);
 
-  // Format the DateTime object to get the month name
   String monthName = DateFormat('MMMM yyyy').format(dateTime);
 
   return monthName;
@@ -146,6 +131,28 @@ String combineFirstAndLast(List<Transaction> list) {
   }
 }
 
+List<Map<String, dynamic>> calculateCategoryTotals(List<Transaction> transactions) {
+  List<Map<String, dynamic>> categoryTotalsList = [];
+  Map<String, double> categoryTotals = {};
+
+  for (var transaction in transactions) {
+    if (categoryTotals.containsKey(transaction.category)) {
+      (categoryTotals[transaction.category] ?? 0) + transaction.amount;
+    } else {
+      categoryTotals[transaction.category] = transaction.amount;
+    }
+  }
+
+  categoryTotals.forEach((category, total) {
+    categoryTotalsList.add({
+      'category': category,
+      'total': total,
+    });
+  });
+
+  return categoryTotalsList;
+}
+
 double getTotalAmount(List<Transaction> transactions, String type) {
   double totalAmount = 0;
 
@@ -158,8 +165,8 @@ double getTotalAmount(List<Transaction> transactions, String type) {
   return totalAmount;
 }
 
-
-double getTotalAmountByYear(List<Transaction> transactions, String type, int year) {
+double getTotalAmountByYear(
+    List<Transaction> transactions, String type, int year) {
   double totalAmount = 0;
 
   for (var transaction in transactions) {

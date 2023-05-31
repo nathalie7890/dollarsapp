@@ -37,6 +37,8 @@ IconData getIconByValue(List<Map<String, dynamic>> categories, String value) {
 
 ListView transList(BuildContext context, List transactions, bool getAll) {
   return ListView.separated(
+    shrinkWrap: true,
+    physics: const NeverScrollableScrollPhysics(),
     itemCount: transactions.length,
     itemBuilder: (context, index) {
       final trans = transactions[index];
@@ -140,6 +142,8 @@ CircleAvatar transIcon(String category, bool isIncome) {
 ListView periodList(
     BuildContext context, List items, bool isIncome, String type) {
   return ListView.separated(
+    shrinkWrap: true,
+    physics: const NeverScrollableScrollPhysics(),
     itemCount: items.length,
     itemBuilder: (context, index) {
       final item = items[index];
