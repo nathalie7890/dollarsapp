@@ -1,12 +1,13 @@
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+
+import 'login.dart';
 import 'package:dollar_app/ui/home.dart';
 import 'package:dollar_app/ui/home_tabs/transaction.dart';
 import 'package:dollar_app/ui/home_tabs/transactions_tabs/add_transaction.dart';
 import 'package:dollar_app/ui/home_tabs/transactions_tabs/edit_transaction.dart';
 import 'package:dollar_app/ui/register.dart';
 import 'package:dollar_app/ui/splash_screen.dart';
-import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'login.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key, required this.initialRoute});
@@ -18,7 +19,9 @@ class MyApp extends StatelessWidget {
     GoRoute(path: "/login", builder: (context, state) => const Login()),
     // GoRoute(path: "/", builder: (context, state) => const Home()),
     GoRoute(
-        path: "/home", name: "home", builder: (context, state) => const Home()),
+        path: "/home",
+        name: "home",
+        builder: (context, state) => const Home()),
     GoRoute(
         path: "/register",
         name: "register",
@@ -55,7 +58,7 @@ class MyApp extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           home: MaterialApp.router(
             routerConfig:
-                GoRouter(initialLocation: initialRoute, routes: _routes),
+                GoRouter(initialLocation: initialRoute, routes: routes),
           )),
     );
   }

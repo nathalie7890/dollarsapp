@@ -1,8 +1,7 @@
-import 'dart:math';
-
 import 'package:dollar_app/service/trans_service.dart';
 import 'package:flutter/material.dart';
 import "package:go_router/go_router.dart";
+import 'package:syncfusion_flutter_charts/charts.dart';
 import '../../../../data/model/trans.dart';
 
 // ui
@@ -39,6 +38,8 @@ IconData getIconByValue(List<Map<String, dynamic>> categories, String value) {
 
 ListView transList(BuildContext context, List transactions, bool getAll) {
   return ListView.separated(
+    shrinkWrap: true,
+    physics: const NeverScrollableScrollPhysics(),
     itemCount: transactions.length,
     itemBuilder: (context, index) {
       final trans = transactions[index];
@@ -139,33 +140,38 @@ CircleAvatar transIcon(String category, bool isIncome) {
   );
 }
 
-ListView periodList(
-    BuildContext context, List items, bool isIncome, String type) {
+ListView periodList(BuildContext context, List items, bool isIncome,
+    String type, void Function(String, int) setChartData) {
   return ListView.separated(
+    shrinkWrap: true,
+    physics: const NeverScrollableScrollPhysics(),
     itemCount: items.length,
     itemBuilder: (context, index) {
       final item = items[index];
       final total = item['total'];
 
-      return Container(
-          padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-              color: Colors.grey.shade200,
-              borderRadius: BorderRadius.circular(15)),
-          child: Row(
-            children: [
-              type == "week"
-                  ? weekMonthListTile(item)
-                  : type == "month"
-                      ? monthListTile(item)
-                      : type == "year"
-                          ? yearListTile(item)
-                          : Container(),
-              const Spacer(),
-              nunitoText("+ RM $total", 15, FontWeight.w700,
-                  isIncome ? Colors.blue.shade700 : expense_red)
-            ],
-          ));
+      return GestureDetector(
+        onTap: (){setChartData(type, index);},
+        child: Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+                color: Colors.grey.shade200,
+                borderRadius: BorderRadius.circular(15)),
+            child: Row(
+              children: [
+                type == "week"
+                    ? weekMonthListTile(item)
+                    : type == "month"
+                        ? monthListTile(item)
+                        : type == "year"
+                            ? yearListTile(item)
+                            : Container(),
+                const Spacer(),
+                nunitoText("+ RM $total", 15, FontWeight.w700,
+                    isIncome ? Colors.blue.shade700 : expense_red)
+              ],
+            )),
+      );
     },
     separatorBuilder: (context, index) {
       return const SizedBox(height: 15);
@@ -173,8 +179,8 @@ ListView periodList(
   );
 }
 
-Column weekMonthListTile(dynamic item) {
-  final title = item['week'];
+Widget weekMonthListTile(dynamic item) {
+  final title = item['period'];
   final range = item['range'];
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
@@ -186,11 +192,28 @@ Column weekMonthListTile(dynamic item) {
 }
 
 Text monthListTile(dynamic item) {
-  final month = item['month'];
+  final month = item['period'];
   return nunitoText(month, 15, FontWeight.w800, primary);
 }
 
 Text yearListTile(dynamic item) {
-  final year = item['year'].toString();
+  final year = item['period'].toString();
   return nunitoText(year, 15, FontWeight.w800, primary);
+}
+
+Widget chart(List<Map<String, dynamic>> data) {
+  return SfCircularChart(
+    tooltipBehavior: TooltipBehavior(enable: true),
+    legend: Legend(
+        isVisible: true,
+        position: LegendPosition.bottom,
+        overflowMode: LegendItemOverflowMode.wrap),
+    series: <CircularSeries>[
+      PieSeries<Map<String, dynamic>, String>(
+          dataSource: data,
+          xValueMapper: (data, _) => data['category'],
+          yValueMapper: (data, _) => data['total'],
+          dataLabelSettings: const DataLabelSettings(isVisible: true))
+    ],
+  );
 }

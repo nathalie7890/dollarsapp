@@ -21,15 +21,15 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
   late String tabState;
   late TabController _tabController;
-  late bool refresh;
 
   @override
   void initState() {
     super.initState();
+
     tabState = widget.tabState ?? "";
+
     _tabController = TabController(
-        length: 5, vsync: this, initialIndex: tabState == "" ? 0 : 1);
-    refresh = false;
+        length: 5, vsync: this, initialIndex: tabState.isEmpty ? 0 : 1);
   }
 
   @override
@@ -46,18 +46,16 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
   _goToAddTrans() async {
     final res = await context.push("/addTrans");
-    debugPrint("addTrans res: ${res.toString()}");
-    if (res != null) {
-      setState(() {
-        tabState = res.toString();
-        context.go("/home/$tabState");
-      });
-    }
+
     setState(() {
-      refresh = false;
+      tabState = res.toString();
     });
+
+    _tabController.animateTo(1);
   }
 
+  // when on second tab and swipe right,
+  // takes user to third tab instead of add transaction page
   _scrollTabs(DragEndDetails details) {
     if (details.primaryVelocity! < 0) {
       if (_tabController.index == 0) {
@@ -80,92 +78,97 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-        length: 5,
-        initialIndex: tabState == "" ? 0 : 1,
-        child: Scaffold(
-          body: Padding(
-            padding: const EdgeInsets.only(top: 0.0),
-            child: GestureDetector(
-              onHorizontalDragEnd: (details) => _scrollTabs(details),
-              child: TabBarView(
-                  controller: _tabController,
-                  physics: const NeverScrollableScrollPhysics(),
-                  children: [
-                    const HomeTab(),
-                    Transactions(
-                      tabState: tabState,
-                      refresh: refresh,
-                    ),
-                    const SizedBox(),
-                    const News(),
-                    const Profile()
-                  ]),
-            ),
-          ),
-          bottomNavigationBar: Container(
-            decoration: BoxDecoration(
-              color: Colors.grey.shade50,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.shade200,
-                  blurRadius: 10,
-                  spreadRadius: 5,
-                )
-              ],
-            ),
-            child: TabBar(
-                controller: _tabController,
-                padding: const EdgeInsets.symmetric(vertical: 10),
-                unselectedLabelColor: Colors.grey.shade500,
-                indicatorSize: TabBarIndicatorSize.label,
-                indicatorPadding: const EdgeInsets.symmetric(vertical: -2),
-                labelColor: primary,
-                indicatorColor: Colors.transparent,
-                tabs: [
-                  const Tab(
-                    child: Align(
-                      alignment: Alignment.center,
-                      child: HeroIcon(
-                        HeroIcons.home,
-                        size: 27,
-                      ),
-                    ),
+    return Scaffold(
+      body: Padding(
+        padding: const EdgeInsets.only(top: 0.0),
+        child: GestureDetector(
+          onHorizontalDragEnd: (details) => _scrollTabs(details),
+          child: TabBarView(
+              controller: _tabController,
+              physics: const NeverScrollableScrollPhysics(),
+              children: [
+                const HomeTab(),
+                Transactions(
+                  tabState: tabState,
+                ),
+                const SizedBox(),
+                const News(),
+                const Profile()
+              ]),
+        ),
+      ),
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          color: Colors.grey.shade50,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.shade200,
+              blurRadius: 10,
+              spreadRadius: 5,
+            )
+          ],
+        ),
+        child: TabBar(
+            controller: _tabController,
+            padding: const EdgeInsets.symmetric(vertical: 10),
+            unselectedLabelColor: Colors.grey.shade500,
+            indicatorSize: TabBarIndicatorSize.label,
+            indicatorPadding: const EdgeInsets.symmetric(vertical: -2),
+            labelColor: primary,
+            indicatorColor: Colors.transparent,
+            tabs: [
+              // first tab icon
+              const Tab(
+                child: Align(
+                  alignment: Alignment.center,
+                  child: HeroIcon(
+                    HeroIcons.home,
+                    size: 27,
                   ),
-                  const Tab(
-                    child: Align(
-                      alignment: Alignment.center,
-                      child: HeroIcon(
-                        HeroIcons.wallet,
-                        size: 27,
-                      ),
-                    ),
+                ),
+              ),
+
+              // second tab icon
+              const Tab(
+                child: Align(
+                  alignment: Alignment.center,
+                  child: HeroIcon(
+                    HeroIcons.wallet,
+                    size: 27,
                   ),
-                  Tab(
-                    child: Align(
-                      alignment: Alignment.center,
-                      child: FloatingActionButton(
-                        onPressed: () => {_goToAddTrans()},
-                        elevation: 0,
-                        backgroundColor: primary,
-                        child: const HeroIcon(HeroIcons.plus),
-                      ),
-                    ),
+                ),
+              ),
+
+              // btn that goes to add transaction page
+              Tab(
+                child: Align(
+                  alignment: Alignment.center,
+                  child: FloatingActionButton(
+                    onPressed: () => {_goToAddTrans()},
+                    elevation: 0,
+                    backgroundColor: primary,
+                    child: const HeroIcon(HeroIcons.plus),
                   ),
-                  const Tab(
-                    child: Align(
-                      alignment: Alignment.center,
-                      child: HeroIcon(HeroIcons.newspaper, size: 27),
-                    ),
-                  ),
-                  const Tab(
-                    child: Align(
-                      alignment: Alignment.center,
-                      child: HeroIcon(HeroIcons.userCircle, size: 27),
-                    ),
-                  ),
-                ]),
-          ),
-        ));
+                ),
+              ),
+
+              // third tab icon
+              const Tab(
+                child: Align(
+                  alignment: Alignment.center,
+                  child: HeroIcon(HeroIcons.newspaper, size: 27),
+                ),
+              ),
+
+              // fourth tab icon
+              const Tab(
+                child: Align(
+                  alignment: Alignment.center,
+                  child: HeroIcon(HeroIcons.userCircle, size: 27),
+                ),
+              ),
+            ]),
+      ),
+    );
   }
 }

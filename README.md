@@ -45,5 +45,3 @@ Keep track of your income and expenses 💰
 
 * User may edit transaction details, which includes replacing the original image with a new one
 * User may delete transaction
-
-

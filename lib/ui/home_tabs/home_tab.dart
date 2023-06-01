@@ -1,8 +1,9 @@
 import 'package:dollar_app/ui/home_tabs/transactions_tabs/sort.dart';
 import 'package:dollar_app/ui/home_tabs/transactions_tabs/widgets/emptyList.dart';
-import 'package:dollar_app/ui/home_tabs/transactions_tabs/widgets/loading.dart';
+import 'package:dollar_app/ui/widgets/loading.dart';
 import 'package:dollar_app/ui/home_tabs/transactions_tabs/widgets/trans_list.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_scroll_to_top/flutter_scroll_to_top.dart';
 
 // ui
 import '../../data/model/trans.dart';
@@ -25,8 +26,10 @@ class HomeTab extends StatefulWidget {
 
 class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
+
   final auth = AuthService();
   final transService = TransactionService();
+
   List<Transaction> _trans = [];
   double _totalIncome = 0.0;
   double _totalExpense = 0.0;
@@ -40,9 +43,12 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
       duration: const Duration(milliseconds: 1200),
     );
     _controller.repeat();
+
+    // fetch current user
     _getCurrentUser();
+
+    // fetch transactions
     _fetchTrans();
-    // _uploadSampleData();
   }
 
   @override
@@ -58,7 +64,6 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
 // fetch current user
   _getCurrentUser() {
     final user = auth.getCurrentUser();
-    // debugPrint(user.toString());
     if (user != null) {
       setState(() {
         _username = user.displayName ?? "";
@@ -74,8 +79,10 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
     if (res != null) {
       setState(() {
         _trans = res;
-        _totalIncome = getTotalAmount(_trans, "income", DateTime.now().year);
-        _totalExpense = getTotalAmount(_trans, "expense", DateTime.now().year);
+        _totalIncome =
+            getTotalAmountByYear(_trans, "income", DateTime.now().year);
+        _totalExpense =
+            getTotalAmountByYear(_trans, "expense", DateTime.now().year);
       });
     }
 
@@ -91,30 +98,40 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
       color: bg,
       child: _isLoading
           ? loadingSpinner(_controller)
-          : Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // usernam and profile pic
-                _userIntro(),
-                const SizedBox(
-                  height: 20,
-                ),
+          : ScrollWrapper(
+              promptAlignment: Alignment.topCenter,
+              promptTheme: const PromptButtonTheme(
+                  icon: Icon(
+                    Icons.arrow_upward,
+                    color: Colors.white,
+                  ),
+                  color: primary),
+              builder: (context, properties) => SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // usernam and profile pic
+                    _userIntro(),
+                    const SizedBox(
+                      height: 20,
+                    ),
 
-                // date, income and expense
-                _mainCard(),
-                const SizedBox(height: 30),
+                    // date, income and expense
+                    _mainCard(),
+                    const SizedBox(height: 30),
 
-                // recent transaction
-                nunitoText("Recent transaction", 20, FontWeight.w600, primary),
-                const SizedBox(
-                  height: 10,
+                    // recent transaction
+                    nunitoText(
+                        "Recent transaction", 20, FontWeight.w600, primary),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    _trans.isEmpty
+                        ? emptyList()
+                        : transList(context, _trans, true),
+                  ],
                 ),
-                Expanded(
-                  child: _trans.isEmpty
-                      ? emptyList()
-                      : transList(context, _trans, true),
-                )
-              ],
+              ),
             ),
     );
   }

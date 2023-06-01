@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 
 import '../../../data/model/trans.dart';
@@ -36,86 +35,111 @@ List<Map<String, dynamic>> sortByWeek(List<Transaction> transactions) {
 
   for (int i = 0; i < weeks.length; i++) {
     Map<String, dynamic> newMap = {};
-    newMap["week"] = "Week ${i + 1}";
+    newMap["period"] = "Week ${i + 1}";
     newMap["range"] = combineFirstAndLast(weeks[i]);
     newMap["total"] = calculateTotals(weeks[i]);
+    newMap['categoryTotals'] = calculateCategoryTotals(weeks[i]);
     result.add(newMap);
   }
+
   List<Map<String, dynamic>> reversed = result.reversed.toList();
+
   return reversed;
 }
 
 List<Map<String, dynamic>> sortByMonth(List<Transaction> transactions) {
-  // Create a map to store the total amount for each month
-  Map<String, double> monthTotalMap = {};
+  Map<String, Map<String, double>> monthCategoryTotalMap = {};
 
-  // Iterate over the transactions and calculate the total amount for each month
   for (var transaction in transactions) {
-    // Get the month and year of the transaction's date
     String monthYear = '${transaction.date.month} ${transaction.date.year}';
 
-    // Update the total amount for the corresponding month
-    if (monthTotalMap.containsKey(monthYear)) {
-      // Update the total amount for the corresponding month
-      monthTotalMap[monthYear] =
-          (monthTotalMap[monthYear] ?? 0) + transaction.amount;
+    if (monthCategoryTotalMap.containsKey(monthYear)) {
+      Map<String, double> categoryTotalMap = monthCategoryTotalMap[monthYear]!;
+      categoryTotalMap[transaction.category] =
+          (categoryTotalMap[transaction.category] ?? 0) + transaction.amount;
     } else {
-      monthTotalMap[monthYear] = transaction.amount;
+      Map<String, double> categoryTotalMap = {};
+      categoryTotalMap[transaction.category] = transaction.amount;
+      monthCategoryTotalMap[monthYear] = categoryTotalMap;
     }
   }
 
-  // Convert the monthTotalMap into a list of maps with 'month' and 'total' keys
-  List<Map<String, dynamic>> result = monthTotalMap.entries.map((entry) {
+  List<Map<String, dynamic>> result =
+      monthCategoryTotalMap.entries.map((entry) {
     String month = _getMonthName(entry.key);
-    String roundedTotal = entry.value.toStringAsFixed(2);
-    double total = double.tryParse(roundedTotal) ?? 0;
+    Map<String, double> categoryTotalMap = entry.value;
 
-    return {'month': month, 'total': total};
+    List<Map<String, dynamic>> categoryTotals = categoryTotalMap.entries
+        .map((categoryEntry) => {
+              'category': categoryEntry.key,
+              'total': categoryEntry.value,
+            })
+        .toList();
+
+    double total = categoryTotalMap.values.reduce((a, b) => a + b);
+
+    return {
+      'period': month,
+      'total': total.toStringAsFixed(2),
+      'categoryTotals': categoryTotals
+    };
   }).toList();
 
   return result;
 }
 
-List<Map<String, dynamic>> sortByYear(
-    List<Transaction> transactions) {
-  // Create a map to store the total amount for each year
-  Map<int, double> yearTotalMap = {};
+List<Map<String, dynamic>> sortByYear(List<Transaction> transactions) {
+  Map<int, Map<String, double>> yearCategoryTotalMap = {};
 
-  // Iterate over the transactions and calculate the total amount for each year
   for (var transaction in transactions) {
-    // Get the year of the transaction's date
     int year = transaction.date.year;
 
-    // Update the total amount for the corresponding year
-    if (yearTotalMap.containsKey(year)) {
-      (yearTotalMap[year] ?? 0) + transaction.amount;
+    if (yearCategoryTotalMap.containsKey(year)) {
+      Map<String, double> categoryTotalMap = yearCategoryTotalMap[year]!;
+      categoryTotalMap[transaction.category] =
+          (categoryTotalMap[transaction.category] ?? 0) + transaction.amount;
     } else {
-      yearTotalMap[year] = transaction.amount;
+      Map<String, double> categoryTotalMap = {};
+      categoryTotalMap[transaction.category] = transaction.amount;
+      yearCategoryTotalMap[year] = categoryTotalMap;
     }
   }
 
-  // Convert the yearTotalMap into a list of maps with 'year' and 'total' keys
-  List<Map<String, dynamic>> result = yearTotalMap.entries.map((entry) {
+  List<Map<String, dynamic>> result = yearCategoryTotalMap.entries.map((entry) {
     int year = entry.key;
-    double total = entry.value;
+    Map<String, double> categoryTotalMap = entry.value;
 
-    return {'year': year, 'total': total};
+    List<Map<String, dynamic>> categoryTotals = [];
+    for (var categoryEntry in categoryTotalMap.entries) {
+      String category = categoryEntry.key;
+      String rounded = categoryEntry.value.toStringAsFixed(2);
+      double total = double.tryParse(rounded) ?? 0;
+
+      categoryTotals.add({
+        'category': category,
+        'total': total,
+      });
+    }
+
+    double total = categoryTotalMap.values.reduce((a, b) => a + b);
+
+    return {
+      'period': year,
+      'total': total.toStringAsFixed(2),
+      'categoryTotals': categoryTotals
+    };
   }).toList();
 
-print(result);
   return result;
 }
 
 String _getMonthName(String monthYear) {
-  // Extract the month and year from the 'monthYear' string
   List<String> parts = monthYear.split(' ');
   int month = int.parse(parts[0]);
   int year = int.parse(parts[1]);
 
-  // Create a DateTime object with the month and year
   DateTime dateTime = DateTime(year, month);
 
-  // Format the DateTime object to get the month name
   String monthName = DateFormat('MMMM yyyy').format(dateTime);
 
   return monthName;
@@ -147,7 +171,43 @@ String combineFirstAndLast(List<Transaction> list) {
   }
 }
 
-double getTotalAmount(List<Transaction> transactions, String type, int year) {
+List<Map<String, dynamic>> calculateCategoryTotals(
+    List<Transaction> transactions) {
+  List<Map<String, dynamic>> categoryTotalsList = [];
+  Map<String, double> categoryTotals = {};
+
+  for (var transaction in transactions) {
+    if (categoryTotals.containsKey(transaction.category)) {
+      (categoryTotals[transaction.category] ?? 0) + transaction.amount;
+    } else {
+      categoryTotals[transaction.category] = transaction.amount;
+    }
+  }
+
+  categoryTotals.forEach((category, total) {
+    categoryTotalsList.add({
+      'category': category,
+      'total': total,
+    });
+  });
+
+  return categoryTotalsList;
+}
+
+double getTotalAmount(List<Transaction> transactions, String type) {
+  double totalAmount = 0;
+
+  for (var transaction in transactions) {
+    if (transaction.type == type) {
+      totalAmount += transaction.amount;
+    }
+  }
+
+  return totalAmount;
+}
+
+double getTotalAmountByYear(
+    List<Transaction> transactions, String type, int year) {
   double totalAmount = 0;
 
   for (var transaction in transactions) {
