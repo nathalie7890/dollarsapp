@@ -43,7 +43,11 @@ class _HomeTabState extends State<HomeTab> with SingleTickerProviderStateMixin {
       duration: const Duration(milliseconds: 1200),
     );
     _controller.repeat();
+
+    // fetch current user
     _getCurrentUser();
+
+    // fetch transactions
     _fetchTrans();
   }
 

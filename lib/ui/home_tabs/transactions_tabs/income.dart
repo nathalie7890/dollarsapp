@@ -29,26 +29,32 @@ class _IncomeState extends State<Income> with SingleTickerProviderStateMixin {
 
   final transService = TransactionService();
 
-  // income, weekly, monthly and yearly
+  // incomes , weekly, monthly and yearly
   List<Transaction> _incomes = [];
   List<Map<String, dynamic>> _weeklyIncome = [];
   List<Map<String, dynamic>> _monthlyIncome = [];
   List<Map<String, dynamic>> _yearlyIncome = [];
   List<Map<String, dynamic>> _categoryTotals = [];
-  double _total = 0;
+  
+  double _total = 0; // total income
 
-  String? _period;
-  String? _category;
-  bool _isLoading = true;
+  String? _period; //all, weekly, monthly, yearly
+  String? _category; //income categories
+  bool _isLoading = true; //for fetch incomes
 
   @override
   void initState() {
     super.initState();
+
+    // for loading spinner
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1200),
     );
+
     _controller.repeat();
+
+    // fetch incomes
     _fetchTransWithType();
   }
 
@@ -58,7 +64,7 @@ class _IncomeState extends State<Income> with SingleTickerProviderStateMixin {
     super.dispose();
   }
 
-// fetch income
+// fetch incomes
   Future _fetchTransWithType() async {
     final res = await transService.getTransWithType(
         type: "income", category: _category);
@@ -84,16 +90,17 @@ class _IncomeState extends State<Income> with SingleTickerProviderStateMixin {
     });
   }
 
-// select period
+// select period and fetch incomes again
   _periodBtnClicked(value) {
     setState(() {
       _period = value;
       _category = null;
     });
+
     _fetchTransWithType();
   }
 
-// select category
+// select category and fetch incomes again
   _categoryBtnClicked(value) {
     setState(() {
       _category = value;
@@ -102,6 +109,7 @@ class _IncomeState extends State<Income> with SingleTickerProviderStateMixin {
     _fetchTransWithType();
   }
 
+  // set chart data and scroll to the top
   void _periodChartData(String type, int index) {
     Utils.scrollToTop(_scrollController);
 

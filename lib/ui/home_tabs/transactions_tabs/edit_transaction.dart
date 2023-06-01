@@ -69,8 +69,8 @@ class _EditTransactionState extends State<EditTransaction>
         _type = res.type;
         _date = res.date;
         _uploadedImageUrl = res.image;
+        _isLoading = false;
       }
-      _isLoading = false;
     });
   }
 
@@ -296,9 +296,7 @@ class _EditTransactionState extends State<EditTransaction>
                           : SizedBox(
                               width: MediaQuery.of(context).size.width,
                               height: 50,
-                              child: _isLoading
-                                  ? loadingSpinner(_controller)
-                                  : _btn(_onAddBtnClicked, "Save Transaction"))
+                              child: _btn(_onAddBtnClicked, "Save Transaction"))
                     ],
                   )),
             ),

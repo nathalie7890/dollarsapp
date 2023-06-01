@@ -1,4 +1,6 @@
 import 'package:dollar_app/service/auth_service.dart';
+import 'package:dollar_app/ui/home_tabs/transactions_tabs/widgets/loading.dart';
+import 'package:dollar_app/ui/widgets/toast.dart';
 import 'package:flutter/material.dart';
 import "package:go_router/go_router.dart";
 
@@ -17,7 +19,10 @@ class Register extends StatefulWidget {
   State<Register> createState() => _RegisterState();
 }
 
-class _RegisterState extends State<Register> {
+class _RegisterState extends State<Register>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+
   final auth = AuthService();
 
   final TextEditingController _username = TextEditingController();
@@ -30,20 +35,50 @@ class _RegisterState extends State<Register> {
   bool _passError = false;
   bool _confirmPassError = false;
 
+  bool _isLoading = false;
+
+  @override
+  void initState() {
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1200),
+    );
+    _controller.repeat();
+
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+// go to login page
   _goToLogin(BuildContext context) {
     context.push("/login");
   }
 
 // sign up
   _onSignupClicked() {
-    try {
-      if (_isValid()) {
-        _singup().then((value) => {
-              if (value == true) {context.push("/login")}
-            });
-      }
-    } catch (e) {
-      debugPrint("Failed to register: $e");
+    if (_isValid()) {
+      setState(() {
+        _isLoading = true;
+      });
+
+      _singup().then((value) => {
+            if (value == true)
+              {
+                auth
+                    .login(_email.text, _password.text)
+                    .then((value) => {context.go("/home")})
+              }
+            else
+              {showToast("Email is already taken")},
+            setState(() {
+              _isLoading = false;
+            })
+          });
     }
   }
 
@@ -111,12 +146,14 @@ class _RegisterState extends State<Register> {
                   const SizedBox(height: 20),
 
                   // sign up btn
-                  SizedBox(
-                      height: 50,
-                      width: MediaQuery.of(context).size.width,
-                      child: _signupBtn(() {
-                        _onSignupClicked();
-                      })),
+                  _isLoading
+                      ? loadingSpinner(_controller)
+                      : SizedBox(
+                          height: 50,
+                          width: MediaQuery.of(context).size.width,
+                          child: _signupBtn(() {
+                            _onSignupClicked();
+                          })),
                   const SizedBox(height: 20),
 
                   // go to login

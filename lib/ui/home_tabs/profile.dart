@@ -183,20 +183,6 @@ class _ProfileState extends State<Profile> {
             _isEditing ? _editUser() : _nameEmail(),
             const SizedBox(height: 20),
 
-            // change password using email from firebase service
-            _isEditing
-                ? const SizedBox(
-                    height: 1,
-                  )
-                : SizedBox(
-                    height: 50,
-                    width: double.infinity,
-                    child: _btn(_onPasswordChange, "Change Password"),
-                  ),
-            const SizedBox(
-              height: 10,
-            ),
-
             // edit profile/save edit btn
             SizedBox(
                 height: 50,

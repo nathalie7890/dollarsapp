@@ -29,6 +29,7 @@ class AddTrans extends StatefulWidget {
 class _AddTransState extends State<AddTrans>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
+
   final auth = AuthService();
   final transService = TransactionService();
 
@@ -55,11 +56,12 @@ class _AddTransState extends State<AddTrans>
   final TextEditingController _title = TextEditingController();
   final TextEditingController _note = TextEditingController();
   final TextEditingController _amount = TextEditingController();
+
   DateTime _date = DateTime.now();
   String _type = "income";
   String _category = "salary";
-  bool _isLoading = false;
 
+  bool _isSubmitLoading = false;
   bool _titleError = false;
   bool _amountError = false;
 
@@ -149,13 +151,13 @@ class _AddTransState extends State<AddTrans>
       return;
     }
 
+    setState(() {
+      _isSubmitLoading = true;
+    });
+
     final uid = auth.getUid();
 
     if (uid.isNotEmpty) {
-      setState(() {
-        _isLoading = true;
-      });
-
       final transaction = Transaction(
           uid: uid,
           title: _title.text,
@@ -166,13 +168,15 @@ class _AddTransState extends State<AddTrans>
           type: _type);
       _addTransaction(transaction, selectedImage).then((value) => {
             if (value == true)
-              {showToast("Added successfully!"), context.pop(_type)}
+              {
+                setState(() {
+                  _isSubmitLoading = false;
+                }),
+                showToast("Added successfully!"),
+                context.pop(_type)
+              }
           });
     }
-
-    setState(() {
-      _isLoading = false;
-    });
   }
 
   @override
@@ -251,12 +255,12 @@ class _AddTransState extends State<AddTrans>
                 const SizedBox(height: 15),
 
                 // add transation button
-                SizedBox(
-                    width: MediaQuery.of(context).size.width,
-                    height: 50,
-                    child: _isLoading
-                        ? loadingSpinner(_controller)
-                        : _btn(_onAddBtnClicked, "Add Transaction"))
+                _isSubmitLoading
+                    ? loadingSpinner(_controller)
+                    : SizedBox(
+                        width: MediaQuery.of(context).size.width,
+                        height: 50,
+                        child: _btn(_onAddBtnClicked, "Add Transaction"))
               ],
             )),
       ),

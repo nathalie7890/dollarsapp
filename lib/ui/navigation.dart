@@ -1,15 +1,13 @@
-import 'package:dollar_app/ui/home.dart';
-import 'package:dollar_app/ui/home_tabs/transaction.dart';
-import 'package:dollar_app/ui/home_tabs/transactions.dart';
-import 'package:dollar_app/ui/home_tabs/transactions_tabs/add_transaction.dart';
-import 'package:dollar_app/ui/home_tabs/transactions_tabs/edit_transaction.dart';
-import 'package:dollar_app/ui/home_tabs/transactions_tabs/expenses.dart';
-import 'package:dollar_app/ui/home_tabs/transactions_tabs/income.dart';
-import 'package:dollar_app/ui/register.dart';
-import 'package:dollar_app/ui/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+
 import 'login.dart';
+import 'package:dollar_app/ui/home.dart';
+import 'package:dollar_app/ui/home_tabs/transaction.dart';
+import 'package:dollar_app/ui/home_tabs/transactions_tabs/add_transaction.dart';
+import 'package:dollar_app/ui/home_tabs/transactions_tabs/edit_transaction.dart';
+import 'package:dollar_app/ui/register.dart';
+import 'package:dollar_app/ui/splash_screen.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key, required this.initialRoute});
@@ -23,20 +21,7 @@ class MyApp extends StatelessWidget {
     GoRoute(
         path: "/home",
         name: "home",
-        builder: (context, state) => const Home(),
-        routes: [
-          GoRoute(
-              path: "tran",
-              builder: (context, state) => const Transactions(),
-              routes: [
-                GoRoute(
-                    path: "income",
-                    builder: (context, state) => const Income()),
-                GoRoute(
-                    path: "expense",
-                    builder: (context, state) => const Expenses())
-              ])
-        ]),
+        builder: (context, state) => const Home()),
     GoRoute(
         path: "/register",
         name: "register",

@@ -6,69 +6,70 @@ import 'package:dollar_app/ui/home_tabs/transactions_tabs/expenses.dart';
 import 'package:dollar_app/ui/home_tabs/transactions_tabs/income.dart';
 
 class Transactions extends StatefulWidget {
-  final String? tabState;
+  final String tabState;
 
-  const Transactions(
-      {Key? key,
-      this.tabState})
-      : super(key: key);
+  const Transactions({Key? key, required this.tabState}) : super(key: key);
 
   @override
   State<Transactions> createState() => _TransactionsState();
 }
 
-class _TransactionsState
-    extends State<Transactions>
-{
-  
-  late String tabState;
-  late bool refresh;
+class _TransactionsState extends State<Transactions>
+    with SingleTickerProviderStateMixin {
+  late TabController _tabController;
 
   @override
   void initState() {
     super.initState();
-    setState(() {
-      tabState = widget.tabState ?? "";
-      debugPrint("transactions: $tabState");
-    });
+
+    _tabController = TabController(
+        length: 2,
+        vsync: this,
+        initialIndex: widget.tabState == "income" ? 0 : 1);
+  }
+
+  @override
+  void didUpdateWidget(covariant Transactions oldWidget) {
+    debugPrint("did update tab state: ${widget.tabState}");
+    _tabController.animateTo(widget.tabState == "income" ? 0 : 1);
+    super.didUpdateWidget(oldWidget);
   }
 
   @override
   void dispose() {
-    // _tabController.dispose();
+    _tabController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-        length: 2,
-        initialIndex: tabState == "expense" ? 1 : 0,
-        child: Scaffold(
-          appBar: PreferredSize(
-            preferredSize: const Size.fromHeight(
-                kToolbarHeight), // Set the preferred height
-            child: Container(
-              padding: const EdgeInsets.symmetric(vertical: 5),
-              color: primary,
-              child: TabBar(
-                tabs: const [
-                  Tab(text: 'Income'),
-                  Tab(text: 'Expense'),
-                ],
-                indicatorColor: tertiary,
-                labelColor: tertiary,
-                indicatorWeight: 1,
-                labelStyle: const TextStyle(fontSize: 18),
-                indicatorPadding: const EdgeInsets.symmetric(vertical: 10),
-                indicatorSize: TabBarIndicatorSize.label,
-                unselectedLabelColor: Colors.grey.shade400,
-              ),
-            ),
+    return Scaffold(
+      appBar: PreferredSize(
+        preferredSize:
+            const Size.fromHeight(kToolbarHeight), // Set the preferred height
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 5),
+          color: primary,
+          child: TabBar(
+            controller: _tabController,
+            tabs: const [
+              Tab(text: 'Income'),
+              Tab(text: 'Expense'),
+            ],
+            indicatorColor: tertiary,
+            labelColor: tertiary,
+            indicatorWeight: 1,
+            labelStyle: const TextStyle(fontSize: 18),
+            indicatorPadding: const EdgeInsets.symmetric(vertical: 10),
+            indicatorSize: TabBarIndicatorSize.label,
+            unselectedLabelColor: Colors.grey.shade400,
           ),
-          body: const TabBarView(
-            children: [Income(), Expenses()],
-          ),
-        ));
+        ),
+      ),
+      body: TabBarView(
+        controller: _tabController,
+        children: const [Income(), Expenses()],
+      ),
+    );
   }
 }
