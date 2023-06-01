@@ -1,5 +1,5 @@
 import 'package:dollar_app/service/trans_service.dart';
-import 'package:dollar_app/ui/home_tabs/transactions_tabs/widgets/loading.dart';
+import 'package:dollar_app/ui/widgets/loading.dart';
 import 'package:dollar_app/ui/widgets/nunito_text.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';

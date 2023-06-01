@@ -2,7 +2,7 @@ import 'package:dollar_app/service/trans_service.dart';
 import 'package:dollar_app/ui/home_tabs/transactions_tabs/lists.dart';
 import 'package:dollar_app/ui/home_tabs/transactions_tabs/sort.dart';
 import 'package:dollar_app/ui/home_tabs/transactions_tabs/widgets/emptyList.dart';
-import 'package:dollar_app/ui/home_tabs/transactions_tabs/widgets/loading.dart';
+import 'package:dollar_app/ui/widgets/loading.dart';
 import 'package:dollar_app/ui/home_tabs/transactions_tabs/widgets/trans_list.dart';
 import 'package:flutter/material.dart';
 
@@ -35,7 +35,7 @@ class _IncomeState extends State<Income> with SingleTickerProviderStateMixin {
   List<Map<String, dynamic>> _monthlyIncome = [];
   List<Map<String, dynamic>> _yearlyIncome = [];
   List<Map<String, dynamic>> _categoryTotals = [];
-  
+
   double _total = 0; // total income
 
   String? _period; //all, weekly, monthly, yearly
@@ -169,7 +169,8 @@ class _IncomeState extends State<Income> with SingleTickerProviderStateMixin {
                   // total income
                   !_isLoading && _incomes.isEmpty
                       ? Container()
-                      : nunitoText("RM $_total", 25, FontWeight.w700, primary),
+                      : nunitoText(
+                          "+ RM $_total", 25, FontWeight.w700, primary),
                   const SizedBox(height: 20),
 
                   // category btns

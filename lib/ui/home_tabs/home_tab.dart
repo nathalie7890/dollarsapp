@@ -1,6 +1,6 @@
 import 'package:dollar_app/ui/home_tabs/transactions_tabs/sort.dart';
 import 'package:dollar_app/ui/home_tabs/transactions_tabs/widgets/emptyList.dart';
-import 'package:dollar_app/ui/home_tabs/transactions_tabs/widgets/loading.dart';
+import 'package:dollar_app/ui/widgets/loading.dart';
 import 'package:dollar_app/ui/home_tabs/transactions_tabs/widgets/trans_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_scroll_to_top/flutter_scroll_to_top.dart';

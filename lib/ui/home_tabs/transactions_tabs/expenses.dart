@@ -1,7 +1,7 @@
 import 'package:dollar_app/ui/home_tabs/transactions_tabs/lists.dart';
 import 'package:dollar_app/ui/home_tabs/transactions_tabs/sort.dart';
 import 'package:dollar_app/ui/home_tabs/transactions_tabs/widgets/emptyList.dart';
-import 'package:dollar_app/ui/home_tabs/transactions_tabs/widgets/loading.dart';
+import 'package:dollar_app/ui/widgets/loading.dart';
 import 'package:dollar_app/ui/home_tabs/transactions_tabs/widgets/trans_list.dart';
 import 'package:flutter/material.dart';
 import '../../../data/model/trans.dart';
@@ -140,45 +140,44 @@ class _ExpensesState extends State<Expenses>
       padding: const EdgeInsets.all(10),
       child: _isLoading
           ? loadingSpinner(_controller)
-          : !_isLoading && _expenses.isEmpty
-              ? emptyList()
-              : SingleChildScrollView(
-                  controller: _scrollController,
-                  child: Column(
-                    children: [
-                      // weekly monthly yearly btns
-                      SizedBox(
-                        height: 40,
-                        child:
-                            periodBtnRow(periods, _periodBtnClicked, _period),
-                      ),
-                      const SizedBox(
-                        height: 15,
-                      ),
+          : SingleChildScrollView(
+              controller: _scrollController,
+              child: Column(
+                children: [
+                  // weekly monthly yearly btns
+                  SizedBox(
+                    height: 40,
+                    child: periodBtnRow(periods, _periodBtnClicked, _period),
+                  ),
+                  const SizedBox(
+                    height: 15,
+                  ),
 
-                      // chart
-                      !_isLoading && _expenses.isEmpty
-                          ? Container()
-                          : chart(_categoryTotals),
+                  // chart
+                  !_isLoading && _expenses.isEmpty
+                      ? Container()
+                      : chart(_categoryTotals),
 
-                      // total expenses
-                      !_isLoading && _expenses.isEmpty
-                          ? Container()
-                          : nunitoText(
-                              "RM $_total", 25, FontWeight.w700, primary),
-                      const SizedBox(height: 20),
+                  // total expenses
+                  !_isLoading && _expenses.isEmpty
+                      ? Container()
+                      : nunitoText(
+                          "- RM $_total", 25, FontWeight.w700, primary),
+                  const SizedBox(height: 20),
 
-                      // category btns
-                      SizedBox(
-                          height: 40,
-                          child: categoryBtnRow(expenseCategories,
-                              _categoryBtnClicked, _category)),
-                      const SizedBox(
-                        height: 30,
-                      ),
+                  // category btns
+                  SizedBox(
+                      height: 40,
+                      child: categoryBtnRow(
+                          expenseCategories, _categoryBtnClicked, _category)),
+                  const SizedBox(
+                    height: 30,
+                  ),
 
-                      // income list
-                      _period == "weekly"
+                  // income list
+                  !_isLoading && _expenses.isEmpty
+                      ? emptyList()
+                      : _period == "weekly"
                           ? periodList(context, _weeklyExpenses, false, "week",
                               _periodChartData)
                           : _period == "monthly"
@@ -188,9 +187,9 @@ class _ExpensesState extends State<Expenses>
                                   ? periodList(context, _yearlyExpenses, false,
                                       "year", _periodChartData)
                                   : transList(context, _expenses, false)
-                    ],
-                  ),
-                ),
+                ],
+              ),
+            ),
     );
   }
 }
