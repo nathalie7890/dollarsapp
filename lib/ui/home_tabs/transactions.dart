@@ -16,7 +16,7 @@ class Transactions extends StatefulWidget {
 
 class _TransactionsState extends State<Transactions>
     with SingleTickerProviderStateMixin {
-  late TabController _tabController;
+  late TabController _tabController;// Reference to Tab 2 widget
 
   @override
   void initState() {
@@ -25,12 +25,12 @@ class _TransactionsState extends State<Transactions>
     _tabController = TabController(
         length: 2,
         vsync: this,
-        initialIndex: widget.tabState == "income" ? 0 : 1);
+        initialIndex:
+            widget.tabState.isEmpty || widget.tabState == "income" ? 0 : 1);
   }
 
   @override
   void didUpdateWidget(covariant Transactions oldWidget) {
-    debugPrint("did update tab state: ${widget.tabState}");
     _tabController.animateTo(widget.tabState == "income" ? 0 : 1);
     super.didUpdateWidget(oldWidget);
   }
