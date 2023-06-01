@@ -140,54 +140,57 @@ class _ExpensesState extends State<Expenses>
       padding: const EdgeInsets.all(10),
       child: _isLoading
           ? loadingSpinner(_controller)
-          : SingleChildScrollView(
-              controller: _scrollController,
-              child: Column(
-                children: [
-                  // weekly monthly yearly btns
-                  SizedBox(
-                    height: 40,
-                    child: periodBtnRow(periods, _periodBtnClicked, _period),
-                  ),
-                  const SizedBox(
-                    height: 15,
-                  ),
-
-                  // chart
-                  !_isLoading && _expenses.isEmpty
-                      ? Container()
-                      : chart(_categoryTotals),
-
-                  // total expenses
-                  !_isLoading && _expenses.isEmpty
-                      ? Container()
-                      : nunitoText(
-                          "- RM $_total", 25, FontWeight.w700, primary),
-                  const SizedBox(height: 20),
-
-                  // category btns
-                  SizedBox(
+          : RefreshIndicator(
+              onRefresh: _fetchTransWithType,
+              child: SingleChildScrollView(
+                controller: _scrollController,
+                child: Column(
+                  children: [
+                    // weekly monthly yearly btns
+                    SizedBox(
                       height: 40,
-                      child: categoryBtnRow(
-                          expenseCategories, _categoryBtnClicked, _category)),
-                  const SizedBox(
-                    height: 30,
-                  ),
+                      child: periodBtnRow(periods, _periodBtnClicked, _period),
+                    ),
+                    const SizedBox(
+                      height: 15,
+                    ),
 
-                  // income list
-                  !_isLoading && _expenses.isEmpty
-                      ? emptyList()
-                      : _period == "weekly"
-                          ? periodList(context, _weeklyExpenses, false, "week",
-                              _periodChartData)
-                          : _period == "monthly"
-                              ? periodList(context, _monthlyExpenses, false,
-                                  "month", _periodChartData)
-                              : _period == 'yearly'
-                                  ? periodList(context, _yearlyExpenses, false,
-                                      "year", _periodChartData)
-                                  : transList(context, _expenses, false)
-                ],
+                    // chart
+                    !_isLoading && _expenses.isEmpty
+                        ? Container()
+                        : chart(_categoryTotals),
+
+                    // total expenses
+                    !_isLoading && _expenses.isEmpty
+                        ? Container()
+                        : nunitoText(
+                            "- RM $_total", 25, FontWeight.w700, primary),
+                    const SizedBox(height: 20),
+
+                    // category btns
+                    SizedBox(
+                        height: 40,
+                        child: categoryBtnRow(
+                            expenseCategories, _categoryBtnClicked, _category)),
+                    const SizedBox(
+                      height: 30,
+                    ),
+
+                    // income list
+                    !_isLoading && _expenses.isEmpty
+                        ? emptyList()
+                        : _period == "weekly"
+                            ? periodList(context, _weeklyExpenses, false,
+                                "week", _periodChartData)
+                            : _period == "monthly"
+                                ? periodList(context, _monthlyExpenses, false,
+                                    "month", _periodChartData)
+                                : _period == 'yearly'
+                                    ? periodList(context, _yearlyExpenses,
+                                        false, "year", _periodChartData)
+                                    : transList(context, _expenses, false)
+                  ],
+                ),
               ),
             ),
     );
