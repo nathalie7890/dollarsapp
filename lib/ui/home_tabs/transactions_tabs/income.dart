@@ -148,55 +148,58 @@ class _IncomeState extends State<Income> with SingleTickerProviderStateMixin {
       padding: const EdgeInsets.all(10),
       child: _isLoading
           ? loadingSpinner(_controller)
-          : SingleChildScrollView(
-              controller: _scrollController,
-              child: Column(
-                children: [
-                  // weekly monthly yearly btns
-                  SizedBox(
-                    height: 40,
-                    child: periodBtnRow(periods, _periodBtnClicked, _period),
-                  ),
-                  const SizedBox(
-                    height: 15,
-                  ),
+          : RefreshIndicator(
+              onRefresh: _fetchTransWithType,
+              child: SingleChildScrollView(
+                controller: _scrollController,
+                child: Column(
+                  children: [
+                    // weekly monthly yearly btns
+                    SizedBox(
+                      height: 40,
+                      child: periodBtnRow(periods, _periodBtnClicked, _period),
+                    ),
+                    const SizedBox(
+                      height: 15,
+                    ),
 
-                  // chart
-                  !_isLoading && _incomes.isEmpty
-                      ? Container()
-                      : chart(_categoryTotals),
+                    // chart
+                    !_isLoading && _incomes.isEmpty
+                        ? Container()
+                        : chart(_categoryTotals),
 
-                  // total income
-                  !_isLoading && _incomes.isEmpty
-                      ? Container()
-                      : nunitoText(
-                          "+ RM $_total", 25, FontWeight.w700, primary),
-                  const SizedBox(height: 20),
+                    // total income
+                    !_isLoading && _incomes.isEmpty
+                        ? Container()
+                        : nunitoText(
+                            "+ RM $_total", 25, FontWeight.w700, primary),
+                    const SizedBox(height: 20),
 
-                  // category btns
-                  SizedBox(
-                    height: 40,
-                    child: categoryBtnRow(
-                        incomeCategories, _categoryBtnClicked, _category),
-                  ),
-                  const SizedBox(
-                    height: 30,
-                  ),
+                    // category btns
+                    SizedBox(
+                      height: 40,
+                      child: categoryBtnRow(
+                          incomeCategories, _categoryBtnClicked, _category),
+                    ),
+                    const SizedBox(
+                      height: 30,
+                    ),
 
-                  // income list
-                  !_isLoading && _incomes.isEmpty
-                      ? emptyList()
-                      : _period == "weekly"
-                          ? periodList(context, _weeklyIncome, true, "week",
-                              _periodChartData)
-                          : _period == "monthly"
-                              ? periodList(context, _monthlyIncome, true,
-                                  "month", _periodChartData)
-                              : _period == "yearly"
-                                  ? periodList(context, _yearlyIncome, true,
-                                      "year", _periodChartData)
-                                  : transList(context, _incomes, false)
-                ],
+                    // income list
+                    !_isLoading && _incomes.isEmpty
+                        ? emptyList()
+                        : _period == "weekly"
+                            ? periodList(context, _weeklyIncome, true, "week",
+                                _periodChartData)
+                            : _period == "monthly"
+                                ? periodList(context, _monthlyIncome, true,
+                                    "month", _periodChartData)
+                                : _period == "yearly"
+                                    ? periodList(context, _yearlyIncome, true,
+                                        "year", _periodChartData)
+                                    : transList(context, _incomes, false)
+                  ],
+                ),
               ),
             ),
     );

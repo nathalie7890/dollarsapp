@@ -157,7 +157,6 @@ class _ProfileState extends State<Profile> with SingleTickerProviderStateMixin {
   }
 
   _onPasswordChange() async {
-    debugPrint(email);
     await auth.auth.sendPasswordResetEmail(email: email);
     showToast("Link is sent!");
   }
