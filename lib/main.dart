@@ -6,6 +6,10 @@ import 'ui/navigation.dart';
 import 'firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
 
+
+// Project name: Dollar App (Tranck income and expense) 
+// Team members: Joel and Nathalie
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
