@@ -7,7 +7,7 @@ import "colors.dart";
 // tabs
 import "home_tabs/home_tab.dart";
 import 'package:dollar_app/ui/home_tabs/transactions.dart';
-import 'package:dollar_app/ui/home_tabs/news.dart';
+// import 'package:dollar_app/ui/home_tabs/news.dart';
 import 'package:dollar_app/ui/home_tabs/profile.dart';
 
 class Home extends StatefulWidget {

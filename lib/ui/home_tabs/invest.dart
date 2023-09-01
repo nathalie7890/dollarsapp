@@ -1,10 +1,6 @@
-import 'dart:ffi';
-
 import 'package:dollar_app/ui/colors.dart';
 import 'package:flutter/material.dart';
 
-import '../utils/utils.dart';
-import '../widgets/horizontal_divider.dart';
 import '../widgets/nunito_text.dart';
 
 class Invest extends StatefulWidget {
