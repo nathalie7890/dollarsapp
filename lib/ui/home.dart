@@ -1,3 +1,4 @@
+import 'package:dollar_app/ui/home_tabs/invest.dart';
 import 'package:heroicons/heroicons.dart';
 import 'package:flutter/material.dart';
 import "package:go_router/go_router.dart";
@@ -92,7 +93,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
                   tabState: tabState,
                 ),
                 const SizedBox(),
-                const News(),
+                const Invest(),
                 const Profile()
               ]),
         ),
@@ -156,7 +157,7 @@ class _HomeState extends State<Home> with SingleTickerProviderStateMixin {
               const Tab(
                 child: Align(
                   alignment: Alignment.center,
-                  child: HeroIcon(HeroIcons.newspaper, size: 27),
+                  child: HeroIcon(HeroIcons.currencyDollar, size: 27),
                 ),
               ),
 

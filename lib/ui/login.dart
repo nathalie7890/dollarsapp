@@ -53,7 +53,7 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
       setState(() {
         _emailError = true;
       });
-      
+
       return;
     }
 
@@ -98,10 +98,21 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                nunitoText("Welcome back,", 30, FontWeight.bold, primary),
-                nunitoText("Login to your account.", 20, FontWeight.w500,
-                    Colors.grey.shade500),
-                const SizedBox(height: 30),
+                Text(
+                  "Dollar",
+                  softWrap: true,
+                  maxLines: 2,
+                  style: GoogleFonts.righteous(
+                    fontSize: 50,
+                    fontWeight: FontWeight.bold,
+                    color: primary,
+                  ),
+                ),
+                const SizedBox(height: 15),
+                // nunitoText("Welcome back,", 30, FontWeight.bold, primary),
+                nunitoText("Login to your account.", 18, FontWeight.w500,
+                    Colors.grey.shade600),
+                const SizedBox(height: 16),
 
                 // email
                 _loginInput("Email", _email, false),

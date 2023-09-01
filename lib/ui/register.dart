@@ -120,10 +120,21 @@ class _RegisterState extends State<Register>
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  nunitoText("Hello there,", 30, FontWeight.bold, primary),
+                  Text(
+                    "Dollar",
+                    softWrap: true,
+                    maxLines: 2,
+                    style: GoogleFonts.righteous(
+                      fontSize: 50,
+                      fontWeight: FontWeight.bold,
+                      color: primary,
+                    ),
+                  ),
+                  const SizedBox(height: 15),
+                  // nunitoText("Hello there,", 30, FontWeight.bold, primary),
                   nunitoText("Create your new account.", 20, FontWeight.w500,
                       Colors.grey.shade500),
-                  const SizedBox(height: 30),
+                  const SizedBox(height: 15),
 
                   // username
                   _loginInput("Username", _username, false),
